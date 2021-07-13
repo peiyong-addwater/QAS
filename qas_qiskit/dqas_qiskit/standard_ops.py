@@ -1,5 +1,6 @@
 import qiskit
 import numpy as np
+from pprint import pprint
 from abc import ABC, abstractmethod
 from qiskit.circuit.library import (
     CU3Gate,
@@ -40,12 +41,22 @@ _single_qubit_gate_no_param = {"HGate":HGate, "IGate":IGate, "SGate":SGate, "Sdg
                                "TdgGate":TdgGate, "XGate":XGate, "YGate":YGate, "ZGate":ZGate, "SXGate":SXGate}
 _two_qubit_gate_no_param = {"CXGate":CXGate, "CZGate":CZGate, "CYGate":CYGate, "CHGate":CHGate}
 
+single_qubit_ops = {}
+single_qubit_ops.update(_single_qubit_gate_no_param)
+single_qubit_ops.update(_single_qubit_gate_3_params)
+
+two_qubit_ops = {}
+two_qubit_ops.update(_two_qubit_gate_no_param)
+two_qubit_ops.update(_two_qubit_gate_3_params)
+
 standard_quantum_ops = {}
 standard_quantum_ops.update(_single_qubit_gate_3_params)
 standard_quantum_ops.update(_two_qubit_gate_3_params)
 standard_quantum_ops.update(_single_qubit_gate_no_param)
 standard_quantum_ops.update(_two_qubit_gate_no_param)
 
+def supported_ops():
+    pprint(standard_quantum_ops)
 
 class Op(ABC):
 
@@ -81,6 +92,42 @@ class QuantumGate(Op):
 
     def get_pos(self):
         return list(self.pos)
+
+class GatePool:
+    def __init__(self, num_qubits:int, single_qubit_op_generator:List[AnyStr],
+                 two_qubit_op_generator:List[AnyStr],
+                 complete_undirected_graph:bool=True, two_qubit_gate_map:Optional[Sequence[Tuple[int]]]=None):
+        for c in single_qubit_op_generator:
+            assert c in single_qubit_ops.keys()
+        for c in two_qubit_op_generator:
+            assert c in two_qubit_ops.keys()
+        if two_qubit_gate_map is not None:
+            assert complete_undirected_graph is False
+            self.coupling = two_qubit_gate_map
+            for c in self.coupling:
+                assert len(c) == 2
+                assert c[0] != c[1]
+                assert c[0] >= 0
+                assert c[0] < num_qubits
+                assert c[1] >= 0
+                assert c[1] < num_qubits
+        else:
+            self.coupling = []
+            for i in range(num_qubits):
+                for j in range(num_qubits):
+                    if i!=j:
+                        self.coupling.append((i,j))
+
+        self.num_qubits = num_qubits
+        self.single_qubit_gates = single_qubit_op_generator
+        self.two_qubit_gates = two_qubit_op_generator
+
+
+
+
+
+
+
 
 
 
