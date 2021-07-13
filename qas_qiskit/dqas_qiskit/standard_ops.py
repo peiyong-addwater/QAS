@@ -81,7 +81,7 @@ class Op(ABC):
 
 
 class QuantumGate(Op):
-    def __init__(self, name:str, pos:Tuple, param:Optional[Sequence]=None):
+    def __init__(self, name:str, pos:Tuple[int], param:Optional[Sequence]=None):
         assert name in standard_quantum_ops.keys()
         if name in _two_qubit_gate_3_params.keys() or name in _two_qubit_gate_no_param.keys():
             assert len(pos) == 2
@@ -91,23 +91,30 @@ class QuantumGate(Op):
             assert len(param) == 3
             self.op = standard_quantum_ops[name](param[0], param[1], param[2])
             self.param_dim = 3
+            self.param = param
         else:
             self.op = standard_quantum_ops[name]()
             self.param_dim = 0
+            self.param = None
         self.pos = pos
-        self.param = param
         self.name = name
 
     def __str__(self):
         return "({}, {}, {})".format(self.name, list(self.pos), self.param)
 
+    def get_op(self):
+        return self.op
+
     def get_pos(self):
         return list(self.pos)
 
-class GatePool:
+
+
+class GatePool(dict):
     def __init__(self, num_qubits:int, single_qubit_op_generator:List[AnyStr],
                  two_qubit_op_generator:List[AnyStr],
                  complete_undirected_graph:bool=True, two_qubit_gate_map:Optional[Sequence[Tuple[int]]]=None):
+        super(GatePool, self).__init__()
         for c in single_qubit_op_generator:
             assert c in single_qubit_ops.keys()
         for c in two_qubit_op_generator:
@@ -143,6 +150,9 @@ class GatePool:
                 self.pool[pool_key] = {c:couple_direction}
                 pool_key = pool_key + 1
 
+    def __getitem__(self, key):
+        return self.pool[key]
+
     def __str__(self):
         return json.dumps(self.pool)
 
@@ -159,9 +169,8 @@ def default_complete_graph_non_parameterized_pool(num_qubits:int)->GatePool:
     s = ["XGate", "YGate", "ZGate", "HGate", "TGate", "SGate", "HGate", "SXGate", "TdgGate", "SdgGate", "IGate"]
     return GatePool(num_qubits, s, d)
 
-
-
-
+#p = default_complete_graph_non_parameterized_pool(3)
+#print(p.get_op(0))
 
 
 
