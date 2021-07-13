@@ -145,7 +145,7 @@ def default_complete_graph_parameterized_pool(num_qubits:int)->GatePool:
 
 def default_complete_graph_non_parameterized_pool(num_qubits:int)->GatePool:
     d = ["CXGate"]
-    s = ["XGate", "YGate", "ZGate", "HGate", "TGate", "SGate", "HGate", "SXGate", "TdgGate", "SdgGate"]
+    s = ["XGate", "YGate", "ZGate", "HGate", "TGate", "SGate", "HGate", "SXGate", "TdgGate", "SdgGate", "IGate"]
     return GatePool(num_qubits, s, d)
 
 
