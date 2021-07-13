@@ -57,7 +57,7 @@ def extract_ops(num_qubits:int, k:List[int],op_pool:GatePool, circ_params:np.nda
     assert num_qubits == op_pool.num_qubits
     assert p == len(k)
     assert c == len(op_pool)
-    assert l == 3 # force max num of parameters equal to 3
+    assert l == 3 # force max num of parameters in each gate equal to 3
     assert min(k) >=0
     assert max(k) <c
     extracted_gates = []
