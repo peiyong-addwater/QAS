@@ -1,5 +1,7 @@
 import qiskit
+from qiskit import QuantumCircuit
 import numpy as np
+import json
 from pprint import pprint
 from abc import ABC, abstractmethod
 from qiskit.circuit.library import (
@@ -63,6 +65,7 @@ class Op(ABC):
     @abstractmethod
     def __str__(self):
         pass
+
     @abstractmethod
     def get_pos(self):
         pass
@@ -121,6 +124,32 @@ class GatePool:
         self.num_qubits = num_qubits
         self.single_qubit_gates = single_qubit_op_generator
         self.two_qubit_gates = two_qubit_op_generator
+        self.pool = {}
+        pool_key = 0
+        for i in range(num_qubits):
+            for c in single_qubit_op_generator:
+                self.pool[pool_key] = {c:(i,)}
+                pool_key = pool_key+1
+        for couple_direction in self.coupling:
+            for c in two_qubit_op_generator:
+                self.pool[pool_key] = {c:couple_direction}
+                pool_key = pool_key + 1
+
+    def __str__(self):
+            return json.dumps(self.pool)
+
+def default_complete_graph_parameterized_pool(num_qubits:int)->GatePool:
+    s = ["U3Gate"]
+    d = ["CU3Gate"]
+    return GatePool(num_qubits,s,d)
+
+def default_complete_graph_non_parameterized_pool(num_qubits:int)->GatePool:
+    d = ["CXGate"]
+    s = ["XGate", "YGate", "ZGate", "HGate", "TGate", "SGate", "HGate", "SXGate", "TdgGate", "SdgGate"]
+    return GatePool(num_qubits, s, d)
+
+
+
 
 
 
