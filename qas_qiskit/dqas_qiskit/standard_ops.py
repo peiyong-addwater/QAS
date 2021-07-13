@@ -43,6 +43,15 @@ _single_qubit_gate_no_param = {"HGate":HGate, "IGate":IGate, "SGate":SGate, "Sdg
                                "TdgGate":TdgGate, "XGate":XGate, "YGate":YGate, "ZGate":ZGate, "SXGate":SXGate}
 _two_qubit_gate_no_param = {"CXGate":CXGate, "CZGate":CZGate, "CYGate":CYGate, "CHGate":CHGate}
 
+parameterized = {}
+parameterized.update(_single_qubit_gate_3_params)
+parameterized.update(_two_qubit_gate_3_params)
+
+non_parameterized = {}
+non_parameterized.update(_single_qubit_gate_no_param)
+non_parameterized.update(_two_qubit_gate_no_param)
+
+
 single_qubit_ops = {}
 single_qubit_ops.update(_single_qubit_gate_no_param)
 single_qubit_ops.update(_single_qubit_gate_3_params)
@@ -78,14 +87,13 @@ class QuantumGate(Op):
             assert len(pos) == 2
         if name in _single_qubit_gate_3_params.keys() or name in _single_qubit_gate_no_param.keys():
             assert len(pos) == 1
-        if name in _single_qubit_gate_3_params.keys() or name in _two_qubit_gate_3_params.keys():
+        if name in parameterized.keys():
             assert len(param) == 3
-        if param is None:
+            self.op = standard_quantum_ops[name](param[0], param[1], param[2])
+            self.param_dim = 3
+        else:
             self.op = standard_quantum_ops[name]()
             self.param_dim = 0
-        else:
-            self.op = standard_quantum_ops[name](param[0],param[1],param[2])
-            self.param_dim = 3
         self.pos = pos
         self.param = param
         self.name = name
@@ -136,7 +144,10 @@ class GatePool:
                 pool_key = pool_key + 1
 
     def __str__(self):
-            return json.dumps(self.pool)
+        return json.dumps(self.pool)
+
+    def __len__(self):
+        return len(self.pool.keys())
 
 def default_complete_graph_parameterized_pool(num_qubits:int)->GatePool:
     s = ["U3Gate"]
