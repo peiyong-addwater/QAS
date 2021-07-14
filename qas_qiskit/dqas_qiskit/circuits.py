@@ -1,45 +1,7 @@
+from standard_ops import *
 import qiskit
 from qiskit import QuantumCircuit
 import numpy as np
-import jax.numpy as jnp
-import jax
-import optax
-import functools
-import json
-from pprint import pprint
-from abc import ABC, abstractmethod
-from qiskit.circuit.library import (
-    CU3Gate,
-    U3Gate,
-    HGate,
-    IGate,
-    SGate,
-    SdgGate,
-    TGate,
-    TdgGate,
-    XGate,
-    YGate,
-    ZGate,
-    CXGate,
-    CZGate,
-    CYGate,
-    CHGate,
-    SXGate
-)
-from typing import (
-    List,
-    Sequence,
-    Any,
-    Tuple,
-    Callable,
-    Iterator,
-    Optional,
-    Union,
-    Iterable,
-    Dict,
-    AnyStr
-)
-from standard_ops import *
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -78,4 +40,38 @@ params = np.random.randn(3*len(pool)*3).reshape((3, len(pool), 3))
 egs = extract_ops(3, k, pool,params)
 print([str(c) for c in egs])
 """
+
+class QCircFromk(ABC):
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def get_full_circuit_with_prepend(self):
+        pass
+
+    @abstractmethod
+    def get_loss(self):
+        pass
+
+    @abstractmethod
+    def get_gradient(self):
+        pass
+
+    @abstractmethod
+    def get_qasm(self):
+        pass
+
+    @abstractmethod
+    def get_final_state_density_matrix(self):
+        pass
+
+    @abstractmethod
+    def get_measurement_results(self):
+        pass
+
+    @abstractmethod
+    def get_extracted_QuantumCircuit_object(self):
+        pass
 

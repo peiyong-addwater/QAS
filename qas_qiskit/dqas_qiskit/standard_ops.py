@@ -1,6 +1,3 @@
-import qiskit
-from qiskit import QuantumCircuit
-import numpy as np
 import json
 from pprint import pprint
 from abc import ABC, abstractmethod
@@ -169,19 +166,10 @@ def default_complete_graph_non_parameterized_pool(num_qubits:int)->GatePool:
     s = ["XGate", "YGate", "ZGate", "HGate", "TGate", "SGate", "HGate", "SXGate", "TdgGate", "SdgGate", "IGate"]
     return GatePool(num_qubits, s, d)
 
-#p = default_complete_graph_non_parameterized_pool(3)
-#print(p.get_op(0))
-
-
-
-
-
-
-
-
-
-
-
+def simple_complete_graph_non_parameterized_pool(num_qubits:int)->GatePool:
+    d = ["CXGate"]
+    s = ["XGate", "YGate", "ZGate", "HGate","IGate","SGate","SdgGate"]
+    return GatePool(num_qubits, s, d)
 
 
 
