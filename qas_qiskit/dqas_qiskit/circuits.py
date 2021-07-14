@@ -12,7 +12,6 @@ from qiskit.providers.aer.noise import depolarizing_error
 from qiskit.providers.aer.noise import thermal_relaxation_error
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import Unroller
-import jax.numpy as jnp
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -191,8 +190,7 @@ class QCircFromK(ABC):
 
 
 class BitFlipSearchDensityMatrix(QCircFromK):
-    def __init__(self, circ_params:np.ndarray, structure_list:List[int], op_pool:GatePool,
-                 noise_model:Optional[NoiseModel]=None):
+    def __init__(self, circ_params:np.ndarray, structure_list:List[int], op_pool:GatePool):
         self.params = circ_params
         self.k = structure_list
         self.pool = op_pool
@@ -201,13 +199,13 @@ class BitFlipSearchDensityMatrix(QCircFromK):
         self.backbone_circ = construct_backbone_circuit_from_gate_list(3, self.extracted_gates)
         self.init_states = SIMPLE_DATASET_BIT_FLIP[0]
         self.target_states = SIMPLE_DATASET_BIT_FLIP[1]
-        self.noise_model = noise_model
         self.loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
-                                                                self.backbone_circ, self.noise_model)
+                                                                self.backbone_circ)
+        self.gradient = self.parameter_shift_gradient()
 
     def parameter_shift_gradient(self):
         shift = np.pi/2
-        gradients = jnp.zeros((self.p, self.c, self.l))
+        gradients = np.zeros((self.p, self.c, self.l))
         for gate_param_indices in self.param_indices:
             for index in gate_param_indices:
                 shift_mat = np.zeros((self.p, self.c, self.l))
@@ -219,9 +217,9 @@ class BitFlipSearchDensityMatrix(QCircFromK):
                 right_shifted_circ = construct_backbone_circuit_from_gate_list(3, right_shifted_gates)
                 left_shifted_circ = construct_backbone_circuit_from_gate_list(3, left_shifted_gates)
                 right_shifted_loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
-                                                                                 right_shifted_circ, self.noise_model)
+                                                                                 right_shifted_circ)
                 left_shifted_loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
-                                                                                left_shifted_circ, self.noise_model)
+                                                                                left_shifted_circ)
                 gradients[index[0], index[1], index[2]] = (right_shifted_loss-left_shifted_loss)/2
         return gradients
 
@@ -234,25 +232,18 @@ class BitFlipSearchDensityMatrix(QCircFromK):
         return self.backbone_circ
 
     def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
-                                               target_states:List[DensityMatrix],backbone_circ:QuantumCircuit,
-                                               noise_model:Optional[NoiseModel]=None)->np.float64:
+                                               target_states:List[DensityMatrix],
+                                               backbone_circ:QuantumCircuit,)->np.float64:
         num_qubits = backbone_circ.num_qubits
-        if noise_model is not None:
-            noisy_gates = noise_model.noise_instructions
-            pass_ = Unroller(noisy_gates)
-            pm = PassManager(pass_)
-            processed_backbone_circ = pm.run(backbone_circ)
-            simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0, noise_model=noise_model)
-        else:
-            processed_backbone_circ = backbone_circ
-            simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
         fid_list = []
         for i in range(len(init_states)):
             target = target_states[i]
             qc = QuantumCircuit(num_qubits)
             qc.initialize(init_states[i], 0)
-            qc.append(processed_backbone_circ.to_instruction(), [i for i in range(num_qubits)])
+            qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
             qc.save_density_matrix(label='encoded_state')
+            qc = qiskit.transpile(qc, simulator)
             result = simulator.run(qc).result().data()['encoded_state']
             result = DensityMatrix(result)
             fidelity = state_fidelity(result, target)
@@ -262,6 +253,8 @@ class BitFlipSearchDensityMatrix(QCircFromK):
     def get_loss(self):
         return self.loss
 
+    def get_gradient(self):
+        return self.gradient
 
 
 
