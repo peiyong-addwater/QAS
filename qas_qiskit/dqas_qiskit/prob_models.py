@@ -18,6 +18,10 @@ from typing import (
     AnyStr
 )
 
+def categorical_sample(alpha, key):
+    sampled = jax.random.categorical(key, alpha, axis=1)
+    return [int(c) for c in sampled]
+
 class ProbModelBaseClass(ABC):
 
     @abstractmethod
@@ -32,10 +36,14 @@ class ProbModelBaseClass(ABC):
     def get_parameters(self):
         pass
 
+    @abstractmethod
+    def sample(self, *args):
+        pass
+
 
 
 class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
-    def __init__(self, alpha:jnp.ndarray):
+    def __init__(self, alpha:Union[jnp.ndarray, np.ndarray]):
         self.c = alpha.shape[1] # c columns, pool size
         self.alpha = alpha
         self.p = alpha.shape[0] # p rows, num of layers
@@ -62,9 +70,10 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
     def get_parameters(self):
         return self.alpha
 
-def categorical_sample(alpha, key):
-    sampled = jax.random.categorical(key, alpha, axis=1)
-    return [int(c) for c in sampled]
+    def sample(self, size):
+        seeds = list(range(size))
+        return [categorical_sample(self.alpha, jax.random.PRNGKey(seed)) for seed in seeds]
+
 
 
 
@@ -72,7 +81,7 @@ def categorical_sample(alpha, key):
 
 
 """
-alpha = jnp.random.randn(12).reshape(3,4)
+alpha = np.random.randn(12).reshape(3,4)
 start_learning_rate = 1e-1
 optimizer = optax.adam(start_learning_rate)
 opt_state = optimizer.init(alpha)
