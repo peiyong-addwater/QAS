@@ -1,6 +1,7 @@
 import numpy as np
 import jax.numpy as jnp
 import jax
+import time
 import optax
 from typing import (
     List,
@@ -109,6 +110,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):
+        epoch_start = time.time()
         pb = prob_model(prob_params)
         # update the parameters for the prob dist first
         if prob_train_k_num_samples is not None:
@@ -145,15 +147,17 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
         circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
         circ_params = optax.apply_updates(circ_params, circ_updates)
         circ_params = np.array(circ_params)
+        epoch_end = time.time()
         if verbose>0 and verbose<=1:
             print(
-                "Epoch {}, Loss {:.6f}".format(i+1, loss)
+                "Epoch {}, Loss {:.6f}, Epoch Time: {}".format(i+1, loss, epoch_end-epoch_start)
             )
         if verbose>1:
             print("==========Epoch {}==========".format(i+1))
             print("k={}".format(best_k))
             print("Gate Sequence: {}".format(circ.get_circuit_ops(circ_params)))
             print("Loss: {}".format(loss))
+            print("Epoch Time: {}".format(epoch_end-epoch_start))
 
     final_circ_param = circ_params
     final_prob_param = prob_params
