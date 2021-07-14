@@ -264,10 +264,10 @@ class BitFlipSearchDensityMatrix(QCircFromK):
 
         return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
 
-    def show_circuit_ops(self, circ_params):
+    def get_circuit_ops(self, circ_params):
         extracted_gates, _ = extract_ops(3, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
-        print(op_list)
+        return op_list
 
 
 """
@@ -285,7 +285,7 @@ opt_state = optimizer.init(params)
 for i in range(50):
     print(i)
     circ = BitFlipSearchDensityMatrix(p,c,l, k, pool)
-    circ.show_circuit_ops(params)
+    print(circ.get_circuit_ops(params))
     grads = circ.get_gradient(params)
     grads = jnp.nan_to_num(grads)
     loss = circ.get_loss(params)

@@ -37,7 +37,7 @@ class ProbModelBaseClass(ABC):
         pass
 
     @abstractmethod
-    def sample(self, *args):
+    def sample_k(self, *args):
         pass
 
 
@@ -70,7 +70,7 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
     def get_parameters(self):
         return self.alpha
 
-    def sample(self, size):
+    def sample_k(self, size):
         seeds = list(range(size))
         return [categorical_sample(self.alpha, jax.random.PRNGKey(seed)) for seed in seeds]
 
