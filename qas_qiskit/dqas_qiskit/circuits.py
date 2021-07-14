@@ -142,24 +142,24 @@ def get_encoded_states_ideal_five_bit_code(init_states:List[np.ndarray])->List[D
         encoded_states.append(DensityMatrix(result))
     return encoded_states
 
-simple_dataset_bit_flip = []
-simple_dataset_bit_flip.append(PAULI_EIGENSTATES_T_STATE)
-simple_dataset_bit_flip.append(get_encoded_states_ideal_bit_flip_code(PAULI_EIGENSTATES_T_STATE))
+SIMPLE_DATASET_BIT_FLIP = []
+SIMPLE_DATASET_BIT_FLIP.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_BIT_FLIP.append(get_encoded_states_ideal_bit_flip_code(PAULI_EIGENSTATES_T_STATE))
 
-simple_dataset_phase_flip = []
-simple_dataset_phase_flip.append(PAULI_EIGENSTATES_T_STATE)
-simple_dataset_phase_flip.append(get_encoded_states_ideal_phase_flip_code(PAULI_EIGENSTATES_T_STATE))
+SIMPLE_DATASET_PHASE_FLIP = []
+SIMPLE_DATASET_PHASE_FLIP.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_PHASE_FLIP.append(get_encoded_states_ideal_phase_flip_code(PAULI_EIGENSTATES_T_STATE))
 
-simple_dataset_5_bit_code = []
-simple_dataset_5_bit_code.append(PAULI_EIGENSTATES_T_STATE)
-simple_dataset_5_bit_code.append(get_encoded_states_ideal_five_bit_code(PAULI_EIGENSTATES_T_STATE))
+SIMPLE_DATASET_FIVE_BIT_CODE = []
+SIMPLE_DATASET_FIVE_BIT_CODE.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_FIVE_BIT_CODE.append(get_encoded_states_ideal_five_bit_code(PAULI_EIGENSTATES_T_STATE))
 
-simple_dataset_9_bit_code = []
-simple_dataset_9_bit_code.append(PAULI_EIGENSTATES_T_STATE)
-simple_dataset_9_bit_code.append(get_encoded_states_ideal_shor_9_bit_code(PAULI_EIGENSTATES_T_STATE))
+SIMPLE_DATASET_NINE_BIT_CODE = []
+SIMPLE_DATASET_NINE_BIT_CODE.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_NINE_BIT_CODE.append(get_encoded_states_ideal_shor_9_bit_code(PAULI_EIGENSTATES_T_STATE))
 
 
-class QCircFromk(ABC):
+class QCircFromK(ABC):
 
     @abstractmethod
     def __str__(self):
@@ -190,3 +190,6 @@ class QCircFromk(ABC):
         pass
 
 
+class BitFlipSearch(QCircFromK):
+    def __init__(self, circ_params:np.ndarray, gate_list:List[int], verbose:bool=False):
+        raise NotImplementedError
