@@ -73,8 +73,13 @@ class Op(ABC):
         pass
 
     @abstractmethod
-    def get_pos(self):
+    def get_qreg_pos(self):
         pass
+
+    @abstractmethod
+    def get_creg_pos(self):
+        pass
+
 
 
 class QuantumGate(Op):
@@ -85,6 +90,7 @@ class QuantumGate(Op):
         if name in _single_qubit_gate_3_params.keys() or name in _single_qubit_gate_no_param.keys():
             assert len(pos) == 1
         if name in parameterized.keys():
+            #TODO: add options for single- and two- parameter gates, like rx, u1, u2, crx, etc...
             assert len(param) == 3
             self.op = standard_quantum_ops[name](param[0], param[1], param[2])
             self.param_dim = 3
@@ -102,8 +108,12 @@ class QuantumGate(Op):
     def get_op(self):
         return self.op
 
-    def get_pos(self):
+    def get_qreg_pos(self):
         return list(self.pos)
+
+    def get_creg_pos(self):
+        #TODO: Gates with classical infomation as control
+        raise NotImplementedError
 
 
 

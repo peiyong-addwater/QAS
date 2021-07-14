@@ -27,7 +27,7 @@ STATE_DICT_KEYS = list(STATE_DIC.keys())
 def generate_single_qubit_state(theta_B:float, phi_B:float)->np.ndarray:
     return np.cos(theta_B/2)*ket0 + np.sin(theta_B/2)*np.exp(1j*phi_B)*ket1
 
-def extract_ops(num_qubits:int, k:List[int],op_pool:GatePool, circ_params:np.ndarray)->List[QuantumGate]:
+def extract_ops(num_qubits:int, k:List[int],op_pool:GatePool, circ_params:np.ndarray)->(List[QuantumGate], List):
     p, c, l = circ_params.shape[0], circ_params.shape[1], circ_params.shape[2]
     assert num_qubits == op_pool.num_qubits
     assert p == len(k)
@@ -36,15 +36,24 @@ def extract_ops(num_qubits:int, k:List[int],op_pool:GatePool, circ_params:np.nda
     assert min(k) >=0
     assert max(k) <c
     extracted_gates = []
+    param_indices = []
     for i in range(len(k)):
         gate_info =op_pool[k[i]]
         assert len(gate_info.keys()) == 1
         gate_name = list(gate_info.keys())[0]
         gate_pos = gate_info[gate_name]
+        #TODO: make modifications to the code for single- and two-parameter gates
         gate_param = circ_params[i, k[i], :]
+        param_indices.append([[i, k[i], 0], [i, k[i], 1], [i, k[i], 2]])
         gate = QuantumGate(gate_name, gate_pos, gate_param)
         extracted_gates.append(gate)
-    return extracted_gates
+    return extracted_gates, param_indices
+
+def construct_backbone_circuit_from_gate_list(num_qubits:int, extracted_gates:List[QuantumGate])->QuantumCircuit:
+    qc = QuantumCircuit(num_qubits)
+    for c in extracted_gates:
+        qc.append(c.get_op(), qargs=c.get_qreg_pos())
+    return qc
 
 def get_encoded_states_ideal_bit_flip_code(init_states:List[np.ndarray])->List[DensityMatrix]:
     backbone_circ = QuantumCircuit(3)
@@ -191,5 +200,10 @@ class QCircFromK(ABC):
 
 
 class BitFlipSearch(QCircFromK):
-    def __init__(self, circ_params:np.ndarray, gate_list:List[int], verbose:bool=False):
-        raise NotImplementedError
+    def __init__(self, circ_params:np.ndarray, structure_list:List[int], op_pool:GatePool,
+                 noise_model:Optional[NoiseModel]=None):
+        self.params = circ_params
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = circ_params.shape[0], circ_params.shape[1], circ_params.shape[2]
+        self.extracted_gates, self.param_indices = extract_ops(3, self.k, self.pool, self.params)
