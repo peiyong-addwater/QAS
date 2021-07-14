@@ -10,7 +10,8 @@ from qiskit.providers.aer.noise import QuantumError, ReadoutError
 from qiskit.providers.aer.noise import pauli_error
 from qiskit.providers.aer.noise import depolarizing_error
 from qiskit.providers.aer.noise import thermal_relaxation_error
-
+from qiskit.transpiler import PassManager
+from qiskit.transpiler.passes import Unroller
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -175,10 +176,6 @@ class QCircFromK(ABC):
         pass
 
     @abstractmethod
-    def get_full_circuit_with_prepend(self):
-        pass
-
-    @abstractmethod
     def get_loss(self):
         pass
 
@@ -186,9 +183,6 @@ class QCircFromK(ABC):
     def get_gradient(self):
         pass
 
-    @abstractmethod
-    def get_final_state_density_matrix(self):
-        pass
 
     @abstractmethod
     def get_measurement_results(self):
@@ -199,7 +193,7 @@ class QCircFromK(ABC):
         pass
 
 
-class BitFlipSearch(QCircFromK):
+class BitFlipSearchDensityMatrix(QCircFromK):
     def __init__(self, circ_params:np.ndarray, structure_list:List[int], op_pool:GatePool,
                  noise_model:Optional[NoiseModel]=None):
         self.params = circ_params
@@ -207,3 +201,47 @@ class BitFlipSearch(QCircFromK):
         self.pool = op_pool
         self.p, self.c, self.l = circ_params.shape[0], circ_params.shape[1], circ_params.shape[2]
         self.extracted_gates, self.param_indices = extract_ops(3, self.k, self.pool, self.params)
+        self.backbone_circ = construct_backbone_circuit_from_gate_list(3, self.extracted_gates)
+        self.init_states = SIMPLE_DATASET_BIT_FLIP[0]
+        self.target_states = SIMPLE_DATASET_BIT_FLIP[1]
+        self.noise_model = noise_model
+        self.loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
+                                                                self.backbone_circ, self.noise_model)
+
+
+    def __str__(self):
+        gate_name_list = [str(c) for c in self.extracted_gates]
+        return gate_name_list
+
+    def get_extracted_QuantumCircuit_object(self):
+        return self.backbone_circ
+
+    def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
+                                               target_states:List[DensityMatrix],backbone_circ:QuantumCircuit,
+                                               noise_model:Optional[NoiseModel]=None):
+        num_qubits = backbone_circ.num_qubits
+        if noise_model is not None:
+            noisy_gates = noise_model.noise_instructions
+            pass_ = Unroller(noisy_gates)
+            pm = PassManager(pass_)
+            processed_backbone_circ = pm.run(backbone_circ)
+            simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0, noise_model=noise_model)
+        else:
+            processed_backbone_circ = backbone_circ
+            simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        fid_list = []
+        for i in range(len(init_states)):
+            target = target_states[i]
+            qc = QuantumCircuit(num_qubits)
+            qc.initialize(init_states[i], 0)
+            qc.append(processed_backbone_circ.to_instruction(), [i for i in range(num_qubits)])
+            qc.save_density_matrix(label='encoded_state')
+            result = simulator.run(qc).result().data()['encoded_state']
+            result = DensityMatrix(result)
+            fidelity = state_fidelity(result, target)
+            fid_list.append(fidelity)
+        return 1-np.average(fid_list)
+
+
+
+
