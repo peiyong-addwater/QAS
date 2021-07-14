@@ -157,7 +157,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             print("k={}".format(best_k))
             print("Gate Sequence: {}".format(circ.get_circuit_ops(circ_params)))
             print("Loss: {}".format(loss))
-            print("Epoch Time: {}".format(epoch_end-epoch_start))
+            print("Epoch Time: {:.4f} seconds".format(epoch_end-epoch_start))
 
     final_circ_param = circ_params
     final_prob_param = prob_params
