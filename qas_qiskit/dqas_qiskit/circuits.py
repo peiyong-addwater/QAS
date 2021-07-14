@@ -12,6 +12,7 @@ from qiskit.providers.aer.noise import depolarizing_error
 from qiskit.providers.aer.noise import thermal_relaxation_error
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import Unroller
+import jax.numpy as jnp
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -185,10 +186,6 @@ class QCircFromK(ABC):
 
 
     @abstractmethod
-    def get_measurement_results(self):
-        pass
-
-    @abstractmethod
     def get_extracted_QuantumCircuit_object(self):
         pass
 
@@ -208,6 +205,26 @@ class BitFlipSearchDensityMatrix(QCircFromK):
         self.loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
                                                                 self.backbone_circ, self.noise_model)
 
+    def parameter_shift_gradient(self):
+        shift = np.pi/2
+        gradients = jnp.zeros((self.p, self.c, self.l))
+        for gate_param_indices in self.param_indices:
+            for index in gate_param_indices:
+                shift_mat = np.zeros((self.p, self.c, self.l))
+                shift_mat[index[0], index[1], index[2]] = shift
+                right_shifted_params = self.params + shift_mat
+                left_shifted_params = self.params-shift_mat
+                right_shifted_gates, _ = extract_ops(3, self.k, self.pool, right_shifted_params)
+                left_shifted_gates, _ = extract_ops(3, self.k, self.pool, left_shifted_params)
+                right_shifted_circ = construct_backbone_circuit_from_gate_list(3, right_shifted_gates)
+                left_shifted_circ = construct_backbone_circuit_from_gate_list(3, left_shifted_gates)
+                right_shifted_loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
+                                                                                 right_shifted_circ, self.noise_model)
+                left_shifted_loss = self.calculate_avg_loss_with_prepend_states(self.init_states, self.target_states,
+                                                                                left_shifted_circ, self.noise_model)
+                gradients[index[0], index[1], index[2]] = (right_shifted_loss-left_shifted_loss)/2
+        return gradients
+
 
     def __str__(self):
         gate_name_list = [str(c) for c in self.extracted_gates]
@@ -218,7 +235,7 @@ class BitFlipSearchDensityMatrix(QCircFromK):
 
     def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
                                                target_states:List[DensityMatrix],backbone_circ:QuantumCircuit,
-                                               noise_model:Optional[NoiseModel]=None):
+                                               noise_model:Optional[NoiseModel]=None)->np.float64:
         num_qubits = backbone_circ.num_qubits
         if noise_model is not None:
             noisy_gates = noise_model.noise_instructions
@@ -241,6 +258,9 @@ class BitFlipSearchDensityMatrix(QCircFromK):
             fidelity = state_fidelity(result, target)
             fid_list.append(fidelity)
         return 1-np.average(fid_list)
+
+    def get_loss(self):
+        return self.loss
 
 
 
