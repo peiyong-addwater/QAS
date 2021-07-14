@@ -145,8 +145,18 @@ def get_encoded_states_ideal_five_bit_code(init_states:List[np.ndarray])->List[D
 simple_dataset_bit_flip = []
 simple_dataset_bit_flip.append(PAULI_EIGENSTATES_T_STATE)
 simple_dataset_bit_flip.append(get_encoded_states_ideal_bit_flip_code(PAULI_EIGENSTATES_T_STATE))
-print(simple_dataset_bit_flip)
 
+simple_dataset_phase_flip = []
+simple_dataset_phase_flip.append(PAULI_EIGENSTATES_T_STATE)
+simple_dataset_phase_flip.append(get_encoded_states_ideal_phase_flip_code(PAULI_EIGENSTATES_T_STATE))
+
+simple_dataset_5_bit_code = []
+simple_dataset_5_bit_code.append(PAULI_EIGENSTATES_T_STATE)
+simple_dataset_5_bit_code.append(get_encoded_states_ideal_five_bit_code(PAULI_EIGENSTATES_T_STATE))
+
+simple_dataset_9_bit_code = []
+simple_dataset_9_bit_code.append(PAULI_EIGENSTATES_T_STATE)
+simple_dataset_9_bit_code.append(get_encoded_states_ideal_shor_9_bit_code(PAULI_EIGENSTATES_T_STATE))
 
 
 class QCircFromk(ABC):
@@ -178,4 +188,5 @@ class QCircFromk(ABC):
     @abstractmethod
     def get_extracted_QuantumCircuit_object(self):
         pass
+
 
