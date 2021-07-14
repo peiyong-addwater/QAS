@@ -84,7 +84,7 @@ def train_circuit(num_epochs:int, circ_constructor, init_params:np.ndarray, k:Li
 #TODO: Early Stopping for Circuit Search
 def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.ndarray, init_circ_params:np.ndarray,
          op_pool:GatePool, search_circ_constructor, prob_model=IndependentCategoricalProbabilisticModel, circ_lr=0.1,
-         prob_lr = 0.1,circ_opt = optax.adam, prob_opt = optax.adam, prob_train_k_num_samples:Optional[int]=None,
+         prob_lr = 0.1, circ_opt = optax.adam, prob_opt = optax.adam, prob_train_k_num_samples:Optional[int]=None,
          train_circ_in_between_epochs:Optional[int]=None, verbose:int = 0):
 
     p = init_circ_params.shape[0]
@@ -184,10 +184,10 @@ p = 5
 c = len(pool)
 l = 3
 param = np.random.randn(p*c*l).reshape((p,c,l))
-a = np.random.randn(p*c)
+a = np.zeros(p*c)
 a = a.reshape((p,c))
 final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss= dqas_qiskit(
-    20, SIMPLE_DATASET_BIT_FLIP, a, param, pool, BitFlipSearchDensityMatrix, IndependentCategoricalProbabilisticModel,
+    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, BitFlipSearchDensityMatrix, IndependentCategoricalProbabilisticModel,
     prob_train_k_num_samples=100, verbose=2
 )
 
