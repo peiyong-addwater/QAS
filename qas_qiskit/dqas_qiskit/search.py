@@ -153,10 +153,10 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
                 "Epoch {}, Loss {:.6f}, Epoch Time: {}".format(i+1, loss, epoch_end-epoch_start)
             )
         if verbose>1:
-            print("==========Epoch {}==========".format(i+1))
+            print("================ Epoch {} ================".format(i+1))
             print("k={}".format(best_k))
             print("Gate Sequence: {}".format(circ.get_circuit_ops(circ_params)))
-            print("Loss: {}".format(loss))
+            print("Loss: {:.8f}".format(loss))
             print("Epoch Time: {:.4f} seconds".format(epoch_end-epoch_start))
 
     final_circ_param = circ_params
