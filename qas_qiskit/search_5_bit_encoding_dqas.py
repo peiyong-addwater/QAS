@@ -39,8 +39,7 @@ p = 30
 c = len(pool)
 l = 3
 param = np.random.randn(p*c*l).reshape((p,c,l))
-a = np.zeros(p*c)
-a = a.reshape((p,c))
+a = np.zeros(p*c).reshape((p,c))
 final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss= dqas_qiskit(
     50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
     IndependentCategoricalProbabilisticModel,
