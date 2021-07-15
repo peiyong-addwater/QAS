@@ -16,11 +16,20 @@ from typing import (
     Dict,
     AnyStr
 )
-from prob_models import ProbModelBaseClass, IndependentCategoricalProbabilisticModel, categorical_sample
-from circuits import QCircFromK, BitFlipSearchDensityMatrix, SIMPLE_DATASET_BIT_FLIP
-from standard_ops import GatePool, default_complete_graph_parameterized_pool
+from prob_models import (
+    ProbModelBaseClass,
+    IndependentCategoricalProbabilisticModel,
+    categorical_sample)
+from circuits import (
+    QCircFromK,
+    BitFlipSearchDensityMatrix,
+    SIMPLE_DATASET_BIT_FLIP,
+    FiveBitCodeSearchDensityMatrix,
+    SIMPLE_DATASET_FIVE_BIT_CODE
+)
+from standard_ops import GatePool, default_complete_graph_parameterized_pool, default_complete_graph_non_parameterized_pool
 
-def train_circuit(num_epochs:int, circ_constructor, init_params:np.ndarray, k:List[int], op_pool:GatePool,
+def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndarray, k:List[int], op_pool:GatePool,
                   training_data:List[List],opt=optax.adam, lr:float=0.1,
                   early_stopping_threshold:Optional[float]=None,
                   verbose:int=0, early_stopping_avg_num_epochs:int=4):
@@ -49,7 +58,7 @@ def train_circuit(num_epochs:int, circ_constructor, init_params:np.ndarray, k:Li
         loss_list.append(loss)
         if verbose>0 and verbose<=1:
             print(
-                "Epoch {}, Loss {:.6f}".format(i+1, loss)
+                "Epoch {}, Loss {:.8f}".format(i+1, loss)
             )
         if verbose>1:
             print("==========Epoch {}==========".format(i+1))
@@ -83,9 +92,10 @@ def train_circuit(num_epochs:int, circ_constructor, init_params:np.ndarray, k:Li
 
 #TODO: Early Stopping for Circuit Search
 def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.ndarray, init_circ_params:np.ndarray,
-         op_pool:GatePool, search_circ_constructor, prob_model=IndependentCategoricalProbabilisticModel, circ_lr=0.1,
-         prob_lr = 0.1, circ_opt = optax.adam, prob_opt = optax.adam, prob_train_k_num_samples:Optional[int]=None,
-         train_circ_in_between_epochs:Optional[int]=None, verbose:int = 0):
+         op_pool:GatePool, search_circ_constructor:Callable, prob_model=IndependentCategoricalProbabilisticModel,
+        circ_lr=0.1, prob_lr = 0.1, circ_opt = optax.adam, prob_opt = optax.adam,
+                prob_train_k_num_samples:Optional[int]=None,
+         train_circ_in_between_epochs:Optional[int]=None, verbose:int = 0, parameterized_circuit:bool = True):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
@@ -97,8 +107,8 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     assert len(training_data) == 2
 
     if train_circ_in_between_epochs is not None:
-        #TODO: Train the circuit for a few epochs before calculating the gradient of the probabilistic model?
-        raise NotImplementedError
+        assert train_circ_in_between_epochs > 0
+        assert train_circ_in_between_epochs <= 50
     if prob_train_k_num_samples is not None:
         assert prob_train_k_num_samples > 0
 
@@ -110,6 +120,8 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):
+        if verbose>1:
+            print("===================== Epoch {} =====================".format(i+1))
         epoch_start = time.time()
         pb = prob_model(prob_params)
         # update the parameters for the prob dist first
@@ -135,25 +147,52 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             prob_params = optax.apply_updates(prob_params, prob_model_updates)
 
         # then update the circuit parameters according to the updated prob parameters
-        new_pb = prob_model(prob_params)
-        new_prob_mat = new_pb.get_prob_matrix()
-        best_k = jnp.argmax(new_prob_mat, axis=1)
-        best_k = [int(c) for c in best_k]
-        circ = search_circ_constructor(p,c,l,best_k,op_pool)
-        loss = circ.get_loss(circ_params, training_data[0], training_data[1])
-        loss_list.append(loss)
-        circ_gradient = circ.get_gradient(circ_params, training_data[0], training_data[1])
-        circ_gradient = jnp.nan_to_num(circ_gradient)
-        circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
-        circ_params = optax.apply_updates(circ_params, circ_updates)
-        circ_params = np.array(circ_params)
+        if train_circ_in_between_epochs is not None and parameterized_circuit:
+            if verbose>0:
+                print(">>>"*20)
+                print("Update the Parameters in the Circuit for {} Iterations...".format(train_circ_in_between_epochs))
+            new_pb = prob_model(prob_params)
+            new_prob_mat = new_pb.get_prob_matrix()
+            best_k = jnp.argmax(new_prob_mat, axis=1)
+            best_k = [int(c) for c in best_k]
+            circ_params, circ, _, loss = train_circuit(
+                train_circ_in_between_epochs, search_circ_constructor, circ_params, best_k, op_pool, training_data,
+                verbose=1, lr = 0.05
+            )
+            loss_list.append(loss)
+            if verbose>0:
+                print("Between-Iteration Circuit Training Finished! Updated Loss = {:.8f}".format(loss))
+                print(">>>" * 20)
+
+        elif train_circ_in_between_epochs is None and parameterized_circuit:
+            # only update the parameters of the circuit for one iteration
+            new_pb = prob_model(prob_params)
+            new_prob_mat = new_pb.get_prob_matrix()
+            best_k = jnp.argmax(new_prob_mat, axis=1)
+            best_k = [int(c) for c in best_k]
+            circ = search_circ_constructor(p,c,l,best_k,op_pool)
+            loss = circ.get_loss(circ_params, training_data[0], training_data[1])
+            loss_list.append(loss)
+            circ_gradient = circ.get_gradient(circ_params, training_data[0], training_data[1])
+            circ_gradient = jnp.nan_to_num(circ_gradient)
+            circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
+            circ_params = optax.apply_updates(circ_params, circ_updates)
+            circ_params = np.array(circ_params)
+        else:
+            # no parameters in the gates
+            new_pb = prob_model(prob_params)
+            new_prob_mat = new_pb.get_prob_matrix()
+            best_k = jnp.argmax(new_prob_mat, axis=1)
+            best_k = [int(c) for c in best_k]
+            circ = search_circ_constructor(p, c, l, best_k, op_pool)
+            loss = circ.get_loss(circ_params, training_data[0], training_data[1])
+            loss_list.append(loss)
         epoch_end = time.time()
         if verbose>0 and verbose<=1:
             print(
                 "Epoch {}, Loss {:.6f}, Epoch Time: {}".format(i+1, loss, epoch_end-epoch_start)
             )
         if verbose>1:
-            print("================ Epoch {} ================".format(i+1))
             print("k={}".format(best_k))
             print("Gate Sequence: {}".format(circ.get_circuit_ops(circ_params)))
             print("Loss: {:.8f}".format(loss))
@@ -179,16 +218,16 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss
 
 
-pool = default_complete_graph_parameterized_pool(3)
-p = 5
+pool =default_complete_graph_parameterized_pool(5)
+p = 30
 c = len(pool)
 l = 3
 param = np.random.randn(p*c*l).reshape((p,c,l))
 a = np.zeros(p*c)
 a = a.reshape((p,c))
 final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss= dqas_qiskit(
-    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, BitFlipSearchDensityMatrix, IndependentCategoricalProbabilisticModel,
-    prob_train_k_num_samples=100, verbose=2
+    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, FiveBitCodeSearchDensityMatrix, IndependentCategoricalProbabilisticModel,
+    prob_train_k_num_samples=200, verbose=2,train_circ_in_between_epochs=10,parameterized_circuit=True
 )
 
 
