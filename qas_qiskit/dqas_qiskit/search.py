@@ -226,7 +226,7 @@ param = np.random.randn(p*c*l).reshape((p,c,l))
 a = np.zeros(p*c)
 a = a.reshape((p,c))
 final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss= dqas_qiskit(
-    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
+    50, SIMPLE_DATASET_FIVE_BIT_CODE, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
     IndependentCategoricalProbabilisticModel,
     prob_train_k_num_samples=200, verbose=2,train_circ_in_between_epochs=10,parameterized_circuit=True
 )
