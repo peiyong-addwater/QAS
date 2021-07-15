@@ -217,7 +217,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
 
     return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss
 
-
+"""
 pool =default_complete_graph_parameterized_pool(5)
 p = 30
 c = len(pool)
@@ -231,7 +231,7 @@ final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final
     prob_train_k_num_samples=200, verbose=2,train_circ_in_between_epochs=10,parameterized_circuit=True
 )
 
-
+"""
 
 
 
