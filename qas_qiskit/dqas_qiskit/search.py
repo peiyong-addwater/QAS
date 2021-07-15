@@ -3,6 +3,7 @@ import jax.numpy as jnp
 import jax
 import time
 import optax
+from joblib import Parallel, delayed
 from typing import (
     List,
     Sequence,
@@ -28,6 +29,8 @@ from .circuits import (
     SIMPLE_DATASET_FIVE_BIT_CODE
 )
 from .standard_ops import GatePool, default_complete_graph_parameterized_pool, default_complete_graph_non_parameterized_pool
+
+
 
 def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndarray, k:List[int], op_pool:GatePool,
                   training_data:List[List],opt=optax.adam, lr:float=0.1,
@@ -126,11 +129,17 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
         pb = prob_model(prob_params)
         # update the parameters for the prob dist first
         if prob_train_k_num_samples is not None:
+            # filter all OOM related warnings
+
             sampled_k_list = pb.sample_k(prob_train_k_num_samples)
             prob_losses = [search_circ_constructor(p,c,l,k,op_pool).get_loss(circ_params, training_data[0],
                                                                              training_data[1]) for k in sampled_k_list]
-            prob_gradients = [jnp.nan_to_num(pb.get_gradient(prob_losses[i], sampled_k_list[i]))
-                              for i in range(prob_train_k_num_samples)]
+            #prob_gradients = [jnp.nan_to_num(pb.get_gradient(prob_losses[i], sampled_k_list[i]))
+            #                  for i in range(prob_train_k_num_samples)]
+            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses[i], sampled_k_list[i])
+                                      for i in range(prob_train_k_num_samples))
+            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
+
             prob_gradients = jnp.stack(prob_gradients, axis=0)
             avg_prob_gradients = jnp.mean(prob_gradients, axis=0)
             prob_model_updates, opt_state_prob = optimizer_for_prob.update(avg_prob_gradients, opt_state_prob)

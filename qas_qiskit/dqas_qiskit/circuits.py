@@ -14,6 +14,7 @@ from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import Unroller
 import jax.numpy as jnp
 import optax
+from joblib import delayed, Parallel
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -190,40 +191,46 @@ class QCircFromK(ABC):
     def get_extracted_QuantumCircuit_object(self, *args):
         pass
 
+class SearchDensityMatrix(QCircFromK):
 
-class BitFlipSearchDensityMatrixNoiseless(QCircFromK):
-    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
+    @abstractmethod
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool,
+                 noise_model:Optional[NoiseModel]=None):
         self.k = structure_list
         self.pool = op_pool
-        self.p, self.c, self.l = p,c,l
+        self.p, self.c, self.l = p, c, l
+        self.noise_model = noise_model
 
-        # self.gradient = self.parameter_shift_gradient()
+    @abstractmethod
+    def get_loss(self, *args):
+        pass
 
-    def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
-        shift = np.pi/2
-        gradients = np.zeros((self.p, self.c, self.l))
-        for gate_param_indices in param_indices:
-            for index in gate_param_indices:
-                shift_mat = np.zeros((self.p, self.c, self.l))
-                shift_mat[index[0], index[1], index[2]] = shift
-                right_shifted_params = circ_params + shift_mat
-                left_shifted_params = circ_params-shift_mat
-                right_shifted_gates, _ = extract_ops(3, self.k, self.pool, right_shifted_params)
-                left_shifted_gates, _ = extract_ops(3, self.k, self.pool, left_shifted_params)
-                right_shifted_circ = construct_backbone_circuit_from_gate_list(3, right_shifted_gates)
-                left_shifted_circ = construct_backbone_circuit_from_gate_list(3, left_shifted_gates)
-                right_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
-                                                                                 right_shifted_circ)
-                left_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
-                                                                                left_shifted_circ)
-                gradients[index[0], index[1], index[2]] = (right_shifted_loss-left_shifted_loss)/2
-        return gradients
+    @abstractmethod
+    def get_gradient(self, *args):
+        pass
 
+    @abstractmethod
+    def get_extracted_QuantumCircuit_object(self, *args):
+        pass
 
-    def get_extracted_QuantumCircuit_object(self, circ_params):
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
-        return backbone_circ
+    def gradient_parameter_shift_single_parameter(self, num_qubits:int, circ_params:np.ndarray,
+                                                  index:List[int],init_states:List, target_states:List, shift=np.pi/2):
+        gradient = np.zeros((self.p, self.c, self.l))
+        shift_mat = np.zeros((self.p, self.c, self.l))
+        shift_mat[index[0], index[1], index[2]] = shift
+        right_shifted_params = circ_params + shift_mat
+        left_shifted_params = circ_params - shift_mat
+        right_shifted_gates, _ = extract_ops(num_qubits, self.k, self.pool, right_shifted_params)
+        left_shifted_gates, _ = extract_ops(num_qubits, self.k, self.pool, left_shifted_params)
+        right_shifted_circ = construct_backbone_circuit_from_gate_list(num_qubits, right_shifted_gates)
+        left_shifted_circ = construct_backbone_circuit_from_gate_list(num_qubits, left_shifted_gates)
+        right_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
+                                                                         right_shifted_circ)
+        left_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
+                                                                        left_shifted_circ)
+        gradient[index[0], index[1], index[2]] = (right_shifted_loss-left_shifted_loss)/2
+
+        return gradient
 
     def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
                                                target_states:List[DensityMatrix],
@@ -249,6 +256,36 @@ class BitFlipSearchDensityMatrixNoiseless(QCircFromK):
                 pass
             fid_list.append(fidelity)
         return 1-np.average(fid_list)
+
+
+class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p,c,l
+        self.num_qubits = 3
+
+        # self.gradient = self.parameter_shift_gradient()
+
+    def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
+        shift = np.pi/2
+        all_param_indices = []
+        for gate_param_indices in param_indices:
+            for index in gate_param_indices:
+                all_param_indices.append(index)
+        gradients = Parallel(n_jobs=-1, verbose=0)(delayed(self.gradient_parameter_shift_single_parameter)(
+            self.num_qubits, circ_params, index, init_states, target_states, shift
+        ) for index in all_param_indices)
+        gradients = jnp.stack(gradients, axis=0)
+        gradients = jnp.sum(gradients, axis=0)
+        return gradients
+
+
+    def get_extracted_QuantumCircuit_object(self, circ_params):
+        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        return backbone_circ
+
 
     def get_loss(self, circ_params, init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
         assert self.p == circ_params.shape[0]
@@ -273,32 +310,26 @@ class BitFlipSearchDensityMatrixNoiseless(QCircFromK):
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
-class FiveBitCodeSearchDensityMatrixNoiseless(QCircFromK):
+class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p,c,l
+        self.num_qubits = 5
 
         # self.gradient = self.parameter_shift_gradient()
 
     def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
-        shift = np.pi/2
-        gradients = np.zeros((self.p, self.c, self.l))
+        shift = np.pi / 2
+        all_param_indices = []
         for gate_param_indices in param_indices:
             for index in gate_param_indices:
-                shift_mat = np.zeros((self.p, self.c, self.l))
-                shift_mat[index[0], index[1], index[2]] = shift
-                right_shifted_params = circ_params + shift_mat
-                left_shifted_params = circ_params-shift_mat
-                right_shifted_gates, _ = extract_ops(5, self.k, self.pool, right_shifted_params)
-                left_shifted_gates, _ = extract_ops(5, self.k, self.pool, left_shifted_params)
-                right_shifted_circ = construct_backbone_circuit_from_gate_list(5, right_shifted_gates)
-                left_shifted_circ = construct_backbone_circuit_from_gate_list(5, left_shifted_gates)
-                right_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
-                                                                                 right_shifted_circ)
-                left_shifted_loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states,
-                                                                                left_shifted_circ)
-                gradients[index[0], index[1], index[2]] = (right_shifted_loss-left_shifted_loss)/2
+                all_param_indices.append(index)
+        gradients = Parallel(n_jobs=-1, verbose=0)(delayed(self.gradient_parameter_shift_single_parameter)(
+            self.num_qubits, circ_params, index, init_states, target_states, shift
+        ) for index in all_param_indices)
+        gradients = jnp.stack(gradients, axis=0)
+        gradients = jnp.sum(gradients, axis=0)
         return gradients
 
 
@@ -306,31 +337,6 @@ class FiveBitCodeSearchDensityMatrixNoiseless(QCircFromK):
         extracted_gates, param_indices = extract_ops(5, self.k, self.pool, circ_params)
         backbone_circ = construct_backbone_circuit_from_gate_list(5, extracted_gates)
         return backbone_circ
-
-    def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
-                                               target_states:List[DensityMatrix],
-                                               backbone_circ:QuantumCircuit,)->np.float64:
-        num_qubits = backbone_circ.num_qubits
-        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
-        fid_list = []
-        for i in range(len(init_states)):
-            target = target_states[i]
-            qc = QuantumCircuit(num_qubits)
-            qc.initialize(init_states[i], 0)
-            qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
-            qc.save_density_matrix(label='encoded_state')
-            qc = qiskit.transpile(qc, simulator)
-            result = simulator.run(qc).result().data()['encoded_state']
-            result = DensityMatrix(result)
-            try:
-                fidelity = state_fidelity(result, target, validate=False)
-            except:
-                if not result.is_valid():
-                    print("Invalid Result State Encountered, Setting Fidelity To Zero")
-                fidelity = 0
-                pass
-            fid_list.append(fidelity)
-        return 1-np.average(fid_list)
 
     def get_loss(self, circ_params, init_states = SIMPLE_DATASET_FIVE_BIT_CODE[0], target_states = SIMPLE_DATASET_FIVE_BIT_CODE[1]):
         assert self.p == circ_params.shape[0]

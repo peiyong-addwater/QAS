@@ -4,6 +4,7 @@ import jax.ops
 import jax.numpy as jnp
 from abc import ABC, abstractmethod
 import optax
+from joblib import Parallel, delayed
 from typing import (
     List,
     Sequence,
@@ -61,6 +62,8 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
                 nabla_ln_P = jax.ops.index_update(nabla_ln_P, (i,j),update)
         return nabla_ln_P*circ_loss
 
+
+
     def delta_symbol(self, j:int, m:int)->int:
         return int(j==m)
 
@@ -72,7 +75,9 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
 
     def sample_k(self, size):
         seeds = list(range(size))
-        return [categorical_sample(self.alpha, jax.random.PRNGKey(seed)) for seed in seeds]
+        sampled_k_list = Parallel(n_jobs=-1, verbose=0)(delayed(categorical_sample)
+                                                        (self.alpha, jax.random.PRNGKey(seed)) for seed in seeds)
+        return sampled_k_list
 
 
 
