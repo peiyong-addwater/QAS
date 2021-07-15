@@ -16,18 +16,18 @@ from typing import (
     Dict,
     AnyStr
 )
-from prob_models import (
+from .prob_models import (
     ProbModelBaseClass,
     IndependentCategoricalProbabilisticModel,
     categorical_sample)
-from circuits import (
+from .circuits import (
     QCircFromK,
     BitFlipSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_BIT_FLIP,
     FiveBitCodeSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_FIVE_BIT_CODE
 )
-from standard_ops import GatePool, default_complete_graph_parameterized_pool, default_complete_graph_non_parameterized_pool
+from .standard_ops import GatePool, default_complete_graph_parameterized_pool, default_complete_graph_non_parameterized_pool
 
 def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndarray, k:List[int], op_pool:GatePool,
                   training_data:List[List],opt=optax.adam, lr:float=0.1,

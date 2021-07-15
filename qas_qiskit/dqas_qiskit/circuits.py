@@ -1,4 +1,4 @@
-from standard_ops import *
+from .standard_ops import *
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import state_fidelity, DensityMatrix
