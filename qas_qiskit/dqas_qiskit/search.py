@@ -22,9 +22,9 @@ from prob_models import (
     categorical_sample)
 from circuits import (
     QCircFromK,
-    BitFlipSearchDensityMatrix,
+    BitFlipSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_BIT_FLIP,
-    FiveBitCodeSearchDensityMatrix,
+    FiveBitCodeSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_FIVE_BIT_CODE
 )
 from standard_ops import GatePool, default_complete_graph_parameterized_pool, default_complete_graph_non_parameterized_pool
@@ -226,7 +226,8 @@ param = np.random.randn(p*c*l).reshape((p,c,l))
 a = np.zeros(p*c)
 a = a.reshape((p,c))
 final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss= dqas_qiskit(
-    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, FiveBitCodeSearchDensityMatrix, IndependentCategoricalProbabilisticModel,
+    50, SIMPLE_DATASET_BIT_FLIP, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
+    IndependentCategoricalProbabilisticModel,
     prob_train_k_num_samples=200, verbose=2,train_circ_in_between_epochs=10,parameterized_circuit=True
 )
 

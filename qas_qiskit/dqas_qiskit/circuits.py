@@ -191,7 +191,7 @@ class QCircFromK(ABC):
         pass
 
 
-class BitFlipSearchDensityMatrix(QCircFromK):
+class BitFlipSearchDensityMatrixNoiseless(QCircFromK):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
         self.k = structure_list
         self.pool = op_pool
@@ -273,7 +273,7 @@ class BitFlipSearchDensityMatrix(QCircFromK):
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
-class FiveBitCodeSearchDensityMatrix(QCircFromK):
+class FiveBitCodeSearchDensityMatrixNoiseless(QCircFromK):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
         self.k = structure_list
         self.pool = op_pool
