@@ -170,7 +170,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             )
             loss_list.append(loss)
             if verbose>0:
-                print("Between-Iteration Circuit Training Finished! Updated Loss = {:.8f}".format(loss))
+                print("In-Iteration Circuit Training Finished! Updated Loss = {:.8f}".format(loss))
                 print(">>>" * 20)
 
         elif train_circ_in_between_epochs is None and parameterized_circuit:
