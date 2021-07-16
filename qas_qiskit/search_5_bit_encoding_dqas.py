@@ -57,8 +57,8 @@ single_qubit_gate = ["U3Gate"]
 two_qubit_gate = ["CU3Gate"]
 
 
-#pool =default_complete_graph_parameterized_pool(5)
-pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
+pool =default_complete_graph_parameterized_pool(5)
+#pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
 
 res_dict["Pool"] = str(pool)
 
@@ -88,10 +88,18 @@ with open(file_name, 'w') as f:
 
 
 
-"""
+
 # Fine tune the circuit after architecture search
-final_circ_param, final_circ, final_op_list, _ = train_circuit(50, FiveBitCodeSearchDensityMatrixNoiseless,
-                                                               final_circ_param, final_k, pool,
-                                                               SIMPLE_DATASET_FIVE_BIT_CODE, lr= 0.1,
+tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = train_circuit(500, FiveBitCodeSearchDensityMatrixNoiseless,
+                                                               np.random.randn(p*c*l).reshape((p,c,l)), final_k, pool,
+                                                               SIMPLE_DATASET_FIVE_BIT_CODE, lr= 0.01,
                                                                verbose=2, early_stopping_threshold=0.000001)
-"""
+
+res_dict["fine_tune_res"] = {
+    "tuned_circ_param":tuned_circ_param,
+    "tuned_op_list":tuned_op_list,
+    "fine_tune_loss_list":fine_tune_loss_list
+}
+
+with open(file_name, 'w') as f:
+    json.dump(res_dict, f, indent=4, cls=NpEncoder)

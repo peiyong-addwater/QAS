@@ -90,7 +90,7 @@ def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndar
         print("Circuit Training Finished. Final Loss: {}.\n Final Ops:{}".format(final_loss, final_op_list))
         print("-=" * 20)
 
-    return final_param, final_circ, final_op_list, final_loss
+    return final_param, final_circ, final_op_list, final_loss,loss_list
 
 
 #TODO: Early Stopping for Circuit Search
