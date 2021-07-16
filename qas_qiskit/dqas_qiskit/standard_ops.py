@@ -120,7 +120,7 @@ class QuantumGate(Op):
 class GatePool(dict):
     def __init__(self, num_qubits:int, single_qubit_op_generator:List[AnyStr],
                  two_qubit_op_generator:List[AnyStr],
-                 complete_undirected_graph:bool=True, two_qubit_gate_map:Optional[Sequence[Tuple[int]]]=None):
+                 complete_undirected_graph:bool=True, two_qubit_gate_map:Optional[List[Tuple[int,int]]]=None):
         super(GatePool, self).__init__()
         for c in single_qubit_op_generator:
             assert c in single_qubit_ops.keys()

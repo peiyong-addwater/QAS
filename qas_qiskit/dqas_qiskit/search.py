@@ -129,8 +129,6 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
         pb = prob_model(prob_params)
         # update the parameters for the prob dist first
         if prob_train_k_num_samples is not None:
-            # filter all OOM related warnings
-
             sampled_k_list = pb.sample_k(prob_train_k_num_samples)
             prob_losses = [search_circ_constructor(p,c,l,k,op_pool).get_loss(circ_params, training_data[0],
                                                                              training_data[1]) for k in sampled_k_list]
@@ -164,10 +162,17 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             new_prob_mat = new_pb.get_prob_matrix()
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
-            circ_params, circ, _, loss = train_circuit(
-                train_circ_in_between_epochs, search_circ_constructor, circ_params, best_k, op_pool, training_data,
-                verbose=1, lr = 0.05
-            )
+            loss = 1
+            for epoch in range(train_circ_in_between_epochs):
+                circ = search_circ_constructor(p, c, l, best_k, op_pool)
+                loss = circ.get_loss(circ_params, training_data[0], training_data[1])
+                circ_gradient = circ.get_gradient(circ_params, training_data[0], training_data[1])
+                circ_gradient = jnp.nan_to_num(circ_gradient)
+                circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
+                circ_params = optax.apply_updates(circ_params, circ_updates)
+                circ_params = np.array(circ_params)
+                if verbose>0:
+                    print("Epoch {}, Loss {:.6f}".format(epoch+1, loss))
             loss_list.append(loss)
             if verbose>0:
                 print("In-Iteration Circuit Training Finished! Updated Loss = {:.8f}".format(loss))
@@ -224,7 +229,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
         print("Final Prob Model Parameter\n{}".format(final_prob_param))
         print("-=" * 20)
 
-    return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss
+    return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list
 
 """
 pool =default_complete_graph_parameterized_pool(5)
