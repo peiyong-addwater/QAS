@@ -75,7 +75,7 @@ final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final
     500, SIMPLE_DATASET_FIVE_BIT_CODE, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
     circ_lr=0.1, prob_lr = 0.1, circ_opt = optax.adabelief, prob_opt = optax.adabelief,
     prob_model=IndependentCategoricalProbabilisticModel,
-    prob_train_k_num_samples=300, verbose=2,train_circ_in_between_epochs=20,parameterized_circuit=True
+    prob_train_k_num_samples=300, verbose=2,train_circ_in_between_epochs=10,parameterized_circuit=True
 )
 res_dict["k"] = final_k
 res_dict["op_list"] = final_op_list
@@ -94,7 +94,8 @@ with open(file_name, 'w') as f:
 tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = train_circuit(500, FiveBitCodeSearchDensityMatrixNoiseless,
                                                                np.random.randn(p*c*l).reshape((p,c,l)), final_k, pool,
                                                                SIMPLE_DATASET_FIVE_BIT_CODE, lr= 0.01,
-                                                               verbose=2, early_stopping_threshold=0.000001)
+                                                               verbose=2, early_stopping_threshold=0.000001,
+                                                                                    opt=optax.adabelief)
 
 res_dict["fine_tune_res"] = {
     "tuned_circ_param":tuned_circ_param,
