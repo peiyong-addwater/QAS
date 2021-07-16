@@ -125,6 +125,7 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     for i in range(num_epochs):
         if verbose>1:
             print("=============================== Epoch {} ===============================".format(i+1))
+            print("Updating Parameters for the Probabilistic Model.........")
         epoch_start = time.time()
         pb = prob_model(prob_params)
         # update the parameters for the prob dist first
