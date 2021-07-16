@@ -141,8 +141,8 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
 
             prob_gradients = jnp.stack(prob_gradients, axis=0)
-            avg_prob_gradients = jnp.mean(prob_gradients, axis=0)
-            prob_model_updates, opt_state_prob = optimizer_for_prob.update(avg_prob_gradients, opt_state_prob)
+            sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
+            prob_model_updates, opt_state_prob = optimizer_for_prob.update(sum_prob_gradients, opt_state_prob)
             prob_params = optax.apply_updates(prob_params, prob_model_updates)
         else:
             # choose k according to the probability matrix
