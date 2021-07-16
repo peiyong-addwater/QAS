@@ -212,11 +212,11 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             print("Loss: {:.8f}".format(loss))
             print("Epoch Time: {:.4f} seconds".format(epoch_end-epoch_start))
 
-    final_circ_param = circ_params
-    final_prob_param = prob_params
+    final_circ_param = np.array(circ_params)
+    final_prob_param = np.array(prob_params)
     final_loss = loss_list[-1]
     final_prob_model = prob_model(final_prob_param)
-    final_prob_mat = final_prob_model.get_prob_matrix()
+    final_prob_mat = np.array(final_prob_model.get_prob_matrix())
     final_k = jnp.argmax(final_prob_mat, axis=1)
     final_k = [int(c) for c in final_k]
     final_circ = search_circ_constructor(p, c, l, final_k, op_pool)

@@ -80,6 +80,8 @@ res_dict["k"] = final_k
 res_dict["op_list"] = final_op_list
 res_dict["loss_list"] = loss_list_qas
 res_dict["prob_param"] = final_prob_param
+res_dict["all_circuit_param"] = final_circ_param
+
 
 with open(file_name, 'w') as f:
     json.dump(res_dict, f, indent=4, cls=NpEncoder)
