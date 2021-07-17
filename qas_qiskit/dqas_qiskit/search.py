@@ -312,6 +312,8 @@ def dqas_qiskit_v2(num_epochs:int,
             print("Calculating losses...")
         batch_losses = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_loss_dm)(constructed_circ, circ_params,
                                             training_data[0], training_data[1]) for constructed_circ in sampled_circs)
+        batch_losses = np.nan_to_num(batch_losses, nan=1.0) # deal with NaN in losses
+
         if verbose > 0:
             print("Loss Calculation Finished!")
 
