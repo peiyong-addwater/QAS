@@ -17,7 +17,10 @@ from qiskit.circuit.library import (
     CZGate,
     CYGate,
     CHGate,
-    SXGate
+    SXGate,
+    RXGate,
+    RYGate,
+    RZGate
 )
 from typing import (
     List,

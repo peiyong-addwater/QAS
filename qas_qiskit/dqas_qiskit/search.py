@@ -125,42 +125,14 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
     for i in range(num_epochs):
         if verbose>1:
             print("=============================== Epoch {} ===============================".format(i+1))
-            print("Updating Parameters for the Probabilistic Model.........")
         epoch_start = time.time()
-        pb = prob_model(prob_params)
-        # update the parameters for the prob dist first
-        if prob_train_k_num_samples is not None:
-            sampled_k_list = pb.sample_k(prob_train_k_num_samples)
-            prob_losses = [search_circ_constructor(p,c,l,k,op_pool).get_loss(circ_params, training_data[0],
-                                                                             training_data[1]) for k in sampled_k_list]
-            #prob_gradients = [jnp.nan_to_num(pb.get_gradient(prob_losses[i], sampled_k_list[i]))
-            #                  for i in range(prob_train_k_num_samples)]
-            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses[i], sampled_k_list[i])
-                                      for i in range(prob_train_k_num_samples))
-            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
-
-            prob_gradients = jnp.stack(prob_gradients, axis=0)
-            sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
-            prob_model_updates, opt_state_prob = optimizer_for_prob.update(sum_prob_gradients, opt_state_prob)
-            prob_params = optax.apply_updates(prob_params, prob_model_updates)
-        else:
-            # choose k according to the probability matrix
-            prob_mat = pb.get_prob_matrix()
-            chosen_k = jnp.argmax(prob_mat, axis=1)
-            chosen_k = [int(c) for c in chosen_k]
-            prob_loss = search_circ_constructor(p,c,l,chosen_k,op_pool).get_loss(circ_params, training_data[0],
-                                                                             training_data[1])
-            prob_gradient = jnp.nan_to_num(pb.get_gradient(prob_loss, chosen_k))
-            prob_model_updates, opt_state_prob = optimizer_for_prob.update(prob_gradient, opt_state_prob)
-            prob_params = optax.apply_updates(prob_params, prob_model_updates)
-
-        # then update the circuit parameters according to the updated prob parameters
+        # update the circuit parameters according to the prob parameters
         if train_circ_in_between_epochs is not None and parameterized_circuit:
             if verbose>0:
                 print(">>>"*20)
                 print("Update the Parameters in the Circuit for {} Iterations...".format(train_circ_in_between_epochs))
-            new_pb = prob_model(prob_params)
-            new_prob_mat = new_pb.get_prob_matrix()
+            pb = prob_model(prob_params)
+            new_prob_mat = pb.get_prob_matrix()
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
             loss = 1
@@ -181,8 +153,8 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
 
         elif train_circ_in_between_epochs is None and parameterized_circuit:
             # only update the parameters of the circuit for one iteration
-            new_pb = prob_model(prob_params)
-            new_prob_mat = new_pb.get_prob_matrix()
+            pb = prob_model(prob_params)
+            new_prob_mat = pb.get_prob_matrix()
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
             circ = search_circ_constructor(p,c,l,best_k,op_pool)
@@ -195,13 +167,44 @@ def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.nda
             circ_params = np.array(circ_params)
         else:
             # no parameters in the gates
-            new_pb = prob_model(prob_params)
-            new_prob_mat = new_pb.get_prob_matrix()
+            pb = prob_model(prob_params)
+            new_prob_mat = pb.get_prob_matrix()
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
             circ = search_circ_constructor(p, c, l, best_k, op_pool)
             loss = circ.get_loss(circ_params, training_data[0], training_data[1])
             loss_list.append(loss)
+
+
+        # then update the parameters for the prob dist
+        if verbose>0:
+            print("Updating Parameters for the Probabilistic Model.........")
+        if prob_train_k_num_samples is not None:
+            sampled_k_list = pb.sample_k(prob_train_k_num_samples)
+            prob_losses = [search_circ_constructor(p, c, l, k, op_pool).get_loss(circ_params, training_data[0],
+                                                                                 training_data[1]) for k in
+                           sampled_k_list]
+            # prob_gradients = [jnp.nan_to_num(pb.get_gradient(prob_losses[i], sampled_k_list[i]))
+            #                  for i in range(prob_train_k_num_samples)]
+            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses[i], sampled_k_list[i])
+                                                            for i in range(prob_train_k_num_samples))
+            prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
+
+            prob_gradients = jnp.stack(prob_gradients, axis=0)
+            sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
+            prob_model_updates, opt_state_prob = optimizer_for_prob.update(sum_prob_gradients, opt_state_prob)
+            prob_params = optax.apply_updates(prob_params, prob_model_updates)
+        else:
+            # choose k according to the probability matrix
+            prob_mat = pb.get_prob_matrix()
+            chosen_k = jnp.argmax(prob_mat, axis=1)
+            chosen_k = [int(c) for c in chosen_k]
+            prob_loss = search_circ_constructor(p, c, l, chosen_k, op_pool).get_loss(circ_params, training_data[0],
+                                                                                     training_data[1])
+            prob_gradient = jnp.nan_to_num(pb.get_gradient(prob_loss, chosen_k))
+            prob_model_updates, opt_state_prob = optimizer_for_prob.update(prob_gradient, opt_state_prob)
+            prob_params = optax.apply_updates(prob_params, prob_model_updates)
+
         epoch_end = time.time()
         if verbose>0 and verbose<=1:
             print(
