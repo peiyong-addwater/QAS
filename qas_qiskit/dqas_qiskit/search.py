@@ -1,6 +1,7 @@
 import numpy as np
 import jax.numpy as jnp
 import jax
+import itertools
 import time
 import optax
 from joblib import Parallel, delayed
@@ -92,6 +93,23 @@ def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndar
 
     return final_param, final_circ, final_op_list, final_loss,loss_list
 
+def _entropy_of_prob_mat_categorical(prob_mat:Union[np.ndarray, jnp.ndarray]):
+    p = prob_mat.shape[0]
+    c = prob_mat.shape[1]
+    p_list = []
+    for i in range(p):
+        c_list = [i for i in range(c)]
+        p_list.append(c_list)
+    combinations = [elem for elem in itertools.product(*p_list)]
+    probs = []
+    for comb in combinations:
+        prob = 1
+        for i in range(p):
+            prob = prob * prob_mat[i, comb[i]]
+        probs.append(prob)
+
+    hp = np.sum(p*np.log(1/p) for p in probs)
+    return np.float(hp)
 
 
 def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.ndarray, init_circ_params:np.ndarray,
@@ -256,6 +274,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
     opt_state_circ = optimizer_for_circ.init(circ_params)
     opt_state_prob = optimizer_for_prob.init(prob_params)
     loss_list = []
+    prob_entropy_list = []
     sample_batch_avg_loss = 0
     pb = prob_model(prob_params)
     if verbose>0:
@@ -339,18 +358,21 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
 
         loss_list.append(sample_batch_avg_loss)
 
+        pb = prob_model(prob_params)
+        new_prob_mat = pb.get_prob_matrix()
+        new_entropy = _entropy_of_prob_mat_categorical(new_prob_mat)
+        prob_entropy_list.append(new_entropy)
+
         epoch_end = time.time()
 
 
         if verbose>1:
-            pb = prob_model(prob_params)
-            new_prob_mat = pb.get_prob_matrix()
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
             best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
 
             print("Batch Avg Loss on Samples: {:.6f}".format(loss_list[-1]))
-
+            print("Entropy of Updated Prob Model: {:.6f}".format(new_entropy))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
@@ -384,7 +406,8 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         print("Final Prob Model Parameter\n{}".format(final_prob_param))
         print("-=" * 20)
 
-    return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list
+    return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
+           loss_list, prob_entropy_list
 
 
 
