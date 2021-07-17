@@ -255,10 +255,20 @@ def _circ_obj_get_gradient_dm(circ_obj, circ_params, init_state, target_state:Li
 
 
 
-def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.ndarray, init_circ_params:np.ndarray,
-         op_pool:GatePool, search_circ_constructor:Callable, prob_model=IndependentCategoricalProbabilisticModel,
-        circ_lr=0.1, prob_lr = 0.1, circ_opt = optax.adam, prob_opt = optax.adam,
-                batch_k_num_samples:int=200, verbose:int = 0, parameterized_circuit:bool = True):
+def dqas_qiskit_v2(num_epochs:int,
+                   training_data:List[List],
+                   init_prob_params:np.ndarray,
+                   init_circ_params:np.ndarray,
+                   op_pool:GatePool,
+                   search_circ_constructor:Callable,
+                   prob_model=IndependentCategoricalProbabilisticModel,
+                   circ_lr=0.1,
+                   prob_lr = 0.1,
+                   circ_opt = optax.adam,
+                   prob_opt = optax.adam,
+                   batch_k_num_samples:int=200,
+                   verbose:int = 0,
+                   parameterized_circuit:bool = True):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
@@ -305,12 +315,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         if verbose > 0:
             print("Loss Calculation Finished!")
 
-
-
-
         if parameterized_circuit:
-            #circ_batch_gradients = [search_circ_constructor(p, c, l, k, op_pool).get_gradient(circ_params,
-            #                                    training_data[0], training_data[1]) for k in sampled_k_list]
             if verbose > 0:
                 print("Calculating gradients for circuit parameters...")
             circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
