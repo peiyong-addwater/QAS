@@ -69,7 +69,7 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 5 if num_qubits ==3 else 25
+    p = 4 if num_qubits ==3 else 30
     c = len(pool)
     l = 3
 
@@ -90,8 +90,8 @@ if __name__ == "__main__":
                     search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
                     circ_lr=0.1,
                     prob_lr = 0.1,
-                    circ_opt = optax.noisy_sgd,
-                    prob_opt = optax.adam,
+                    circ_opt = optax.adabelief,
+                    prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
                     batch_k_num_samples=300,
                     verbose=2,

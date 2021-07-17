@@ -34,6 +34,10 @@ class ProbModelBaseClass(ABC):
         pass
 
     @abstractmethod
+    def get_prob_for_k(self, k:List[int]):
+        pass
+
+    @abstractmethod
     def get_parameters(self):
         pass
 
@@ -62,13 +66,18 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
                 nabla_ln_P = jax.ops.index_update(nabla_ln_P, (i,j),update)
         return nabla_ln_P*circ_loss
 
-
-
     def delta_symbol(self, j:int, m:int)->int:
         return int(j==m)
 
     def get_prob_matrix(self):
         return self.prob_matrix
+
+    def get_prob_for_k(self, k:List[int]):
+        assert len(k) == self.p
+        prob = 1
+        for i in range(self.p):
+            prob = prob*self.prob_matrix[i, k[i]]
+        return prob
 
     def get_parameters(self):
         return self.alpha

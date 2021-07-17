@@ -289,6 +289,10 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         if verbose > 0:
             print("Sample Circuits for Batch Size: {}".format(batch_k_num_samples))
         sampled_k_list = pb.sample_k(batch_k_num_samples)
+        #sampled_k_prob = [float(pb.get_prob_for_k(k)) for k in sampled_k_list]
+        #gradient_weights = [p/sum(sampled_k_prob) for p in sampled_k_prob]
+        #print(gradient_weights)
+
         sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
         #batch_losses = [search_circ_constructor(p, c, l, k, op_pool).get_loss(circ_params, training_data[0],
         #                                                    training_data[1]) for k in sampled_k_list]
@@ -309,7 +313,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
             #                                    training_data[0], training_data[1]) for k in sampled_k_list]
             if verbose > 0:
                 print("Calculating gradients for circuit parameters...")
-            circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
+            circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
                         circ_params, training_data[0], training_data[1]) for constructed_circ in sampled_circs
                                                                   )
             if verbose > 0:
