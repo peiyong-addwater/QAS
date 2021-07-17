@@ -326,7 +326,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         prob_losses_modified = batch_losses
         sample_batch_avg_loss = np.average(batch_losses)
         if verbose > 0:
-            print("Calculating gradients fot prob model parameters...")
+            print("Calculating gradients for prob model parameters...")
         prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses_modified[i],
                                         sampled_k_list[i]) for i in range(batch_k_num_samples))
         prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
@@ -381,7 +381,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
             best_k = [int(c) for c in best_k]
             best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
 
-            print(">>>>Batch Avg Loss on Samples: {:.6f}".format(loss_list[-1]))
+            print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(loss_list[-1]))
             print(">>>>>Entropy of Updated Prob Model: {:.6f}".format(new_entropy))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))

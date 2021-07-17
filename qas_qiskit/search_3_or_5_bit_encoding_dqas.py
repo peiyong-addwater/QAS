@@ -69,7 +69,7 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 5 if num_qubits ==3 else 25
+    p = 3 if num_qubits ==3 else 25
     c = len(pool)
     l = 3
 
