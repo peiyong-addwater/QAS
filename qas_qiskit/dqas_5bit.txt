@@ -50,4 +50,4 @@ module load anaconda3/2020.11
 module load cuda/11.1.1
 
 # The job command(s):
-python search_5_bit_encoding_dqas.py
+python search_3_or_5_bit_encoding_dqas.py
