@@ -275,7 +275,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
     opt_state_circ = optimizer_for_circ.init(circ_params)
     opt_state_prob = optimizer_for_prob.init(prob_params)
     loss_list = []
-    prob_entropy_list = []
+    # prob_entropy_list = []
     sample_batch_avg_loss = 0
     pb = prob_model(prob_params)
     if verbose>0:
@@ -372,11 +372,6 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
 
         pb = prob_model(prob_params)
         new_prob_mat = pb.get_prob_matrix()
-        if verbose > 0:
-            print("Calculating entropy of the prob model...")
-        new_entropy = _entropy_of_prob_mat_categorical(new_prob_mat)
-        prob_entropy_list.append(new_entropy)
-
         epoch_end = time.time()
 
 
@@ -386,7 +381,6 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
             best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
 
             print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(loss_list[-1]))
-            print(">>>>>Entropy of Updated Prob Model: {:.6f}".format(new_entropy))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
