@@ -52,6 +52,8 @@ if __name__ == "__main__":
 
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
     num_qubits= 3
+    if num_qubits !=3:
+        assert num_qubits == 5
 
     res_dict = {}
     res_dict["NUM_QUBITS"] = num_qubits
