@@ -320,7 +320,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
 
         circ_batch_gradients = jnp.stack(circ_batch_gradients, axis=0)
         circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
-        circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
+        circ_gradient = jnp.sum(circ_batch_gradients, axis=0)
 
         #prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
         prob_losses_modified = batch_losses
