@@ -90,10 +90,10 @@ if __name__ == "__main__":
                     search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
                     circ_lr=0.1,
                     prob_lr = 0.1,
-                    circ_opt = optax.adam,
-                    prob_opt = optax.adam,
+                    circ_opt = optax.adabelief,
+                    prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=200,
+                    batch_k_num_samples=300,
                     verbose=2,
                     parameterized_circuit=True
     )
