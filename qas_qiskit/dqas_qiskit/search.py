@@ -415,7 +415,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         print("-=" * 20)
 
     return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
-           loss_list, prob_entropy_list
+           loss_list
 
 
 
