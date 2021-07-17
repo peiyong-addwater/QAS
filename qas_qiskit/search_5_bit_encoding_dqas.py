@@ -71,7 +71,12 @@ res_dict["Search_Param"] = {"p":p, "c":c, "l":l}
 
 param = np.random.randn(p*c*l).reshape((p,c,l))
 a = np.zeros(p*c).reshape((p,c))
-final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas= dqas_qiskit(
+# add some hints for prob parameters:
+a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 1, 1, 1, 1, 1, 1, 1, 1, 1
+
+
+final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
+    dqas_qiskit(
     500, SIMPLE_DATASET_FIVE_BIT_CODE, a, param, pool, FiveBitCodeSearchDensityMatrixNoiseless,
     circ_lr=0.1, prob_lr = 0.1, circ_opt = optax.adabelief, prob_opt = optax.adabelief,
     prob_model=IndependentCategoricalProbabilisticModel,
