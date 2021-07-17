@@ -350,9 +350,9 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
             best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
 
             print("New Optimal k={}".format(best_k))
-            print("Current Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
+            print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
-                "Current Loss On Optimal Gate Sequence: {:.8f}".format(best_circ.get_loss(circ_params,
+                "Loss On New Optimal Gate Sequence: {:.8f}".format(best_circ.get_loss(circ_params,
                                                                 training_data[0], training_data[1]))
             )
             print(
