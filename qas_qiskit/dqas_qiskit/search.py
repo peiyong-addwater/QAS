@@ -304,7 +304,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         prob_gradients = jnp.stack(prob_gradients, axis=0)
         sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
 
-        if verbose>1:
+        if verbose>=10:
             if parameterized_circuit:
                 print(
                 "Circuit Param Gradient:\n",
@@ -319,8 +319,16 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
                     "Circuit Param Gradient:\n",
                     "Not Available for Non-parameterized Circuit",
                     "\nProb Param Gradient:\n",
-                    sum_prob_gradients
+                    sum_prob_gradients,
+                    "\nProb Matrix:\n",
+                    prob_model(prob_params).get_prob_matrix()
                 )
+        if verbose>1 and verbose<10:
+            print(
+                "Prob Matrix:\n",
+                prob_model(prob_params).get_prob_matrix()
+            )
+
         # update the parameters
         prob_model_updates, opt_state_prob = optimizer_for_prob.update(sum_prob_gradients, opt_state_prob)
         prob_params = optax.apply_updates(prob_params, prob_model_updates)
