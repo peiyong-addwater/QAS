@@ -308,7 +308,7 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
             #circ_batch_gradients = [search_circ_constructor(p, c, l, k, op_pool).get_gradient(circ_params,
             #                                    training_data[0], training_data[1]) for k in sampled_k_list]
             if verbose > 0:
-                print("Calculating gradients fot circuit parameters...")
+                print("Calculating gradients for circuit parameters...")
             circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
                         circ_params, training_data[0], training_data[1]) for constructed_circ in sampled_circs
                                                                   )
