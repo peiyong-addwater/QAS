@@ -357,11 +357,10 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
                 "Loss On New Optimal Gate Sequence: {:.8f}".format(best_circ.get_loss(circ_params,
                                                                 training_data[0], training_data[1]))
             )
+            epoch_end = time.time()
             print(
                 "Epoch {}, Time: {}".format(i + 1, epoch_end - epoch_start)
             )
-            epoch_end = time.time()
-            print("Epoch Time: {:.4f} seconds".format(epoch_end-epoch_start))
         if verbose>0 and verbose<=1:
             print(
                 "Epoch {}, Batch Avg Loss on Samples: {:.6f}, Epoch Time: {}".format(i+1, loss_list[-1],
