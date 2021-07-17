@@ -101,14 +101,15 @@ def _entropy_of_prob_mat_categorical(prob_mat:Union[np.ndarray, jnp.ndarray]):
         c_list = [i for i in range(c)]
         p_list.append(c_list)
     combinations = [elem for elem in itertools.product(*p_list)]
-    probs = []
-    for comb in combinations:
+
+    def single_prob(combo):
         prob = 1
         for i in range(p):
-            prob = prob * prob_mat[i, comb[i]]
-        probs.append(prob)
+            prob = prob * prob_mat[i, combo[i]]
+        return prob*np.log(1/prob)
 
-    hp = np.sum(p*np.log(1/p) for p in probs)
+    probs = Parallel(n_jobs=-1, verbose=0)(delayed(single_prob)(combo) for combo in combinations)
+    hp = np.sum(probs)
     return np.float(hp)
 
 
@@ -292,8 +293,13 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         #batch_losses = [search_circ_constructor(p, c, l, k, op_pool).get_loss(circ_params, training_data[0],
         #                                                    training_data[1]) for k in sampled_k_list]
 
+
+        if verbose > 0:
+            print("Calculating losses...")
         batch_losses = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_loss_dm)(constructed_circ, circ_params,
                                             training_data[0], training_data[1]) for constructed_circ in sampled_circs)
+        if verbose > 0:
+            print("Loss Calculation Finished!")
 
 
 
@@ -301,10 +307,13 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         if parameterized_circuit:
             #circ_batch_gradients = [search_circ_constructor(p, c, l, k, op_pool).get_gradient(circ_params,
             #                                    training_data[0], training_data[1]) for k in sampled_k_list]
-
+            if verbose > 0:
+                print("Calculating gradients fot circuit parameters...")
             circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
                         circ_params, training_data[0], training_data[1]) for constructed_circ in sampled_circs
                                                                   )
+            if verbose > 0:
+                print("Circuit Param Gradients Calculation Finished!")
 
         else:
             circ_batch_gradients = [np.zeros(p,c,l) for _ in sampled_k_list]
@@ -316,12 +325,16 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
         #prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
         prob_losses_modified = batch_losses
         sample_batch_avg_loss = np.average(batch_losses)
+        if verbose > 0:
+            print("Calculating gradients fot prob model parameters...")
         prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses_modified[i],
                                         sampled_k_list[i]) for i in range(batch_k_num_samples))
         prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
 
         prob_gradients = jnp.stack(prob_gradients, axis=0)
         sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
+        if verbose > 0:
+            print("Prob Model Param Gradients Calculation Finished!")
 
         if verbose>=10:
             if parameterized_circuit:
@@ -355,6 +368,8 @@ def dqas_qiskit_v2(num_epochs:int,training_data:List[List], init_prob_params:np.
 
         pb = prob_model(prob_params)
         new_prob_mat = pb.get_prob_matrix()
+        if verbose > 0:
+            print("Calculating entropy of the prob model...")
         new_entropy = _entropy_of_prob_mat_categorical(new_prob_mat)
         prob_entropy_list.append(new_entropy)
 
