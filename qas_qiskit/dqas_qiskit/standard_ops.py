@@ -20,7 +20,10 @@ from qiskit.circuit.library import (
     SXGate,
     RXGate,
     RYGate,
-    RZGate
+    RZGate,
+    CRXGate,
+    CRYGate,
+    CRZGate
 )
 from typing import (
     List,
@@ -39,6 +42,9 @@ from typing import (
 _single_qubit_gate_3_params = {"U3Gate":U3Gate}
 _two_qubit_gate_3_params = {"CU3Gate":CU3Gate}
 
+_single_qubit_gate_1_param = {"RXGate":RXGate, "RYGate":RYGate, "RZGate":RZGate}
+_two_qubit_gate_1_param = {"CRXGate":CRXGate, "CRYGate":CRYGate, "CRZGate":CRZGate}
+
 _single_qubit_gate_no_param = {"HGate":HGate, "IGate":IGate, "SGate":SGate, "SdgGate":SdgGate, "TGate":TGate,
                                "TdgGate":TdgGate, "XGate":XGate, "YGate":YGate, "ZGate":ZGate, "SXGate":SXGate}
 _two_qubit_gate_no_param = {"CXGate":CXGate, "CZGate":CZGate, "CYGate":CYGate, "CHGate":CHGate}
@@ -46,6 +52,8 @@ _two_qubit_gate_no_param = {"CXGate":CXGate, "CZGate":CZGate, "CYGate":CYGate, "
 parameterized = {}
 parameterized.update(_single_qubit_gate_3_params)
 parameterized.update(_two_qubit_gate_3_params)
+parameterized.update(_single_qubit_gate_1_param)
+parameterized.update(_two_qubit_gate_1_param)
 
 non_parameterized = {}
 non_parameterized.update(_single_qubit_gate_no_param)
@@ -55,16 +63,20 @@ non_parameterized.update(_two_qubit_gate_no_param)
 single_qubit_ops = {}
 single_qubit_ops.update(_single_qubit_gate_no_param)
 single_qubit_ops.update(_single_qubit_gate_3_params)
+single_qubit_ops.update(_single_qubit_gate_1_param)
 
 two_qubit_ops = {}
 two_qubit_ops.update(_two_qubit_gate_no_param)
 two_qubit_ops.update(_two_qubit_gate_3_params)
+two_qubit_ops.update(_two_qubit_gate_1_param)
 
 standard_quantum_ops = {}
 standard_quantum_ops.update(_single_qubit_gate_3_params)
 standard_quantum_ops.update(_two_qubit_gate_3_params)
 standard_quantum_ops.update(_single_qubit_gate_no_param)
 standard_quantum_ops.update(_two_qubit_gate_no_param)
+single_qubit_ops.update(_single_qubit_gate_1_param)
+single_qubit_ops.update(_two_qubit_gate_1_param)
 
 def supported_ops():
     pprint(standard_quantum_ops)
@@ -95,9 +107,12 @@ class QuantumGate(Op):
         if name in parameterized.keys():
             #TODO: add options for single- and two- parameter gates, like rx, u1, u2, crx, etc...
             assert len(param) == 3
-            self.op = standard_quantum_ops[name](param[0], param[1], param[2])
             self.param_dim = 3
             self.param = param
+            if name in _single_qubit_gate_3_params.keys() or name in _two_qubit_gate_3_params.keys():
+                self.op = standard_quantum_ops[name](param[0], param[1], param[2])
+            if name in _single_qubit_gate_1_param.keys() or name in _two_qubit_gate_1_param.keys():
+                self.op = standard_quantum_ops[name](param[0])
         else:
             self.op = standard_quantum_ops[name]()
             self.param_dim = 0
