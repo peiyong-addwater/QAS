@@ -473,7 +473,7 @@ def dqas_qiskit_v2_weighted_gradients(num_epochs:int,
             print("Sample Circuits for Batch Size: {}".format(batch_k_num_samples))
         sampled_k_list = pb.sample_k(batch_k_num_samples)
         sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
-        gradient_weights = [p/jnp.sum(sampled_k_prob) for p in sampled_k_prob]
+        gradient_weights = [p/sum(sampled_k_prob) for p in sampled_k_prob]
         #print(gradient_weights)
 
         sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
