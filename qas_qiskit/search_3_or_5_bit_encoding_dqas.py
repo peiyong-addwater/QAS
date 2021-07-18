@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2_weighted_gradients(num_epochs=5,
+        dqas_qiskit_v2_weighted_gradients(num_epochs=400,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     # Fine tune the circuit after architecture search
     tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = \
-        train_circuit(500,
+        train_circuit(1000,
                     circ_constructor=FiveBitCodeSearchDensityMatrixNoiseless if num_qubits==5 else BitFlipSearchDensityMatrixNoiseless,
                     init_params=np.random.randn(p*c*l).reshape((p,c,l)),
                     k=final_k,
