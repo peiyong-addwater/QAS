@@ -105,7 +105,6 @@ class QuantumGate(Op):
         if name in _single_qubit_gate_3_params.keys() or name in _single_qubit_gate_no_param.keys():
             assert len(pos) == 1
         if name in parameterized.keys():
-            #TODO: add options for single- and two- parameter gates, like rx, u1, u2, crx, etc...
             assert len(param) == 3
             self.param_dim = 3
             self.param = param
