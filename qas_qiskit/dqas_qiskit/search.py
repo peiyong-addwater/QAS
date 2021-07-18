@@ -426,6 +426,195 @@ def dqas_qiskit_v2(num_epochs:int,
 
 
 
+def dqas_qiskit_v2_weighted_gradients(num_epochs:int,
+                   training_data:List[List],
+                   init_prob_params:np.ndarray,
+                   init_circ_params:np.ndarray,
+                   op_pool:GatePool,
+                   search_circ_constructor:Callable,
+                   prob_model=IndependentCategoricalProbabilisticModel,
+                   circ_lr=0.1,
+                   prob_lr = 0.1,
+                   circ_opt = optax.adam,
+                   prob_opt = optax.adam,
+                   batch_k_num_samples:int=200,
+                   verbose:int = 0,
+                   parameterized_circuit:bool = True):
+
+    p = init_circ_params.shape[0]
+    c = init_circ_params.shape[1]
+    l = init_circ_params.shape[2]
+
+    prob_params = init_prob_params
+    circ_params = init_circ_params
+
+    assert len(training_data) == 2
+    assert batch_k_num_samples > 0
+
+    optimizer_for_circ = circ_opt(circ_lr)
+    optimizer_for_prob = prob_opt(prob_lr)
+    opt_state_circ = optimizer_for_circ.init(circ_params)
+    opt_state_prob = optimizer_for_prob.init(prob_params)
+    loss_list = []
+    # prob_entropy_list = []
+    sample_batch_avg_loss = 0
+    pb = prob_model(prob_params)
+    if verbose>0:
+        print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
+    for i in range(num_epochs):
+        if verbose>1:
+            print("=============================== Epoch {} ===============================".format(i+1))
+        epoch_start = time.time()
+        # update the circuit parameters and the prob parameters
+        # sample a batch of k
+        if verbose > 0:
+            print("Sample Circuits for Batch Size: {}".format(batch_k_num_samples))
+        sampled_k_list = pb.sample_k(batch_k_num_samples)
+        sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
+        gradient_weights = [p/jnp.sum(sampled_k_prob) for p in sampled_k_prob]
+        #print(gradient_weights)
+
+        sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
+        #batch_losses = [search_circ_constructor(p, c, l, k, op_pool).get_loss(circ_params, training_data[0],
+        #                                                    training_data[1]) for k in sampled_k_list]
+
+
+        if verbose > 0:
+            print("Calculating losses...")
+        batch_losses = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_loss_dm)(constructed_circ, circ_params,
+                                            training_data[0], training_data[1]) for constructed_circ in sampled_circs)
+        batch_losses = np.nan_to_num(batch_losses, nan=1.0) # deal with NaN in losses
+
+        if verbose > 0:
+            print("Loss Calculation Finished!")
+
+        if parameterized_circuit:
+            if verbose > 0:
+                print("Calculating weighted gradients for circuit parameters...")
+            circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
+                        circ_params, training_data[0], training_data[1]) for constructed_circ in sampled_circs)
+            circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.multiply)(circ_batch_gradients[i],
+                                                            gradient_weights[i]) for i in range(batch_k_num_samples))
+
+            if verbose > 0:
+                print("Weighted Circuit Param Gradients Calculation Finished!")
+
+        else:
+            circ_batch_gradients = [np.zeros(p,c,l) for _ in sampled_k_list]
+
+
+        circ_batch_gradients = jnp.stack(circ_batch_gradients, axis=0)
+        circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
+        circ_gradient = jnp.sum(circ_batch_gradients, axis=0)
+
+        #prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
+        prob_losses_modified = batch_losses
+        sample_batch_avg_loss = np.average(batch_losses)
+        if verbose > 0:
+            print("Calculating weighted gradients for prob model parameters...")
+        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses_modified[i],
+                                        sampled_k_list[i]) for i in range(batch_k_num_samples))
+        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
+        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.multiply)(prob_gradients[i], gradient_weights[i])
+                                                        for i in range(batch_k_num_samples)
+                                                        )
+
+        prob_gradients = jnp.stack(prob_gradients, axis=0)
+        sum_prob_gradients = jnp.sum(prob_gradients, axis=0)
+        if verbose > 0:
+            print("Weighted Prob Model Param Gradients Calculation Finished!")
+
+        if verbose>=10:
+            if parameterized_circuit:
+                print(
+                "Circuit Param Gradient:\n",
+                circ_gradient,
+                "\nProb Param Gradient:\n",
+                sum_prob_gradients,
+                "\nProb Matrix:\n",
+                prob_model(prob_params).get_prob_matrix()
+                )
+            else:
+                print(
+                    "Circuit Param Gradient:\n",
+                    "Not Available for Non-parameterized Circuit",
+                    "\nProb Param Gradient:\n",
+                    sum_prob_gradients,
+                    "\nProb Matrix:\n",
+                    prob_model(prob_params).get_prob_matrix()
+                )
+
+        # update the parameters
+        prob_model_updates, opt_state_prob = optimizer_for_prob.update(sum_prob_gradients, opt_state_prob)
+        prob_params = optax.apply_updates(prob_params, prob_model_updates)
+
+        circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
+        circ_params = optax.apply_updates(circ_params, circ_updates)
+        circ_params = np.array(circ_params)
+
+        loss_list.append(sample_batch_avg_loss)
+
+        pb = prob_model(prob_params)
+        new_prob_mat = pb.get_prob_matrix()
+        epoch_end = time.time()
+
+
+        if verbose>1:
+            best_k = jnp.argmax(new_prob_mat, axis=1)
+            best_k = [int(c) for c in best_k]
+            best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
+
+            print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(loss_list[-1]))
+            print("New Optimal k={}".format(best_k))
+            print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
+            print(
+                ">>>>>>Loss On New Optimal Gate Sequence: {:.8f}".format(best_circ.get_loss(circ_params,
+                                                                training_data[0], training_data[1]))
+            )
+            epoch_end = time.time()
+            print(
+                "Epoch {}, Time: {}".format(i + 1, epoch_end - epoch_start)
+            )
+        if verbose>0 and verbose<=1:
+            print(
+                "Epoch {}, Batch Avg Loss on Samples: {:.6f}, Epoch Time: {}".format(i+1, loss_list[-1],
+                                                                                     epoch_end-epoch_start)
+            )
+
+    final_circ_param = np.array(circ_params)
+    final_prob_param = np.array(prob_params)
+    final_loss = loss_list[-1]
+    final_prob_model = prob_model(final_prob_param)
+    final_prob_mat = np.array(final_prob_model.get_prob_matrix())
+    final_k = jnp.argmax(final_prob_mat, axis=1)
+    final_k = [int(c) for c in final_k]
+    final_circ = search_circ_constructor(p, c, l, final_k, op_pool)
+    final_op_list = final_circ.get_circuit_ops(final_circ_param)
+    if verbose>0:
+        print("-="*20)
+        print("Circuit Search Finished.\nFinal Loss: {}.\nFinal Ops:\n{}".format(final_loss, final_op_list))
+        print("Final k:\n{}".format(final_k))
+        print("Final Probability Matrix\n{}".format(final_prob_mat))
+        print("Final Prob Model Parameter\n{}".format(final_prob_param))
+        print("-=" * 20)
+
+    return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
+           loss_list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -51,7 +51,9 @@ def nowtime():
 if __name__ == "__main__":
 
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
-    num_qubits= 5
+    restricted_pool = False
+
+    num_qubits= 3
     if num_qubits !=3:
         assert num_qubits == 5
 
@@ -63,13 +65,17 @@ if __name__ == "__main__":
     two_qubit_gate = ["CU3Gate"]
 
 
-    pool =default_complete_graph_parameterized_pool(num_qubits)
-    #pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
+    #pool =default_complete_graph_parameterized_pool(num_qubits)
+    if num_qubits == 5 and restricted_pool:
+        pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
+        file_name = nowtime() + "_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
+    else:
+        pool = default_complete_graph_parameterized_pool(num_qubits)
 
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 4 if num_qubits ==3 else 20
+    p = 2 if num_qubits ==3 else 25
     c = len(pool)
     l = 3
 
@@ -82,7 +88,7 @@ if __name__ == "__main__":
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2(num_epochs=500,
+        dqas_qiskit_v2(num_epochs=100,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
