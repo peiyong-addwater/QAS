@@ -55,17 +55,24 @@ def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndar
             print("k={}".format(k))
     loss_list = []
     for i in range(num_epochs):
+        epoch_start = time.time()
         input_states = training_data[0]
         target_states = training_data[1]
         circ = circ_constructor(p,c,l,k, op_pool)
         loss = circ.get_loss(params, input_states, target_states)
         loss_list.append(loss)
+        grads = circ.get_gradient(params, input_states, target_states)
+        grads = jnp.nan_to_num(grads)
+        updates, opt_state = optimizer.update(grads, opt_state)
+        params = optax.apply_updates(params, updates)
+        params = np.array(params)
+        epoch_end = time.time()
         if verbose>0 and verbose<=1:
             print(
-                "Epoch {}, Loss {:.8f}".format(i+1, loss)
+                "Epoch {}, Loss {:.8f}, Time{}".format(i+1, loss, epoch_end-epoch_start)
             )
         if verbose>1:
-            print("==========Epoch {}==========".format(i+1))
+            print("==========Epoch {} Time {}==========".format(i+1, epoch_end-epoch_start))
             print("Gate Sequence: {}".format(circ.get_circuit_ops(params)))
             print("Loss: {}".format(loss))
         if early_stopping_threshold is not None and i>early_stopping_avg_num_epochs:
@@ -76,11 +83,6 @@ def train_circuit(num_epochs:int, circ_constructor:Callable, init_params:np.ndar
                     print("Early Stopped at Epoch {}".format(i+1))
                     print("**" * 20)
                 break
-        grads = circ.get_gradient(params, input_states, target_states)
-        grads = jnp.nan_to_num(grads)
-        updates, opt_state = optimizer.update(grads, opt_state)
-        params = optax.apply_updates(params, updates)
-        params = np.array(params)
 
     final_param = params
     final_loss = loss_list[-1]

@@ -33,7 +33,7 @@ from dqas_qiskit.standard_ops import (
     default_complete_graph_parameterized_pool,
     default_complete_graph_non_parameterized_pool
 )
-from dqas_qiskit.search import train_circuit, dqas_qiskit, dqas_qiskit_v2
+from dqas_qiskit.search import train_circuit, dqas_qiskit, dqas_qiskit_v2, dqas_qiskit_v2_weighted_gradients
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
     restricted_pool = False
 
-    num_qubits= 3
+    num_qubits= 5
     if num_qubits !=3:
         assert num_qubits == 5
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2(num_epochs=100,
+        dqas_qiskit_v2_weighted_gradients(num_epochs=5,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
@@ -99,7 +99,7 @@ if __name__ == "__main__":
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=300,
+                    batch_k_num_samples=1000,
                     verbose=2,
                     parameterized_circuit=True
     )
@@ -120,7 +120,7 @@ if __name__ == "__main__":
                     k=final_k,
                     op_pool=pool,
                     training_data=SIMPLE_DATASET_FIVE_BIT_CODE if num_qubits==5 else SIMPLE_DATASET_BIT_FLIP,
-                    lr= 0.01,
+                    lr= 0.1,
                     verbose=2,
                     early_stopping_threshold=0.000001,
                     opt=optax.adabelief
