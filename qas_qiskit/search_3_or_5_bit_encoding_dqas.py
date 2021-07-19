@@ -51,7 +51,7 @@ def nowtime():
 if __name__ == "__main__":
 
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
-    restricted_pool = False
+    restricted_pool = True
 
     num_qubits= 5
     if num_qubits !=3:
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 2 if num_qubits ==3 else 25
+    p = 3 if num_qubits ==3 else 30
     c = len(pool)
     l = 3
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2_weighted_gradients(num_epochs=400,
+        dqas_qiskit_v2_weighted_gradients(num_epochs=1000,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
@@ -99,7 +99,7 @@ if __name__ == "__main__":
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=1000,
+                    batch_k_num_samples=300,
                     verbose=2,
                     parameterized_circuit=True
     )

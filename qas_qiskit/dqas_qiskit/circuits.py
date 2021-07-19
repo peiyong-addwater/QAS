@@ -120,8 +120,6 @@ def get_encoded_states_ideal_shor_9_bit_code(init_states:List[np.ndarray])->List
         encoded_states.append(DensityMatrix(result))
     return encoded_states
 
-
-
 def get_encoded_states_ideal_five_bit_code(init_states:List[np.ndarray])->List[DensityMatrix]:
     backbone_circ = QuantumCircuit(5)
     backbone_circ.z(0)
