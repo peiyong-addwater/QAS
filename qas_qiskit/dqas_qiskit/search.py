@@ -115,11 +115,21 @@ def _entropy_of_prob_mat_categorical(prob_mat:Union[np.ndarray, jnp.ndarray]):
     return np.float(hp)
 
 
-def dqas_qiskit(num_epochs:int,training_data:List[List], init_prob_params:np.ndarray, init_circ_params:np.ndarray,
-         op_pool:GatePool, search_circ_constructor:Callable, prob_model=IndependentCategoricalProbabilisticModel,
-        circ_lr=0.1, prob_lr = 0.1, circ_opt = optax.adam, prob_opt = optax.adam,
+def dqas_qiskit(num_epochs:int,
+                training_data:List[List],
+                init_prob_params:np.ndarray,
+                init_circ_params:np.ndarray,
+                op_pool:GatePool,
+                search_circ_constructor:Callable,
+                prob_model=IndependentCategoricalProbabilisticModel,
+                circ_lr=0.1,
+                prob_lr = 0.1,
+                circ_opt = optax.adam,
+                prob_opt = optax.adam,
                 prob_train_k_num_samples:int=200,
-         train_circ_in_between_epochs:Optional[int]=None, verbose:int = 0, parameterized_circuit:bool = True):
+                train_circ_in_between_epochs:Optional[int]=None,
+                verbose:int = 0,
+                parameterized_circuit:bool = True):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
