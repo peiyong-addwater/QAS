@@ -33,7 +33,7 @@ from dqas_qiskit.standard_ops import (
     default_complete_graph_parameterized_pool,
     default_complete_graph_non_parameterized_pool
 )
-from dqas_qiskit.search import train_circuit, dqas_qiskit, dqas_qiskit_v2, dqas_qiskit_v2_weighted_gradients
+from dqas_qiskit.search import train_circuit, dqas_qiskit, dqas_qiskit_v2
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
     restricted_pool = True
 
-    num_qubits= 5
+    num_qubits= 3
     if num_qubits !=3:
         assert num_qubits == 5
 
@@ -75,29 +75,32 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 3 if num_qubits ==3 else 30
+    p = 2 if num_qubits ==3 else 30
     c = len(pool)
     l = 3
 
     res_dict["Search_Param"] = {"p":p, "c":c, "l":l}
 
+    np.random.seed(0)
+
     param = np.random.randn(p*c*l).reshape((p,c,l))
+    print(param)
     a = np.zeros(p*c).reshape((p,c))
     # add some hints for prob parameters:
     # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2_weighted_gradients(num_epochs=1000,
+        dqas_qiskit_v2(num_epochs=500,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
                     op_pool=pool,
                     search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
-                    circ_lr=0.1,
-                    prob_lr = 0.1,
-                    circ_opt = optax.adabelief,
-                    prob_opt = optax.adabelief,
+                    circ_lr=1,
+                    prob_lr = 1,
+                    circ_opt = optax.adam,
+                    prob_opt = optax.adam,
                     prob_model=IndependentCategoricalProbabilisticModel,
                     batch_k_num_samples=300,
                     verbose=2,
