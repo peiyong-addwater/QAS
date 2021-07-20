@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     res_dict["Search_Param"] = {"p":p, "c":c, "l":l}
 
-    np.random.seed(0)
+    #np.random.seed(0)
 
     param = np.random.randn(p*c*l).reshape((p,c,l))
     print(param)
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
-        dqas_qiskit_v2(num_epochs=500,
+        dqas_qiskit_v2(num_epochs=100,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
@@ -99,8 +99,8 @@ if __name__ == "__main__":
                     search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
                     circ_lr=1,
                     prob_lr = 1,
-                    circ_opt = optax.adam,
-                    prob_opt = optax.adam,
+                    circ_opt = optax.adabelief,
+                    prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
                     batch_k_num_samples=300,
                     verbose=2,
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # Fine tune the circuit after architecture search
     tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = \
-        train_circuit(1000,
+        train_circuit(100,
                     circ_constructor=FiveBitCodeSearchDensityMatrixNoiseless if num_qubits==5 else BitFlipSearchDensityMatrixNoiseless,
                     init_params=np.random.randn(p*c*l).reshape((p,c,l)),
                     k=final_k,

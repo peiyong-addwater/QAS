@@ -296,7 +296,6 @@ def dqas_qiskit_v2(num_epochs:int,
     opt_state_circ = optimizer_for_circ.init(circ_params)
     opt_state_prob = optimizer_for_prob.init(prob_params)
     loss_list = []
-    # prob_entropy_list = []
     sample_batch_avg_loss = 0
     pb = prob_model(prob_params)
     if verbose>0:
@@ -310,12 +309,9 @@ def dqas_qiskit_v2(num_epochs:int,
         if verbose > 0:
             print("Sample Circuits for Batch Size: {}".format(batch_k_num_samples))
         sampled_k_list = pb.sample_k(batch_k_num_samples)
-        sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
-        #print(gradient_weights)
+        #sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
 
         sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
-        #batch_losses = [search_circ_constructor(p, c, l, k, op_pool).get_loss(circ_params, training_data[0],
-        #                                                    training_data[1]) for k in sampled_k_list]
 
 
         if verbose > 0:
@@ -327,14 +323,28 @@ def dqas_qiskit_v2(num_epochs:int,
         if verbose > 0:
             print("Loss Calculation Finished!")
 
+        prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
+        sample_batch_avg_loss = np.average(batch_losses)
+        if verbose > 0:
+            print("Calculating gradients for prob model parameters...")
+        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses_modified[i],
+                                                                                 sampled_k_list[i]) for i in
+                                                        range(batch_k_num_samples))
+        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
+
+        prob_gradients = jnp.stack(prob_gradients, axis=0)
+        prob_gradients = jnp.mean(prob_gradients, axis=0)
+        if verbose > 0:
+            print("Prob Model Param Gradients Calculation Finished!")
+
         if parameterized_circuit:
             if verbose > 0:
-                print("Calculating weighted gradients for circuit parameters...")
+                print("Calculating gradients for circuit parameters...")
             circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
                         circ_params, training_data[0], training_data[1]) for constructed_circ in sampled_circs)
 
             if verbose > 0:
-                print("Weighted Circuit Param Gradients Calculation Finished!")
+                print("Circuit Param Gradients Calculation Finished!")
 
         else:
             circ_batch_gradients = [np.zeros(p,c,l) for _ in sampled_k_list]
@@ -344,19 +354,6 @@ def dqas_qiskit_v2(num_epochs:int,
         circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
         circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
 
-        prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
-        #prob_losses_modified = batch_losses
-        sample_batch_avg_loss = np.average(batch_losses)
-        if verbose > 0:
-            print("Calculating weighted gradients for prob model parameters...")
-        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_gradient)(prob_losses_modified[i],
-                                        sampled_k_list[i]) for i in range(batch_k_num_samples))
-        prob_gradients = Parallel(n_jobs=-1, verbose=0)(delayed(jnp.nan_to_num)(c) for c in prob_gradients)
-
-        prob_gradients = jnp.stack(prob_gradients, axis=0)
-        prob_gradients = jnp.mean(prob_gradients, axis=0)
-        if verbose > 0:
-            print("Weighted Prob Model Param Gradients Calculation Finished!")
 
         if verbose>=10:
             if parameterized_circuit:
