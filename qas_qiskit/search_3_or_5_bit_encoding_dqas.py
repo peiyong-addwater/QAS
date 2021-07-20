@@ -84,7 +84,7 @@ if __name__ == "__main__":
     #np.random.seed(0)
 
     param = np.random.randn(p*c*l).reshape((p,c,l))
-    print(param)
+    # print(param)
     a = np.zeros(p*c).reshape((p,c))
     # add some hints for prob parameters:
     # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 1, 1, 1, 1, 1, 1, 1, 1, 1
