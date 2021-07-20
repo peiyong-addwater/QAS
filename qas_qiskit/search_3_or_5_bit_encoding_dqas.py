@@ -51,9 +51,9 @@ def nowtime():
 if __name__ == "__main__":
 
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
-    restricted_pool = True
+    restricted_pool = False
 
-    num_qubits= 3
+    num_qubits= 5
     if num_qubits !=3:
         assert num_qubits == 5
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 2 if num_qubits ==3 else 30
+    p = 2 if num_qubits ==3 else 18
     c = len(pool)
     l = 3
 
