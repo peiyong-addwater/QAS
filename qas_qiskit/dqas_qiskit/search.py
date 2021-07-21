@@ -297,6 +297,7 @@ def dqas_qiskit_v2(num_epochs:int,
     opt_state_prob = optimizer_for_prob.init(prob_params)
     loss_list = []
     sample_batch_avg_loss = 0
+    loss_std = []
     pb = prob_model(prob_params)
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
@@ -320,6 +321,7 @@ def dqas_qiskit_v2(num_epochs:int,
                                             training_data[0], training_data[1]) for constructed_circ in sampled_circs)
         batch_losses = np.nan_to_num(batch_losses, nan=1.0) # deal with NaN in losses
         batch_loss_std = jnp.std(batch_losses)
+        loss_std.append(batch_loss_std)
         if verbose > 0:
             print("Standard deviation of the losses in current batch: {}".format(batch_loss_std))
 
@@ -438,7 +440,7 @@ def dqas_qiskit_v2(num_epochs:int,
         print("-=" * 20)
 
     return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
-           loss_list
+           loss_list, loss_std
 
 
 

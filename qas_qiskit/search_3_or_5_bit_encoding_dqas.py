@@ -92,7 +92,8 @@ if __name__ == "__main__":
     # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 20, 20, 20, 20, 20, 20, 20, 20, 20
 
     #TODO: Add beam search for structure parameters
-    final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\
+    final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
+    loss_list_qas, loss_std=\
         dqas_qiskit_v2(num_epochs=100,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
@@ -111,6 +112,7 @@ if __name__ == "__main__":
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
     res_dict["loss_list"] = loss_list_qas
+    res_dict["loss_std"] = loss_std
     res_dict["prob_param"] = final_prob_param
     res_dict["all_circuit_param"] = final_circ_param
 
