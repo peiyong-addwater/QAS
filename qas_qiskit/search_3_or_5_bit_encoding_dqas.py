@@ -47,7 +47,7 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 def nowtime():
-    return str(time.strftime("%Y%m%d-%H%M", time.localtime()))
+    return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
     file_name = nowtime()+"_QEC_CODE_SEARCH.json"
