@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # print(param)
     a = np.zeros(p*c).reshape((p,c))
     # add some hints for prob parameters:
-    # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 1, 1, 1, 1, 1, 1, 1, 1, 1
+    # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 20, 20, 20, 20, 20, 20, 20, 20, 20
 
 
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, loss_list_qas=\

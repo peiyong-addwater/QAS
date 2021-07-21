@@ -319,6 +319,9 @@ def dqas_qiskit_v2(num_epochs:int,
         batch_losses = Parallel(n_jobs=-1, verbose=0)(delayed(_circ_obj_get_loss_dm)(constructed_circ, circ_params,
                                             training_data[0], training_data[1]) for constructed_circ in sampled_circs)
         batch_losses = np.nan_to_num(batch_losses, nan=1.0) # deal with NaN in losses
+        batch_loss_std = jnp.std(batch_losses)
+        if verbose > 0:
+            print("Standard deviation of the losses in current batch: {}".format(batch_loss_std))
 
         if verbose > 0:
             print("Loss Calculation Finished!")
@@ -381,6 +384,11 @@ def dqas_qiskit_v2(num_epochs:int,
 
         circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
         circ_params = optax.apply_updates(circ_params, circ_updates)
+        # add some noise to the circuit parameter
+        seed = np.random.randint(0, 100)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key=key, shape=(p, c, l))
+        circ_params = circ_params+noise
         circ_params = np.array(circ_params)
 
         loss_list.append(sample_batch_avg_loss)
