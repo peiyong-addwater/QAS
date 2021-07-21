@@ -190,6 +190,7 @@ class QCircFromK(ABC):
         pass
 
 class SearchDensityMatrix(QCircFromK):
+    #TODO: Add punishment terms for loss
 
     @abstractmethod
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool,

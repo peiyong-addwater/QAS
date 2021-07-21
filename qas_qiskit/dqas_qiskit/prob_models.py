@@ -1,3 +1,5 @@
+import random
+
 import jax.nn
 import numpy as np
 import jax.ops
@@ -85,7 +87,7 @@ class IndependentCategoricalProbabilisticModel(ProbModelBaseClass):
     def sample_k(self, size):
         seeds = list(range(size))
         sampled_k_list = Parallel(n_jobs=-1, verbose=0)(delayed(categorical_sample)
-                                                        (self.alpha, jax.random.PRNGKey(seed)) for seed in seeds)
+            (self.alpha, jax.random.PRNGKey(seed+random.randint(a=1000*size, b=1000000000*size))) for seed in seeds)
         return sampled_k_list
 
 
