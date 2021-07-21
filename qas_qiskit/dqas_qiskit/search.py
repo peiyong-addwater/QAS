@@ -387,7 +387,7 @@ def dqas_qiskit_v2(num_epochs:int,
         # add some noise to the circuit parameter
         seed = np.random.randint(0, 100)
         key = jax.random.PRNGKey(seed)
-        noise = jax.random.normal(key=key, shape=(p, c, l))
+        noise = jax.random.normal(key=key, shape=(p, c, l))/50
         circ_params = circ_params+noise
         circ_params = np.array(circ_params)
 
