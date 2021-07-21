@@ -54,6 +54,8 @@ if __name__ == "__main__":
     restricted_pool = False
 
     num_qubits= 5
+
+
     if num_qubits !=3:
         assert num_qubits == 5
 
@@ -97,12 +99,12 @@ if __name__ == "__main__":
                     init_circ_params=param,
                     op_pool=pool,
                     search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
-                    circ_lr=1,
-                    prob_lr = 1,
+                    circ_lr= 0.1,
+                    prob_lr = 0.1,
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=300,
+                    batch_k_num_samples=600,
                     verbose=2,
                     parameterized_circuit=True
     )
