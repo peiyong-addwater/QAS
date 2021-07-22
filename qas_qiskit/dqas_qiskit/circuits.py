@@ -194,7 +194,6 @@ class QCircFromK(ABC):
         pass
 
 class SearchDensityMatrix(QCircFromK):
-    #TODO: Add penalty terms for loss
 
     @abstractmethod
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool,
@@ -352,7 +351,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(5, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss
+        return loss + self.penalty_terms()
 
     def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_FIVE_BIT_CODE[0], target_states =SIMPLE_DATASET_FIVE_BIT_CODE[1]):
         assert self.p == circ_params.shape[0]
@@ -366,6 +365,15 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         extracted_gates, _ = extract_ops(5, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
         return op_list
+
+    def penalty_terms(self):
+        # penalty for consecutive repeated operations
+        repeated = 0
+        for i in range(1, len(self.k)):
+            if self.k[i-1] == self.k[i]:
+                repeated = repeated + 1
+
+        return repeated
 
 """
 pool = default_complete_graph_parameterized_pool(3)
