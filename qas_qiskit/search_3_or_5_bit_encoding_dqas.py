@@ -105,7 +105,7 @@ if __name__ == "__main__":
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=600,
+                    batch_k_num_samples=1200,
                     verbose=2,
                     parameterized_circuit=True
     )
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     # Fine tune the circuit after architecture search
     tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = \
-        train_circuit(100,
+        train_circuit(500,
                     circ_constructor=FiveBitCodeSearchDensityMatrixNoiseless if num_qubits==5 else BitFlipSearchDensityMatrixNoiseless,
                     init_params=np.random.randn(p*c*l).reshape((p,c,l)),
                     k=final_k,

@@ -189,8 +189,12 @@ class QCircFromK(ABC):
     def get_extracted_QuantumCircuit_object(self, *args):
         pass
 
+    @abstractmethod
+    def penalty_terms(self, *args):
+        pass
+
 class SearchDensityMatrix(QCircFromK):
-    #TODO: Add punishment terms for loss
+    #TODO: Add penalty terms for loss
 
     @abstractmethod
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool,
@@ -255,6 +259,9 @@ class SearchDensityMatrix(QCircFromK):
                 pass
             fid_list.append(fidelity)
         return 1-np.average(fid_list)
+
+    def penalty_terms(self, *args):
+        raise NotImplementedError
 
 
 class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
