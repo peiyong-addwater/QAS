@@ -351,7 +351,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(5, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss + self.penalty_terms()
+        return loss + self.penalty_terms(circ_params)
 
     def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_FIVE_BIT_CODE[0], target_states =SIMPLE_DATASET_FIVE_BIT_CODE[1]):
         assert self.p == circ_params.shape[0]
@@ -366,14 +366,29 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
-    def penalty_terms(self):
+    def penalty_terms(self, circ_params):
         # penalty for consecutive repeated operations
         repeated = 0
         for i in range(1, len(self.k)):
             if self.k[i-1] == self.k[i]:
                 repeated = repeated + 1
 
-        return repeated
+        # penalty for "useless" gates
+        qubits_with_action = set()
+        qubits_with_action.add(0)
+        num_useless = 0
+        extracted_gates,_ = extract_ops(5, self.k, self.pool, circ_params)
+        for op in extracted_gates:
+            qubit_list = op.get_qreg_pos()
+            if len(qubit_list) == 1:
+                qubits_with_action.add(qubit_list[0])
+            if len(qubit_list) == 2:
+                if qubit_list[0] not in qubits_with_action:
+                    num_useless = num_useless + 1
+                else:
+                    qubits_with_action.add(qubit_list[1])
+
+        return repeated + num_useless
 
 """
 pool = default_complete_graph_parameterized_pool(3)
