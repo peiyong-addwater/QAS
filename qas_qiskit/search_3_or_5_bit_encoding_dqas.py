@@ -77,7 +77,7 @@ if __name__ == "__main__":
     res_dict["Pool"] = str(pool)
 
     print(pool)
-    p = 2 if num_qubits ==3 else 20
+    p = 2 if num_qubits ==3 else 18
     c = len(pool)
     l = 3
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
     loss_list_qas, loss_std=\
-        dqas_qiskit_v2(num_epochs=200,
+        dqas_qiskit_v2(num_epochs=300,
                     training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
                     init_prob_params=a,
                     init_circ_params=param,
