@@ -388,7 +388,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return repeated + num_useless
+        return repeated + num_useless*1.2
 
 """
 pool = default_complete_graph_parameterized_pool(3)

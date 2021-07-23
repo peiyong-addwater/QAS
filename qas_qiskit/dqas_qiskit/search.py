@@ -303,7 +303,7 @@ def dqas_qiskit_v2(num_epochs:int,
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):
         if verbose>1:
-            print("=============================== Epoch {} ===============================".format(i+1))
+            print("=============================== Epoch {}/{} ===============================".format(i+1, num_epochs))
         epoch_start = time.time()
         # update the circuit parameters and the prob parameters
         # sample a batch of k
