@@ -327,6 +327,7 @@ def dqas_qiskit_v2(num_epochs:int,
 
         if verbose > 0:
             print("Loss Calculation Finished!")
+            print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(np.average(batch_losses)))
 
         prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
         sample_batch_avg_loss = np.average(batch_losses)
@@ -404,8 +405,6 @@ def dqas_qiskit_v2(num_epochs:int,
             best_k = jnp.argmax(new_prob_mat, axis=1)
             best_k = [int(c) for c in best_k]
             best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
-
-            print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(loss_list[-1]))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
