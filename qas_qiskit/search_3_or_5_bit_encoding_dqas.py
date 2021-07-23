@@ -105,7 +105,7 @@ if __name__ == "__main__":
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=1200,
+                    batch_k_num_samples=600,
                     verbose=2,
                     parameterized_circuit=True
     )
