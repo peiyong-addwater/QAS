@@ -154,6 +154,7 @@ def dqas_qiskit(num_epochs:int,
     loss_list = []
     sample_batch_avg_loss = 0
     loss_std = []
+    prob_params_list = []
     pb = prob_model(prob_params)
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
@@ -248,6 +249,7 @@ def dqas_qiskit(num_epochs:int,
                     "\nProb Matrix:\n",
                     prob_model(prob_params).get_prob_matrix()
                 )
+        prob_params_list.append(np.array(prob_params))
         epoch_end = time.time()
 
 
@@ -290,7 +292,7 @@ def dqas_qiskit(num_epochs:int,
         print("-=" * 20)
 
     return final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
-           loss_list, loss_std
+           loss_list, loss_std, prob_params_list
 
 
 

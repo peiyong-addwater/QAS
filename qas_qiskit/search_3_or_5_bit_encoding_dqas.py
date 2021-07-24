@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
-    loss_list_qas, loss_std=\
+    loss_list_qas, loss_std, prob_params_list=\
         dqas_qiskit(num_epochs=300,
                     training_data=data_set,
                     init_prob_params=a,
@@ -140,8 +140,9 @@ if __name__ == "__main__":
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
     res_dict["loss_list"] = loss_list_qas
+    res_dict["prob_params_list"] = prob_params_list
     res_dict["loss_std"] = loss_std
-    res_dict["prob_param"] = final_prob_param
+    res_dict["final_prob_param"] = final_prob_param
     res_dict["all_circuit_param"] = final_circ_param
 
 
