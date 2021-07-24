@@ -66,7 +66,7 @@ if __name__ == "__main__":
         num_qubits= 3
         p = 2
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
-        date_set = SIMPLE_DATASET_BIT_FLIP
+        data_set = SIMPLE_DATASET_BIT_FLIP
     elif task == 'PHASE_FLIP':
         num_qubits = 3
         p=3
