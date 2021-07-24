@@ -328,7 +328,7 @@ def dqas_qiskit_v2(num_epochs:int,
         if verbose > 0:
             print("Loss Calculation Finished!")
 
-        prob_losses_modified = [batchloss - sample_batch_avg_loss for batchloss in batch_losses]
+        prob_losses_modified = [batchloss - sample_batch_avg_loss/10 for batchloss in batch_losses]
         sample_batch_avg_loss = np.average(batch_losses)
         if verbose > 0:
             print("Calculating gradients for prob model parameters...")
