@@ -366,7 +366,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return (repeated + num_useless)/1
+        return repeated
 
 
 
@@ -444,7 +444,7 @@ class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return (repeated + num_useless)/1
+        return repeated
 
 
 class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
@@ -521,7 +521,7 @@ class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return (repeated + num_useless)/1
+        return repeated
 
 class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
@@ -596,7 +596,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return (repeated + num_useless)/1
+        return repeated
 
 """
 pool = default_complete_graph_parameterized_pool(3)
