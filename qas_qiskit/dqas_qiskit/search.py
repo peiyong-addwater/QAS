@@ -177,13 +177,7 @@ def dqas_qiskit(num_epochs:int,
             circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
             circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
             circ_params = optax.apply_updates(circ_params, circ_updates)
-            # add some noise to the circuit parameter
-            # seed = np.random.randint(0, 100)
-            # key = jax.random.PRNGKey(seed)
-            # noise = jax.random.normal(key=key, shape=(p, c, l))/50
-            # circ_params = circ_params+noise
             circ_params = np.array(circ_params)
-
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):
