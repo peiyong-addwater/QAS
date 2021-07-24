@@ -136,7 +136,7 @@ if __name__ == "__main__":
                     verbose=12,
                     parameterized_circuit=True,
                     prethermalization=True,
-                    pre_thermal_epochs=20
+                    pre_thermal_epochs=10
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
