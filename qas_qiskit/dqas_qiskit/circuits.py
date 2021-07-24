@@ -328,6 +328,31 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
 
         return loss+self.penalty_terms(circ_params)
 
+    def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
+                                               target_states:List[DensityMatrix],
+                                               backbone_circ:QuantumCircuit,)->np.float64:
+        num_qubits = backbone_circ.num_qubits
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        fid_list = []
+        for i in range(len(init_states)):
+            target = target_states[i]
+            qc = QuantumCircuit(num_qubits)
+            qc.initialize(init_states[i], [0,1]) # initial state is a two-qubit state
+            qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
+            qc.save_density_matrix(label='encoded_state')
+            qc = qiskit.transpile(qc, simulator)
+            result = simulator.run(qc).result().data()['encoded_state']
+            result = DensityMatrix(result)
+            try:
+                fidelity = state_fidelity(result, target, validate=False)
+            except:
+                if not result.is_valid():
+                    print("Invalid Result State Encountered, Setting Fidelity To Zero")
+                fidelity = 0
+                pass
+            fid_list.append(fidelity)
+        return 1-np.average(fid_list)
+
     def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]

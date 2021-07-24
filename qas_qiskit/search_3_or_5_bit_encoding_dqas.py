@@ -54,7 +54,7 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    task = 'BIT_FLIP'
+    task = 'FOUR_TWO_TWO_DETECTION'
 
     TASKS = ['BIT_FLIP', 'PHASE_FLIP', 'FOUR_TWO_TWO_DETECTION','FIVE_BIT_CODE']
     assert task in TASKS
