@@ -114,10 +114,9 @@ if __name__ == "__main__":
 
 
     param = np.random.randn(p*c*l).reshape((p,c,l))
+    # param = np.zeros(p*c*l).reshape((p,c,l))
     # print(param)
     a = np.zeros(p*c).reshape((p,c))
-    # add some hints for prob parameters:
-    # a[0,0], a[0,1], a[0,2], a[0,3], a[0,4], a[0,5], a[0,6], a[0,7], a[0,8] = 20, 20, 20, 20, 20, 20, 20, 20, 20
 
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
@@ -130,12 +129,14 @@ if __name__ == "__main__":
                     search_circ_constructor=circ_constructor,
                     circ_lr= 0.1,
                     prob_lr = 0.1,
-                    circ_opt = optax.adam,
-                    prob_opt = optax.adam,
+                    circ_opt = optax.adabelief,
+                    prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
                     batch_k_num_samples=300,
                     verbose=12,
-                    parameterized_circuit=True
+                    parameterized_circuit=True,
+                    prethermalization=True,
+                    pre_thermal_epochs=20
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list

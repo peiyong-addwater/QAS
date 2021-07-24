@@ -135,7 +135,9 @@ def dqas_qiskit(num_epochs:int,
                    prob_opt = optax.adam,
                    batch_k_num_samples:int=200,
                    verbose:int = 0,
-                   parameterized_circuit:bool = True):
+                   parameterized_circuit:bool = True,
+                   prethermalization:bool=True,
+                   pre_thermal_epochs:Optional[int] = 10):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
@@ -155,7 +157,33 @@ def dqas_qiskit(num_epochs:int,
     sample_batch_avg_loss = 0
     loss_std = []
     prob_params_list = []
+    optimal_circuit_loss = []
     pb = prob_model(prob_params)
+    if prethermalization:
+        assert pre_thermal_epochs >0
+        print("Prethermalization......")
+        for i in range(pre_thermal_epochs):
+            sampled_k_list = pb.sample_k(batch_k_num_samples)
+            # sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
+
+            sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
+            circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
+                                                                                                    circ_params,
+                                                                                                    training_data[0],
+                                                                                                    training_data[1])
+                                                                 for constructed_circ in sampled_circs)
+            circ_batch_gradients = jnp.stack(circ_batch_gradients, axis=0)
+            circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
+            circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
+            circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
+            circ_params = optax.apply_updates(circ_params, circ_updates)
+            # add some noise to the circuit parameter
+            # seed = np.random.randint(0, 100)
+            # key = jax.random.PRNGKey(seed)
+            # noise = jax.random.normal(key=key, shape=(p, c, l))/50
+            # circ_params = circ_params+noise
+            circ_params = np.array(circ_params)
+
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):
@@ -223,10 +251,10 @@ def dqas_qiskit(num_epochs:int,
         circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
         circ_params = optax.apply_updates(circ_params, circ_updates)
         # add some noise to the circuit parameter
-        seed = np.random.randint(0, 100)
-        key = jax.random.PRNGKey(seed)
-        noise = jax.random.normal(key=key, shape=(p, c, l))/50
-        circ_params = circ_params+noise
+        # seed = np.random.randint(0, 100)
+        # key = jax.random.PRNGKey(seed)
+        # noise = jax.random.normal(key=key, shape=(p, c, l))/50
+        # circ_params = circ_params+noise
         circ_params = np.array(circ_params)
 
         loss_list.append(sample_batch_avg_loss)
@@ -250,18 +278,19 @@ def dqas_qiskit(num_epochs:int,
                     prob_model(prob_params).get_prob_matrix()
                 )
         prob_params_list.append(np.array(prob_params))
+        best_k = jnp.argmax(new_prob_mat, axis=1)
+        best_k = [int(c) for c in best_k]
+        best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
+        optimal_circuit_loss.append(float(best_circ.get_loss(circ_params,
+                                                                training_data[0], training_data[1])))
         epoch_end = time.time()
 
 
         if verbose>1:
-            best_k = jnp.argmax(new_prob_mat, axis=1)
-            best_k = [int(c) for c in best_k]
-            best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
-                ">>>>>>Loss On New Optimal Gate Sequence: {:.8f}".format(best_circ.get_loss(circ_params,
-                                                                training_data[0], training_data[1]))
+                ">>>>>>Loss On New Optimal Gate Sequence: {:.8f}".format(optimal_circuit_loss[-1])
             )
             print(">>>>>>>>Batch Avg Loss on Samples: {:.6f}<<<<<<<<".format(np.average(batch_losses)))
             epoch_end = time.time()
