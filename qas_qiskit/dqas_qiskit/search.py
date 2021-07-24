@@ -360,6 +360,23 @@ def dqas_qiskit_v2(num_epochs:int,
         circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
         circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
 
+        # update the parameters
+        prob_model_updates, opt_state_prob = optimizer_for_prob.update(prob_gradients, opt_state_prob)
+        prob_params = optax.apply_updates(prob_params, prob_model_updates)
+
+        circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
+        circ_params = optax.apply_updates(circ_params, circ_updates)
+        # add some noise to the circuit parameter
+        seed = np.random.randint(0, 100)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key=key, shape=(p, c, l))/50
+        circ_params = circ_params+noise
+        circ_params = np.array(circ_params)
+
+        loss_list.append(sample_batch_avg_loss)
+
+        pb = prob_model(prob_params)
+        new_prob_mat = pb.get_prob_matrix()
 
         if verbose>=10:
             if parameterized_circuit:
@@ -380,24 +397,6 @@ def dqas_qiskit_v2(num_epochs:int,
                     "\nProb Matrix:\n",
                     prob_model(prob_params).get_prob_matrix()
                 )
-
-        # update the parameters
-        prob_model_updates, opt_state_prob = optimizer_for_prob.update(prob_gradients, opt_state_prob)
-        prob_params = optax.apply_updates(prob_params, prob_model_updates)
-
-        circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
-        circ_params = optax.apply_updates(circ_params, circ_updates)
-        # add some noise to the circuit parameter
-        seed = np.random.randint(0, 100)
-        key = jax.random.PRNGKey(seed)
-        noise = jax.random.normal(key=key, shape=(p, c, l))/50
-        circ_params = circ_params+noise
-        circ_params = np.array(circ_params)
-
-        loss_list.append(sample_batch_avg_loss)
-
-        pb = prob_model(prob_params)
-        new_prob_mat = pb.get_prob_matrix()
         epoch_end = time.time()
 
 

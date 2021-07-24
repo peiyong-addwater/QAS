@@ -134,7 +134,7 @@ if __name__ == "__main__":
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
                     batch_k_num_samples=300,
-                    verbose=2,
+                    verbose=12,
                     parameterized_circuit=True
     )
     res_dict["k"] = final_k
