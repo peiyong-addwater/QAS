@@ -37,7 +37,7 @@ from dqas_qiskit.standard_ops import (
     default_complete_graph_parameterized_pool,
     default_complete_graph_non_parameterized_pool
 )
-from dqas_qiskit.search import train_circuit, dqas_qiskit, dqas_qiskit_v2
+from dqas_qiskit.search import train_circuit, dqas_qiskit
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -54,7 +54,7 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    task = "BIT_FLIP"
+    task = 'PHASE_FLIP'
 
     TASKS = ['BIT_FLIP', 'PHASE_FLIP', 'FOUR_TWO_TWO_DETECTION','FIVE_BIT_CODE']
     assert task in TASKS
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
     loss_list_qas, loss_std=\
-        dqas_qiskit_v2(num_epochs=300,
+        dqas_qiskit(num_epochs=300,
                     training_data=data_set,
                     init_prob_params=a,
                     init_circ_params=param,

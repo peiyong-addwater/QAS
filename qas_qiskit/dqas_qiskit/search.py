@@ -177,7 +177,7 @@ def dqas_qiskit(num_epochs:int,
                                             training_data[0], training_data[1]) for constructed_circ in sampled_circs)
         batch_losses = np.nan_to_num(batch_losses, nan=1.0) # deal with NaN in losses
         batch_loss_std = jnp.std(batch_losses)
-        loss_std.append(batch_loss_std)
+        loss_std.append(float(batch_loss_std))
         if verbose > 0:
             print("Standard deviation of the losses in current batch: {}".format(batch_loss_std))
 
