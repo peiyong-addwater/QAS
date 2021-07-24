@@ -5,6 +5,7 @@ import itertools
 import time
 import optax
 from joblib import Parallel, delayed
+from pprint import pprint
 from typing import (
     List,
     Sequence,
@@ -243,12 +244,11 @@ def dqas_qiskit(num_epochs:int,
         new_prob_mat = pb.get_prob_matrix()
 
         if verbose>=10:
-            print(
-                    "Prob Param Gradient:\n",
-                    prob_gradients,
-                    "\nProb Matrix:\n",
-                    new_prob_mat
-                )
+            print("Prob Param Gradient:"),
+            print(np.array(prob_gradients))
+            print("Prob Matrix:")
+            print(np.array(new_prob_mat))
+
         prob_params_list.append(np.array(prob_params))
         best_k = jnp.argmax(new_prob_mat, axis=1)
         best_k = [int(c) for c in best_k]
