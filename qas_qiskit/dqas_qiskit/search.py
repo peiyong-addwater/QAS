@@ -258,7 +258,7 @@ def dqas_qiskit(num_epochs:int,
         if verbose>=10:
             if parameterized_circuit:
                 print(
-                "\nProb Param Gradient:\n",
+                "Prob Param Gradient:\n",
                 prob_gradients,
                 "\nProb Matrix:\n",
                 prob_model(prob_params).get_prob_matrix()
