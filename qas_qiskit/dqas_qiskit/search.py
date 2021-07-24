@@ -136,7 +136,8 @@ def dqas_qiskit(num_epochs:int,
                    prob_opt = optax.adam,
                    batch_k_num_samples:int=200,
                    verbose:int = 0,
-                   parameterized_circuit:bool = True):
+                   parameterized_circuit:bool = True,
+                   prob_grad_noise_factor = 1/50):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
@@ -203,7 +204,7 @@ def dqas_qiskit(num_epochs:int,
         key = jax.random.PRNGKey(seed)
         noise = jax.random.normal(key=key, shape=(p, c))
         #print(noise/50)
-        prob_gradients = prob_gradients+noise/50
+        prob_gradients = prob_gradients+noise*prob_grad_noise_factor
 
         if verbose > 0:
             print("Prob Model Param Gradients Calculation Finished!")

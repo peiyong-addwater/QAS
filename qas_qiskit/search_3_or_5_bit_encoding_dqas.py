@@ -67,26 +67,31 @@ if __name__ == "__main__":
         p = 2
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_BIT_FLIP
+        prob_noise_factor = 1/50
     elif task == 'PHASE_FLIP':
         num_qubits = 3
         p=3
         circ_constructor = PhaseFlipDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_PHASE_FLIP
+        prob_noise_factor = 1/50
     elif task == 'FOUR_TWO_TWO_DETECTION':
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
+        prob_noise_factor = 1/50
     elif task == 'FIVE_BIT_CODE':
         num_qubits = 5
         p=18
         circ_constructor = FiveBitCodeSearchDensityMatrixNoiseless
         date_set =SIMPLE_DATASET_FIVE_BIT_CODE
+        prob_noise_factor = 1/50
     else:
         num_qubits = 0
         p=0
         circ_constructor = None
         data_set = None
+        prob_noise_factor = 1/50
         exit(-1)
 
 
@@ -135,6 +140,7 @@ if __name__ == "__main__":
                     batch_k_num_samples=300,
                     verbose=12,
                     parameterized_circuit=True,
+                    prob_grad_noise_factor=prob_noise_factor
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
