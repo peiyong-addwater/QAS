@@ -256,19 +256,11 @@ def dqas_qiskit(num_epochs:int,
         new_prob_mat = pb.get_prob_matrix()
 
         if verbose>=10:
-            if parameterized_circuit:
-                print(
-                "Prob Param Gradient:\n",
-                prob_gradients,
-                "\nProb Matrix:\n",
-                prob_model(prob_params).get_prob_matrix()
-                )
-            else:
-                print(
-                    "\nProb Param Gradient:\n",
+            print(
+                    "Prob Param Gradient:\n",
                     prob_gradients,
                     "\nProb Matrix:\n",
-                    prob_model(prob_params).get_prob_matrix()
+                    new_prob_mat
                 )
         prob_params_list.append(np.array(prob_params))
         best_k = jnp.argmax(new_prob_mat, axis=1)
