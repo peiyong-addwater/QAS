@@ -160,12 +160,11 @@ def dqas_qiskit(num_epochs:int,
     optimal_circuit_loss = []
     pb = prob_model(prob_params)
     if prethermalization:
+        # only update the circuit parameter pool for a few epochs
         assert pre_thermal_epochs >0
         print("Prethermalization......")
         for i in range(pre_thermal_epochs):
             sampled_k_list = pb.sample_k(batch_k_num_samples)
-            # sampled_k_prob = Parallel(n_jobs=-1, verbose=0)(delayed(pb.get_prob_for_k)(k) for k in sampled_k_list)
-
             sampled_circs = [search_circ_constructor(p, c, l, k, op_pool) for k in sampled_k_list]
             circ_batch_gradients = Parallel(n_jobs=1, verbose=0)(delayed(_circ_obj_get_gradient_dm)(constructed_circ,
                                                                                                     circ_params,
