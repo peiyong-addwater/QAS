@@ -24,9 +24,13 @@ from dqas_qiskit.prob_models import (
 from dqas_qiskit.circuits import (
     QCircFromK,
     BitFlipSearchDensityMatrixNoiseless,
+    PhaseFlipDensityMatrixNoiseless,
     SIMPLE_DATASET_BIT_FLIP,
     FiveBitCodeSearchDensityMatrixNoiseless,
-    SIMPLE_DATASET_FIVE_BIT_CODE
+    SIMPLE_DATASET_FIVE_BIT_CODE,
+    SIMPLE_DATASET_PHASE_FLIP,
+    FOUR_TWO_TWO_DETECTION_CODE_DATA,
+    FourTwoTwoDetectionDensityMatrixNoiseless
 )
 from dqas_qiskit.standard_ops import (
     GatePool,
@@ -50,14 +54,41 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    file_name = nowtime()+"_QEC_CODE_SEARCH.json"
+    task = "BIT_FLIP"
+
+    TASKS = ['BIT_FLIP', 'PHASE_FLIP', 'FOUR_TWO_TWO_DETECTION','FIVE_BIT_CODE']
+    assert task in TASKS
+
+    file_name = nowtime()+"_"+task+"_QEC_CODE_SEARCH.json"
     restricted_pool = False
 
-    num_qubits= 5
+    if task == "BIT_FLIP":
+        num_qubits= 3
+        p = 2
+        circ_constructor = BitFlipSearchDensityMatrixNoiseless
+        date_set = SIMPLE_DATASET_BIT_FLIP
+    elif task == 'PHASE_FLIP':
+        num_qubits = 3
+        p=3
+        circ_constructor = PhaseFlipDensityMatrixNoiseless
+        data_set = SIMPLE_DATASET_PHASE_FLIP
+    elif task == 'FOUR_TWO_TWO_DETECTION':
+        num_qubits = 4
+        p=6
+        data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
+        circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
+    elif task == 'FIVE_BIT_CODE':
+        num_qubits = 5
+        p=18
+        circ_constructor = FiveBitCodeSearchDensityMatrixNoiseless
+        date_set =SIMPLE_DATASET_FIVE_BIT_CODE
+    else:
+        num_qubits = 0
+        p=0
+        circ_constructor = None
+        data_set = None
+        exit(-1)
 
-
-    if num_qubits !=3:
-        assert num_qubits == 5
 
     res_dict = {}
     res_dict["NUM_QUBITS"] = num_qubits
@@ -70,14 +101,12 @@ if __name__ == "__main__":
     #pool =default_complete_graph_parameterized_pool(num_qubits)
     if num_qubits == 5 and restricted_pool:
         pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
-        file_name = nowtime() + "_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
+        file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
     else:
         pool = default_complete_graph_parameterized_pool(num_qubits)
 
     res_dict["Pool"] = str(pool)
 
-    print(pool)
-    p = 2 if num_qubits ==3 else 18
     c = len(pool)
     l = 3
 
@@ -95,11 +124,11 @@ if __name__ == "__main__":
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
     loss_list_qas, loss_std=\
         dqas_qiskit_v2(num_epochs=300,
-                    training_data=SIMPLE_DATASET_BIT_FLIP if num_qubits==3 else SIMPLE_DATASET_FIVE_BIT_CODE,
+                    training_data=data_set,
                     init_prob_params=a,
                     init_circ_params=param,
                     op_pool=pool,
-                    search_circ_constructor=BitFlipSearchDensityMatrixNoiseless if num_qubits == 3 else FiveBitCodeSearchDensityMatrixNoiseless,
+                    search_circ_constructor=circ_constructor,
                     circ_lr= 0.1,
                     prob_lr = 0.1,
                     circ_opt = optax.adabelief,
@@ -122,11 +151,11 @@ if __name__ == "__main__":
     # Fine tune the circuit after architecture search
     tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = \
         train_circuit(500,
-                    circ_constructor=FiveBitCodeSearchDensityMatrixNoiseless if num_qubits==5 else BitFlipSearchDensityMatrixNoiseless,
+                    circ_constructor=circ_constructor,
                     init_params=np.random.randn(p*c*l).reshape((p,c,l)),
                     k=final_k,
                     op_pool=pool,
-                    training_data=SIMPLE_DATASET_FIVE_BIT_CODE if num_qubits==5 else SIMPLE_DATASET_BIT_FLIP,
+                    training_data=data_set,
                     lr= 0.1,
                     verbose=2,
                     early_stopping_threshold=0.000001,
