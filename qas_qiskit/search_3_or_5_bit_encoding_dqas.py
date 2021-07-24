@@ -54,7 +54,7 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    task = 'PHASE_FLIP'
+    task = 'BIT_FLIP'
 
     TASKS = ['BIT_FLIP', 'PHASE_FLIP', 'FOUR_TWO_TWO_DETECTION','FIVE_BIT_CODE']
     assert task in TASKS
@@ -135,8 +135,6 @@ if __name__ == "__main__":
                     batch_k_num_samples=300,
                     verbose=12,
                     parameterized_circuit=True,
-                    prethermalization=True,
-                    pre_thermal_epochs=10
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
