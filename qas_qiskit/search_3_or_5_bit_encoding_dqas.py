@@ -112,7 +112,6 @@ if __name__ == "__main__":
 
     res_dict["Search_Param"] = {"p":p, "c":c, "l":l}
 
-    #np.random.seed(0)
 
     param = np.random.randn(p*c*l).reshape((p,c,l))
     # print(param)
@@ -144,6 +143,8 @@ if __name__ == "__main__":
     res_dict["loss_std"] = loss_std
     res_dict["prob_param"] = final_prob_param
     res_dict["all_circuit_param"] = final_circ_param
+
+
 
 
 
