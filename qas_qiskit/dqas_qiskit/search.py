@@ -380,8 +380,6 @@ def dqas_qiskit_v2(num_epochs:int,
         if verbose>=10:
             if parameterized_circuit:
                 print(
-                "Circuit Param Gradient:\n",
-                circ_gradient,
                 "\nProb Param Gradient:\n",
                 prob_gradients,
                 "\nProb Matrix:\n",
@@ -389,8 +387,6 @@ def dqas_qiskit_v2(num_epochs:int,
                 )
             else:
                 print(
-                    "Circuit Param Gradient:\n",
-                    "Not Available for Non-parameterized Circuit",
                     "\nProb Param Gradient:\n",
                     prob_gradients,
                     "\nProb Matrix:\n",
