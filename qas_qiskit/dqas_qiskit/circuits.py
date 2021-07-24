@@ -353,6 +353,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
         # penalty for "useless" gates
         qubits_with_action = set()
         qubits_with_action.add(0)
+        qubits_with_action.add(1)
         num_useless = 0
         extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         for op in extracted_gates:
