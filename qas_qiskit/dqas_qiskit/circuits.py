@@ -315,31 +315,31 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
 
 
     def get_extracted_QuantumCircuit_object(self, circ_params):
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
         return backbone_circ
 
 
-    def get_loss(self, circ_params, init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_loss(self, circ_params, init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
         return loss+self.penalty_terms(circ_params)
 
-    def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        _, param_indices = extract_ops(3, self.k, self.pool, circ_params)
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
 
         return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
 
     def get_circuit_ops(self, circ_params):
-        extracted_gates, _ = extract_ops(3, self.k, self.pool, circ_params)
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
@@ -354,7 +354,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
         qubits_with_action = set()
         qubits_with_action.add(0)
         num_useless = 0
-        extracted_gates,_ = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         for op in extracted_gates:
             qubit_list = op.get_qreg_pos()
             if len(qubit_list) == 1:
@@ -393,31 +393,31 @@ class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
 
 
     def get_extracted_QuantumCircuit_object(self, circ_params):
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         return backbone_circ
 
 
-    def get_loss(self, circ_params, init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_loss(self, circ_params, init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
         return loss + self.penalty_terms(circ_params)
 
-    def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        _, param_indices = extract_ops(3, self.k, self.pool, circ_params)
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
 
         return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
 
     def get_circuit_ops(self, circ_params):
-        extracted_gates, _ = extract_ops(3, self.k, self.pool, circ_params)
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
@@ -432,7 +432,7 @@ class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
         qubits_with_action = set()
         qubits_with_action.add(0)
         num_useless = 0
-        extracted_gates,_ = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         for op in extracted_gates:
             qubit_list = op.get_qreg_pos()
             if len(qubit_list) == 1:
@@ -470,31 +470,31 @@ class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
 
 
     def get_extracted_QuantumCircuit_object(self, circ_params):
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         return backbone_circ
 
 
-    def get_loss(self, circ_params, init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_loss(self, circ_params, init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        extracted_gates, param_indices = extract_ops(3, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(3, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
         return loss + self.penalty_terms(circ_params)
 
-    def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_BIT_FLIP[0], target_states = SIMPLE_DATASET_BIT_FLIP[1]):
+    def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        _, param_indices = extract_ops(3, self.k, self.pool, circ_params)
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
 
         return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
 
     def get_circuit_ops(self, circ_params):
-        extracted_gates, _ = extract_ops(3, self.k, self.pool, circ_params)
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
@@ -509,7 +509,7 @@ class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
         qubits_with_action = set()
         qubits_with_action.add(0)
         num_useless = 0
-        extracted_gates,_ = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         for op in extracted_gates:
             qubit_list = op.get_qreg_pos()
             if len(qubit_list) == 1:
@@ -546,30 +546,30 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
 
 
     def get_extracted_QuantumCircuit_object(self, circ_params):
-        extracted_gates, param_indices = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         backbone_circ = construct_backbone_circuit_from_gate_list(5, extracted_gates)
         return backbone_circ
 
-    def get_loss(self, circ_params, init_states = SIMPLE_DATASET_FIVE_BIT_CODE[0], target_states = SIMPLE_DATASET_FIVE_BIT_CODE[1]):
+    def get_loss(self, circ_params, init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        extracted_gates, param_indices = extract_ops(5, self.k, self.pool, circ_params)
-        backbone_circ = construct_backbone_circuit_from_gate_list(5, extracted_gates)
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
         return loss + self.penalty_terms(circ_params)
 
-    def get_gradient(self, circ_params,init_states = SIMPLE_DATASET_FIVE_BIT_CODE[0], target_states =SIMPLE_DATASET_FIVE_BIT_CODE[1]):
+    def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
         assert self.c == circ_params.shape[1]
         assert self.l == circ_params.shape[2]
-        _, param_indices = extract_ops(5, self.k, self.pool, circ_params)
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
 
         return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
 
     def get_circuit_ops(self, circ_params):
-        extracted_gates, _ = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         op_list = [str(c) for c in extracted_gates]
         return op_list
 
@@ -584,7 +584,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         qubits_with_action = set()
         qubits_with_action.add(0)
         num_useless = 0
-        extracted_gates,_ = extract_ops(5, self.k, self.pool, circ_params)
+        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
         for op in extracted_gates:
             qubit_list = op.get_qreg_pos()
             if len(qubit_list) == 1:
