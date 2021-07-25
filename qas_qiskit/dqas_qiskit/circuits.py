@@ -389,7 +389,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
                 else:
                     qubits_with_action.add(qubit_list[1])
 
-        return repeated+num_useless
+        return (repeated+num_useless)/10
 
 
 

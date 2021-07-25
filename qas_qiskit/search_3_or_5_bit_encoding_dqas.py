@@ -88,8 +88,8 @@ if __name__ == "__main__":
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/20
-        circ_grad_noise_factor = 0
+        prob_noise_factor = 1/10
+        circ_grad_noise_factor = 1/10
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 500
         if restricted_pool:
