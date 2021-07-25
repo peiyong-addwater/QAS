@@ -138,7 +138,8 @@ def dqas_qiskit(num_epochs:int,
                    verbose:int = 0,
                    parameterized_circuit:bool = True,
                    prob_grad_noise_factor = 1/50,
-                   circ_grad_noise_factor = 1/20
+                   circ_grad_noise_factor = 1/20,
+                   force_escape_prob_local_minia = False
                 ):
 
     p = init_circ_params.shape[0]
@@ -161,6 +162,7 @@ def dqas_qiskit(num_epochs:int,
     prob_params_list = []
     optimal_circuit_loss = []
     pb = prob_model(prob_params)
+    local_optima_trapped_counter = 0
     if verbose>0:
         print("Starting Circuit Search for Max {} Epochs.........".format(num_epochs))
     for i in range(num_epochs):

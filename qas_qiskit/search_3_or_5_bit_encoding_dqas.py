@@ -72,6 +72,7 @@ if __name__ == "__main__":
         circ_grad_noise_factor=0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 100
+        force_escape_prob_local_minia = False
     elif task == 'PHASE_FLIP':
         batch_k_num_samples = 300
         num_qubits = 3
@@ -82,16 +83,18 @@ if __name__ == "__main__":
         circ_grad_noise_factor = 0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 200
+        force_escape_prob_local_minia = False
     elif task == 'FOUR_TWO_TWO_DETECTION':
         batch_k_num_samples = 300
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/10
-        circ_grad_noise_factor = 1/10
+        prob_noise_factor = 1/5
+        circ_grad_noise_factor = 1/5
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 500
+        force_escape_prob_local_minia = False
         if restricted_pool:
             connection = [(0,2), (2,0), (0,3), (3,0), (1, 2), (2, 1), (1,3), (3,1), (2, 3), (3, 2)]
             single_qubit_gate = ["U3Gate"]
@@ -107,6 +110,7 @@ if __name__ == "__main__":
         date_set =SIMPLE_DATASET_FIVE_BIT_CODE
         prob_noise_factor = 1/10
         circ_grad_noise_factor = 0
+        force_escape_prob_local_minia = False
         pool = default_complete_graph_parameterized_pool(num_qubits)
         if restricted_pool:
             line_five_qubits_connection = [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3)]
@@ -115,6 +119,7 @@ if __name__ == "__main__":
             pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
             file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
     else:
+        force_escape_prob_local_minia = False
         batch_k_num_samples = 300
         num_epochs = 500
         num_qubits = 0
@@ -163,7 +168,8 @@ if __name__ == "__main__":
                     verbose=12,
                     parameterized_circuit=True,
                     prob_grad_noise_factor=prob_noise_factor,
-                    circ_grad_noise_factor=circ_grad_noise_factor
+                    circ_grad_noise_factor=circ_grad_noise_factor,
+                    force_escape_prob_local_minia=force_escape_prob_local_minia
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
