@@ -63,32 +63,40 @@ if __name__ == "__main__":
     restricted_pool = False
 
     if task == "BIT_FLIP":
+        batch_k_num_samples = 300
         num_qubits= 3
         p = 2
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_BIT_FLIP
         prob_noise_factor = 1/50
         pool = default_complete_graph_parameterized_pool(num_qubits)
+        num_epochs = 100
     elif task == 'PHASE_FLIP':
+        batch_k_num_samples = 300
         num_qubits = 3
         p=3
         circ_constructor = PhaseFlipDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_PHASE_FLIP
         prob_noise_factor = 1/50
         pool = default_complete_graph_parameterized_pool(num_qubits)
+        num_epochs = 200
     elif task == 'FOUR_TWO_TWO_DETECTION':
+        batch_k_num_samples = 300
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
         prob_noise_factor = 1/10
         pool = default_complete_graph_parameterized_pool(num_qubits)
+        num_epochs = 500
     elif task == 'FIVE_BIT_CODE':
+        batch_k_num_samples = 300
+        num_epochs = 500
         num_qubits = 5
         p=18
         circ_constructor = FiveBitCodeSearchDensityMatrixNoiseless
         date_set =SIMPLE_DATASET_FIVE_BIT_CODE
-        prob_noise_factor = 1/50
+        prob_noise_factor = 1/10
         pool = default_complete_graph_parameterized_pool(num_qubits)
         if restricted_pool:
             line_five_qubits_connection = [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3)]
@@ -97,6 +105,8 @@ if __name__ == "__main__":
             pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
             file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
     else:
+        batch_k_num_samples = 300
+        num_epochs = 500
         num_qubits = 0
         p=0
         circ_constructor = None
@@ -125,7 +135,7 @@ if __name__ == "__main__":
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
     loss_list_qas, loss_std, prob_params_list=\
-        dqas_qiskit(num_epochs=300,
+        dqas_qiskit(num_epochs=num_epochs,
                     training_data=data_set,
                     init_prob_params=a,
                     init_circ_params=param,
@@ -136,7 +146,7 @@ if __name__ == "__main__":
                     circ_opt = optax.adabelief,
                     prob_opt = optax.adabelief,
                     prob_model=IndependentCategoricalProbabilisticModel,
-                    batch_k_num_samples=300,
+                    batch_k_num_samples=batch_k_num_samples,
                     verbose=12,
                     parameterized_circuit=True,
                     prob_grad_noise_factor=prob_noise_factor
