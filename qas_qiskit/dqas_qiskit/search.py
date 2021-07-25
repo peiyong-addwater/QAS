@@ -270,6 +270,7 @@ def dqas_qiskit(num_epochs:int,
             else:
                 local_optima_trapped_counter=0
             if force_escape_prob_local_min:
+                print("Force Re-initialization counter {}/{}".format(local_optima_trapped_counter,local_opt_trapped_max_count))
                 if local_optima_trapped_counter>=local_opt_trapped_max_count:
                     # triggers a force re-initialization of prob parameters
                     if sample_batch_avg_loss>batch_loss_threshold and optimal_circuit_loss[-1]>batch_loss_threshold:
