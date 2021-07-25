@@ -142,7 +142,8 @@ def dqas_qiskit(num_epochs:int,
                 force_escape_prob_local_min = False,
                 last_20_opt_circ_loss_std_threshold = 0.001,
                 local_opt_trapped_max_count = 10,
-                batch_loss_threshold = 0.01
+                batch_loss_threshold = 0.01,
+                early_stopping_threshold:Optional[float] = None
                 ):
 
     p = init_circ_params.shape[0]
@@ -279,9 +280,11 @@ def dqas_qiskit(num_epochs:int,
 
         epoch_end = time.time()
 
-        if sample_batch_avg_loss<batch_loss_threshold/2:
-            print("EARLY STOPPING CONDITION MET, STOPPING SEARCH...")
-            break
+        if early_stopping_threshold is not None:
+            if num_epochs>10:
+                if np.average(optimal_circuit_loss[-10:])<=early_stopping_threshold:
+                    print("EARLY STOPPING CONDITIONS MET, STOP SEARCHING...")
+                    break
 
 
         if verbose>1:
