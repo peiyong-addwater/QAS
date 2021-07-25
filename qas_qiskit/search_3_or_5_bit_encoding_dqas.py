@@ -79,6 +79,7 @@ if __name__ == "__main__":
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
+        param = np.random.randn(p * c * l).reshape((p, c, l))
     elif task == 'PHASE_FLIP':
         batch_k_num_samples = 300
         num_qubits = 3
@@ -96,6 +97,7 @@ if __name__ == "__main__":
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
+        param = np.random.randn(p * c * l).reshape((p, c, l))
     elif task == 'FOUR_TWO_TWO_DETECTION':
         batch_k_num_samples = 400
         num_qubits = 4
@@ -113,6 +115,7 @@ if __name__ == "__main__":
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
+        param = np.random.randn(p * c * l).reshape((p, c, l))
         if restricted_pool:
             connection = [(0,2), (2,0), (0,3), (3,0), (1, 2), (2, 1), (1,3), (3,1), (2, 3), (3, 2)]
             single_qubit_gate = ["U3Gate"]
@@ -122,6 +125,7 @@ if __name__ == "__main__":
             c = len(pool)
             l = 3
             a = np.zeros(p * c).reshape((p, c))
+            param = np.random.randn(p * c * l).reshape((p, c, l))
     elif task == 'FIVE_BIT_CODE':
         batch_k_num_samples = 1200
         num_epochs = 500
@@ -139,6 +143,7 @@ if __name__ == "__main__":
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
+        param = np.random.randn(p * c * l).reshape((p, c, l))
         if restricted_pool:
             line_five_qubits_connection = [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3)]
             single_qubit_gate = ["U3Gate"]
@@ -148,6 +153,7 @@ if __name__ == "__main__":
             c = len(pool)
             l = 3
             a = np.zeros(p * c).reshape((p, c))
+            param = np.random.randn(p * c * l).reshape((p, c, l))
     else:
         force_escape_prob_local_min = False
         local_opt_trapped_max_count = 10,
@@ -165,6 +171,7 @@ if __name__ == "__main__":
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
+        param = np.random.randn(p * c * l).reshape((p, c, l))
         exit(-1)
 
 
@@ -177,7 +184,6 @@ if __name__ == "__main__":
     res_dict["Search_Param"] = {"p":p, "c":c, "l":l}
 
 
-    param = np.random.randn(p*c*l).reshape((p,c,l))
     res_dict['circ_param_init'] = param
     res_dict['prob_param_init'] = a
 
