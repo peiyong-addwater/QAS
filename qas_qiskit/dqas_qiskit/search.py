@@ -279,6 +279,10 @@ def dqas_qiskit(num_epochs:int,
 
         epoch_end = time.time()
 
+        if sample_batch_avg_loss<batch_loss_threshold/2:
+            print("EARLY STOPPING CONDITION MET, STOPPING SEARCH...")
+            break
+
 
         if verbose>1:
             if i > 19:
