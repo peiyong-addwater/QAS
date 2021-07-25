@@ -104,7 +104,7 @@ if __name__ == "__main__":
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
         prob_noise_factor = 1/10
         circ_grad_noise_factor = 1/20
-        last_20_opt_circ_loss_std_threshold =0.05
+        last_20_opt_circ_loss_std_threshold =0.1
         local_opt_trapped_max_count = 10,
         batch_loss_threshold = 0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
