@@ -69,6 +69,7 @@ if __name__ == "__main__":
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_BIT_FLIP
         prob_noise_factor = 1/50
+        circ_grad_noise_factor=0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 100
     elif task == 'PHASE_FLIP':
@@ -78,15 +79,17 @@ if __name__ == "__main__":
         circ_constructor = PhaseFlipDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_PHASE_FLIP
         prob_noise_factor = 1/50
+        circ_grad_noise_factor = 0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 200
     elif task == 'FOUR_TWO_TWO_DETECTION':
-        batch_k_num_samples = 500
+        batch_k_num_samples = 300
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/50
+        prob_noise_factor = 1/20
+        circ_grad_noise_factor = 0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 500
         if restricted_pool:
@@ -96,13 +99,14 @@ if __name__ == "__main__":
             pool = GatePool(4, single_qubit_gate, two_qubit_gate, False, connection)
             file_name = nowtime() + "422_DETECTION_CODE_SEARCH_RESTRICTED_POOL.json"
     elif task == 'FIVE_BIT_CODE':
-        batch_k_num_samples = 300
+        batch_k_num_samples = 1200
         num_epochs = 500
         num_qubits = 5
         p=18
         circ_constructor = FiveBitCodeSearchDensityMatrixNoiseless
         date_set =SIMPLE_DATASET_FIVE_BIT_CODE
         prob_noise_factor = 1/10
+        circ_grad_noise_factor = 0
         pool = default_complete_graph_parameterized_pool(num_qubits)
         if restricted_pool:
             line_five_qubits_connection = [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3)]
@@ -114,6 +118,7 @@ if __name__ == "__main__":
         batch_k_num_samples = 300
         num_epochs = 500
         num_qubits = 0
+        circ_grad_noise_factor = 0
         p=0
         circ_constructor = None
         data_set = None
@@ -138,6 +143,7 @@ if __name__ == "__main__":
     # param = np.zeros(p*c*l).reshape((p,c,l))
     # print(param)
     a = np.zeros(p*c).reshape((p,c))
+    res_dict['circ_param_init'] = param
 
     #TODO: Add beam search for structure parameters
     final_prob_param, final_circ_param, final_prob_model, final_circ, final_k, final_op_list, final_loss, \
@@ -156,7 +162,8 @@ if __name__ == "__main__":
                     batch_k_num_samples=batch_k_num_samples,
                     verbose=12,
                     parameterized_circuit=True,
-                    prob_grad_noise_factor=prob_noise_factor
+                    prob_grad_noise_factor=prob_noise_factor,
+                    circ_grad_noise_factor=circ_grad_noise_factor
     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list

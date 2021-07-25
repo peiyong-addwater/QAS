@@ -137,7 +137,9 @@ def dqas_qiskit(num_epochs:int,
                    batch_k_num_samples:int=200,
                    verbose:int = 0,
                    parameterized_circuit:bool = True,
-                   prob_grad_noise_factor = 1/50):
+                   prob_grad_noise_factor = 1/50,
+                   circ_grad_noise_factor = 1/20
+                ):
 
     p = init_circ_params.shape[0]
     c = init_circ_params.shape[1]
@@ -225,6 +227,11 @@ def dqas_qiskit(num_epochs:int,
         circ_batch_gradients = jnp.stack(circ_batch_gradients, axis=0)
         circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
         circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
+        # add some noise to the circuit gradient
+        seed = np.random.randint(0, 1000000000000)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key=key, shape=(p, c, l))
+        circ_gradient = circ_gradient+noise*circ_grad_noise_factor
 
         # update the parameters
         prob_model_updates, opt_state_prob = optimizer_for_prob.update(prob_gradients, opt_state_prob)
@@ -232,11 +239,6 @@ def dqas_qiskit(num_epochs:int,
 
         circ_updates, opt_state_circ = optimizer_for_circ.update(circ_gradient, opt_state_circ)
         circ_params = optax.apply_updates(circ_params, circ_updates)
-        # add some noise to the circuit parameter
-        # seed = np.random.randint(0, 100)
-        # key = jax.random.PRNGKey(seed)
-        # noise = jax.random.normal(key=key, shape=(p, c, l))
-        # circ_params = circ_params+noise/10
         circ_params = np.array(circ_params)
 
         loss_list.append(sample_batch_avg_loss)
