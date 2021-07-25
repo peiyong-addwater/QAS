@@ -68,47 +68,46 @@ if __name__ == "__main__":
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_BIT_FLIP
         prob_noise_factor = 1/50
+        pool = default_complete_graph_parameterized_pool(num_qubits)
     elif task == 'PHASE_FLIP':
         num_qubits = 3
         p=3
         circ_constructor = PhaseFlipDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_PHASE_FLIP
         prob_noise_factor = 1/50
+        pool = default_complete_graph_parameterized_pool(num_qubits)
     elif task == 'FOUR_TWO_TWO_DETECTION':
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/50
+        prob_noise_factor = 1/10
+        pool = default_complete_graph_parameterized_pool(num_qubits)
     elif task == 'FIVE_BIT_CODE':
         num_qubits = 5
         p=18
         circ_constructor = FiveBitCodeSearchDensityMatrixNoiseless
         date_set =SIMPLE_DATASET_FIVE_BIT_CODE
         prob_noise_factor = 1/50
+        pool = default_complete_graph_parameterized_pool(num_qubits)
+        if restricted_pool:
+            line_five_qubits_connection = [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3)]
+            single_qubit_gate = ["U3Gate"]
+            two_qubit_gate = ["CU3Gate"]
+            pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
+            file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
     else:
         num_qubits = 0
         p=0
         circ_constructor = None
         data_set = None
         prob_noise_factor = 1/50
+        pool = default_complete_graph_parameterized_pool(num_qubits)
         exit(-1)
 
 
     res_dict = {}
     res_dict["NUM_QUBITS"] = num_qubits
-
-    line_five_qubits_connection = [(0,1),(1,0),(1,2),(2,1),(2,3),(3,2),(3,4),(4,3)]
-    single_qubit_gate = ["U3Gate"]
-    two_qubit_gate = ["CU3Gate"]
-
-
-    #pool =default_complete_graph_parameterized_pool(num_qubits)
-    if num_qubits == 5 and restricted_pool:
-        pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
-        file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
-    else:
-        pool = default_complete_graph_parameterized_pool(num_qubits)
 
     res_dict["Pool"] = str(pool)
 
