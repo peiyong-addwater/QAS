@@ -260,6 +260,9 @@ def dqas_qiskit(num_epochs:int,
 
 
         if verbose>1:
+            if i > 19:
+                last_10_epoch_opt_circ_loss_std = np.std(optimal_circuit_loss[-20:])
+                print("Loss Std of the Optimal Circuit in the Last 20 Epochs: {}".format(last_10_epoch_opt_circ_loss_std))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(

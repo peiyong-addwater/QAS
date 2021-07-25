@@ -81,14 +81,20 @@ if __name__ == "__main__":
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 200
     elif task == 'FOUR_TWO_TWO_DETECTION':
-        batch_k_num_samples = 300
+        batch_k_num_samples = 500
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/10
+        prob_noise_factor = 1/50
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 500
+        if restricted_pool:
+            connection = [(0,2), (2,0), (0,3), (3,0), (1, 2), (2, 1), (1,3), (3,1), (2, 3), (3, 2)]
+            single_qubit_gate = ["U3Gate"]
+            two_qubit_gate = ["CU3Gate"]
+            pool = GatePool(4, single_qubit_gate, two_qubit_gate, False, connection)
+            file_name = nowtime() + "422_DETECTION_CODE_SEARCH_RESTRICTED_POOL.json"
     elif task == 'FIVE_BIT_CODE':
         batch_k_num_samples = 300
         num_epochs = 500
@@ -120,6 +126,7 @@ if __name__ == "__main__":
     res_dict["NUM_QUBITS"] = num_qubits
 
     res_dict["Pool"] = str(pool)
+    print(pool)
 
     c = len(pool)
     l = 3
