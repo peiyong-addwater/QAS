@@ -124,22 +124,25 @@ def _circ_obj_get_gradient_dm(circ_obj, circ_params, init_state, target_state:Li
 
 
 def dqas_qiskit(num_epochs:int,
-                   training_data:List[List],
-                   init_prob_params:np.ndarray,
-                   init_circ_params:np.ndarray,
-                   op_pool:GatePool,
-                   search_circ_constructor:Callable,
-                   prob_model=IndependentCategoricalProbabilisticModel,
-                   circ_lr=0.1,
-                   prob_lr = 0.1,
-                   circ_opt = optax.adam,
-                   prob_opt = optax.adam,
-                   batch_k_num_samples:int=200,
-                   verbose:int = 0,
-                   parameterized_circuit:bool = True,
-                   prob_grad_noise_factor = 1/50,
-                   circ_grad_noise_factor = 1/20,
-                   force_escape_prob_local_minia = False
+                training_data:List[List],
+                init_prob_params:np.ndarray,
+                init_circ_params:np.ndarray,
+                op_pool:GatePool,
+                search_circ_constructor:Callable,
+                prob_model=IndependentCategoricalProbabilisticModel,
+                circ_lr=0.1,
+                prob_lr = 0.1,
+                circ_opt = optax.adam,
+                prob_opt = optax.adam,
+                batch_k_num_samples:int=200,
+                verbose:int = 0,
+                parameterized_circuit:bool = True,
+                prob_grad_noise_factor = 1/50,
+                circ_grad_noise_factor = 1/20,
+                force_escape_prob_local_min = False,
+                last_20_opt_circ_loss_std_threshold = 0.001,
+                local_opt_trapped_max_count = 10,
+                batch_loss_threshold = 0.01
                 ):
 
     p = init_circ_params.shape[0]
@@ -260,13 +263,26 @@ def dqas_qiskit(num_epochs:int,
         best_circ = search_circ_constructor(p, c, l, best_k, op_pool)
         optimal_circuit_loss.append(float(best_circ.get_loss(circ_params,
                                                                 training_data[0], training_data[1])))
+        if i>19:
+            last_20_epoch_opt_circ_loss_std = np.std(optimal_circuit_loss[-20:])
+            if last_20_epoch_opt_circ_loss_std<=last_20_opt_circ_loss_std_threshold:
+                local_optima_trapped_counter = local_optima_trapped_counter + 1
+            else:
+                local_optima_trapped_counter=0
+            if force_escape_prob_local_min:
+                if local_optima_trapped_counter>=local_opt_trapped_max_count:
+                    # triggers a force re-initialization of prob parameters
+                    if sample_batch_avg_loss>batch_loss_threshold and optimal_circuit_loss[-1]>batch_loss_threshold:
+                        print("FORCE RE-INITIALIZATION CONDITIONS MET, RE-INITIALIZING PROB PARAMETERS RANDOMLY...")
+                        prob_params = np.random.randn(p*c).reshape((p,c))
+
         epoch_end = time.time()
 
 
         if verbose>1:
             if i > 19:
-                last_10_epoch_opt_circ_loss_std = np.std(optimal_circuit_loss[-20:])
-                print("Loss Std of the Optimal Circuit in the Last 20 Epochs: {}".format(last_10_epoch_opt_circ_loss_std))
+                last_20_epoch_opt_circ_loss_std = np.std(optimal_circuit_loss[-20:])
+                print("Loss Std of the Optimal Circuit in the Last 20 Epochs: {}".format(last_20_epoch_opt_circ_loss_std))
             print("New Optimal k={}".format(best_k))
             print("New Optimal Gate Sequence: {}".format(best_circ.get_circuit_ops(circ_params)))
             print(
