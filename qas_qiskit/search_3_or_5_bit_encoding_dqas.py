@@ -107,18 +107,18 @@ if __name__ == "__main__":
         param = np.random.randn(p * c * l).reshape((p, c, l))
 
     elif task == 'FOUR_TWO_TWO_DETECTION':
-        batch_k_num_samples = 400
+        batch_k_num_samples = 600
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/20
-        circ_grad_noise_factor = 1/20
-        last_20_opt_circ_loss_std_threshold =0.1
-        local_opt_trapped_max_count = 20
+        prob_noise_factor = 1/10
+        circ_grad_noise_factor = 1/10
+        last_20_opt_circ_loss_std_threshold =0.01
+        local_opt_trapped_max_count = 10
         batch_loss_threshold = 0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
-        num_epochs = 500
+        num_epochs = 500*2
         force_escape_prob_local_min = True
         early_stopping_threshold = 0.01
 
