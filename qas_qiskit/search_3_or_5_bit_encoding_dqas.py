@@ -60,7 +60,7 @@ if __name__ == "__main__":
     assert task in TASKS
 
     file_name = nowtime()+"_"+task+"_QEC_CODE_SEARCH.json"
-    restricted_pool = False
+    restricted_pool = True
 
     if task == "BIT_FLIP":
         batch_k_num_samples = 300
@@ -68,50 +68,60 @@ if __name__ == "__main__":
         p = 2
         circ_constructor = BitFlipSearchDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_BIT_FLIP
+
         prob_noise_factor = 1/50
         circ_grad_noise_factor=0
         last_20_opt_circ_loss_std_threshold =0
-        local_opt_trapped_max_count = 10,
+        local_opt_trapped_max_count = 10
         batch_loss_threshold = 0.01
+        early_stopping_threshold=0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
-        num_epochs = 100
+        num_epochs = 500
         force_escape_prob_local_min = False
+
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
         param = np.random.randn(p * c * l).reshape((p, c, l))
+
     elif task == 'PHASE_FLIP':
         batch_k_num_samples = 300
         num_qubits = 3
         p=3
         circ_constructor = PhaseFlipDensityMatrixNoiseless
         data_set = SIMPLE_DATASET_PHASE_FLIP
+
         prob_noise_factor = 1/50
         circ_grad_noise_factor = 0
         last_20_opt_circ_loss_std_threshold =0
-        local_opt_trapped_max_count = 10,
+        local_opt_trapped_max_count = 10
         batch_loss_threshold = 0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
-        num_epochs = 200
+        num_epochs = 500
         force_escape_prob_local_min = False
+        early_stopping_threshold = 0.01
+
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
         param = np.random.randn(p * c * l).reshape((p, c, l))
+
     elif task == 'FOUR_TWO_TWO_DETECTION':
         batch_k_num_samples = 400
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
         circ_constructor = FourTwoTwoDetectionDensityMatrixNoiseless
-        prob_noise_factor = 1/10
+        prob_noise_factor = 1/20
         circ_grad_noise_factor = 1/20
         last_20_opt_circ_loss_std_threshold =0.1
-        local_opt_trapped_max_count = 10,
+        local_opt_trapped_max_count = 20
         batch_loss_threshold = 0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
         num_epochs = 500
         force_escape_prob_local_min = True
+        early_stopping_threshold = 0.01
+
         c = len(pool)
         l = 3
         a = np.zeros(p * c).reshape((p, c))
@@ -121,11 +131,12 @@ if __name__ == "__main__":
             single_qubit_gate = ["U3Gate"]
             two_qubit_gate = ["CU3Gate"]
             pool = GatePool(4, single_qubit_gate, two_qubit_gate, False, connection)
-            file_name = nowtime() + "422_DETECTION_CODE_SEARCH_RESTRICTED_POOL.json"
+            file_name = nowtime() + "_422_DETECTION_CODE_SEARCH_RESTRICTED_POOL.json"
             c = len(pool)
             l = 3
             a = np.zeros(p * c).reshape((p, c))
             param = np.random.randn(p * c * l).reshape((p, c, l))
+
     elif task == 'FIVE_BIT_CODE':
         batch_k_num_samples = 1200
         num_epochs = 500
@@ -137,8 +148,10 @@ if __name__ == "__main__":
         circ_grad_noise_factor = 0
         last_20_opt_circ_loss_std_threshold =0
         force_escape_prob_local_min = False
-        local_opt_trapped_max_count = 10,
+        local_opt_trapped_max_count = 10
         batch_loss_threshold = 0.01
+        early_stopping_threshold = 0.01
+
         pool = default_complete_graph_parameterized_pool(num_qubits)
         c = len(pool)
         l = 3
@@ -149,14 +162,15 @@ if __name__ == "__main__":
             single_qubit_gate = ["U3Gate"]
             two_qubit_gate = ["CU3Gate"]
             pool = GatePool(5, single_qubit_gate, two_qubit_gate, False, line_five_qubits_connection)
-            file_name = nowtime() + "FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
+            file_name = nowtime() + "_FIVE_BIT_QEC_CODE_SEARCH_RESTRICTED_POOL.json"
             c = len(pool)
             l = 3
             a = np.zeros(p * c).reshape((p, c))
             param = np.random.randn(p * c * l).reshape((p, c, l))
+
     else:
         force_escape_prob_local_min = False
-        local_opt_trapped_max_count = 10,
+        local_opt_trapped_max_count = 10
         batch_loss_threshold = 0.01
         batch_k_num_samples = 300
         num_epochs = 500
@@ -167,6 +181,7 @@ if __name__ == "__main__":
         circ_constructor = None
         data_set = None
         prob_noise_factor = 1/50
+        early_stopping_threshold = 0.01
         pool = default_complete_graph_parameterized_pool(num_qubits)
         c = len(pool)
         l = 3
@@ -209,7 +224,8 @@ if __name__ == "__main__":
                     force_escape_prob_local_min=force_escape_prob_local_min,
                     last_20_opt_circ_loss_std_threshold=last_20_opt_circ_loss_std_threshold,
                     local_opt_trapped_max_count=local_opt_trapped_max_count,
-                    batch_loss_threshold=batch_loss_threshold
+                    batch_loss_threshold=batch_loss_threshold,
+                    early_stopping_threshold=early_stopping_threshold
                     )
     res_dict["k"] = final_k
     res_dict["op_list"] = final_op_list
@@ -233,7 +249,7 @@ if __name__ == "__main__":
                     op_pool=pool,
                     training_data=data_set,
                     lr= 0.1,
-                    verbose=2,
+                    verbose=-1,
                     early_stopping_threshold=0.000001,
                     opt=optax.adabelief
                     )
