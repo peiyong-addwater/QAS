@@ -275,8 +275,9 @@ def dqas_qiskit(num_epochs:int,
                 if local_optima_trapped_counter>=local_opt_trapped_max_count:
                     # triggers a force re-initialization of prob parameters
                     if sample_batch_avg_loss>batch_loss_threshold and optimal_circuit_loss[-1]>batch_loss_threshold:
-                        print("FORCE RE-INITIALIZATION CONDITIONS MET, RE-INITIALIZING CIRC PARAMETERS RANDOMLY...")
+                        print("FORCE RE-INITIALIZATION CONDITIONS MET, RE-INITIALIZING ALL PARAMETERS RANDOMLY...")
                         circ_params = np.random.randn(p*c*l).reshape((p,c,l))
+                        prob_params = np.random.randn(p*c).reshape((p,c))
                         local_optima_trapped_counter = 0
                     else:
                         local_optima_trapped_counter=0
