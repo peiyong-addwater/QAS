@@ -60,7 +60,7 @@ if __name__ == "__main__":
     assert task in TASKS
 
     file_name = nowtime()+"_"+task+"_QEC_CODE_SEARCH.json"
-    restricted_pool = True
+    restricted_pool = False
 
     if task == "BIT_FLIP":
         batch_k_num_samples = 300
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         param = np.random.randn(p * c * l).reshape((p, c, l))
 
     elif task == 'FOUR_TWO_TWO_DETECTION':
-        batch_k_num_samples = 600
+        batch_k_num_samples = 10000
         num_qubits = 4
         p=6
         data_set = FOUR_TWO_TWO_DETECTION_CODE_DATA
