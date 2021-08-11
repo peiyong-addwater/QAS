@@ -86,7 +86,7 @@ def searchNonParameterized(
                 arcs.append(k)
                 nodes.append(node)
         for k, node in zip(arcs, nodes):
-            # TODO: Need parallel process
+            # TODO: Need parallel processing
             reward = controller.simulation(k, placeholder_params)
             controller.backPropagate(node, reward)
         current_best_arc, current_best_node = controller.exploitArc(placeholder_params)
