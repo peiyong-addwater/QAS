@@ -325,7 +325,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss+self.penalty_terms(circ_params)
+        return loss
 
     def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
                                                target_states:List[DensityMatrix],
@@ -366,29 +366,7 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
         return op_list
 
     def penalty_terms(self, circ_params):
-        # penalty for consecutive repeated operations
-        repeated = 0
-        for i in range(1, len(self.k)):
-            if self.k[i-1] == self.k[i]:
-                repeated = repeated + 1
-
-        # penalty for "useless" gates
-        qubits_with_action = set()
-        qubits_with_action.add(0)
-        qubits_with_action.add(1)
-        num_useless = 0
-        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
-        for op in extracted_gates:
-            qubit_list = op.get_qreg_pos()
-            if len(qubit_list) == 1:
-                qubits_with_action.add(qubit_list[0])
-            if len(qubit_list) == 2:
-                if qubit_list[0] not in qubits_with_action:
-                    num_useless = num_useless + 1
-                else:
-                    qubits_with_action.add(qubit_list[1])
-
-        return (repeated+num_useless)/1
+        raise NotImplementedError
 
 
 
@@ -429,7 +407,7 @@ class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss + self.penalty_terms(circ_params)
+        return loss
 
     def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
@@ -445,28 +423,7 @@ class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
         return op_list
 
     def penalty_terms(self, circ_params):
-        # penalty for consecutive repeated operations
-        repeated = 0
-        for i in range(1, len(self.k)):
-            if self.k[i-1] == self.k[i]:
-                repeated = repeated + 1
-
-        # penalty for "useless" gates
-        qubits_with_action = set()
-        qubits_with_action.add(0)
-        num_useless = 0
-        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
-        for op in extracted_gates:
-            qubit_list = op.get_qreg_pos()
-            if len(qubit_list) == 1:
-                qubits_with_action.add(qubit_list[0])
-            if len(qubit_list) == 2:
-                if qubit_list[0] not in qubits_with_action:
-                    num_useless = num_useless + 1
-                else:
-                    qubits_with_action.add(qubit_list[1])
-
-        return repeated+num_useless
+        raise NotImplementedError
 
 
 class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
@@ -506,7 +463,7 @@ class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss + self.penalty_terms(circ_params)
+        return loss
 
     def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
@@ -522,28 +479,7 @@ class BitFlipSearchDensityMatrixNoiseless(SearchDensityMatrix):
         return op_list
 
     def penalty_terms(self, circ_params):
-        # penalty for consecutive repeated operations
-        repeated = 0
-        for i in range(1, len(self.k)):
-            if self.k[i-1] == self.k[i]:
-                repeated = repeated + 1
-
-        # penalty for "useless" gates
-        qubits_with_action = set()
-        qubits_with_action.add(0)
-        num_useless = 0
-        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
-        for op in extracted_gates:
-            qubit_list = op.get_qreg_pos()
-            if len(qubit_list) == 1:
-                qubits_with_action.add(qubit_list[0])
-            if len(qubit_list) == 2:
-                if qubit_list[0] not in qubits_with_action:
-                    num_useless = num_useless + 1
-                else:
-                    qubits_with_action.add(qubit_list[1])
-
-        return repeated+num_useless
+        raise NotImplementedError
 
 class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
@@ -597,28 +533,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         return op_list
 
     def penalty_terms(self, circ_params):
-        # penalty for consecutive repeated operations
-        repeated = 0
-        for i in range(1, len(self.k)):
-            if self.k[i-1] == self.k[i]:
-                repeated = repeated + 1
-
-        # penalty for "useless" gates
-        qubits_with_action = set()
-        qubits_with_action.add(0)
-        num_useless = 0
-        extracted_gates,_ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
-        for op in extracted_gates:
-            qubit_list = op.get_qreg_pos()
-            if len(qubit_list) == 1:
-                qubits_with_action.add(qubit_list[0])
-            if len(qubit_list) == 2:
-                if qubit_list[0] not in qubits_with_action:
-                    num_useless = num_useless + 1
-                else:
-                    qubits_with_action.add(qubit_list[1])
-
-        return repeated+num_useless
+        raise NotImplementedError
 
 """
 pool = default_complete_graph_parameterized_pool(3)
