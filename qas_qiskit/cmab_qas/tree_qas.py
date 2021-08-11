@@ -130,7 +130,7 @@ class MCTSController():
     def setRoot(self):
         self.root = TreeNode(self.initial_state, None)
 
-    def executeRound(self, node:TreeNode = None, params:np.ndarray=None):
+    def executeRound(self, node:TreeNode, params:np.ndarray):
         if node is None:
             node = self.root
         while not node.state.isTerminal():
@@ -210,19 +210,19 @@ class MCTSController():
         return node
 
 
-    def sampleArc(self):
+    def sampleArc(self, params:np.ndarray):
         curr = self.root
         for i in range(self.iteration_limit):
-            self.executeRound(node=curr)
+            self.executeRound(node=curr, params=params)
         while not curr.state.isTerminal():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
         return curr.state.current_k, curr
 
-    def exploitArc(self):
+    def exploitArc(self, params:np.ndarray):
         curr = self.root
         while not curr.state.isTerminal():
             for i in range(self.iteration_limit * self.eval_expansion_factor):
-                self.executeRound(node=curr)
+                self.executeRound(node=curr, params=params)
             curr = self.getBestChild(curr, 0, policy=self.second_policy)
         return curr.state.current_k, curr
 

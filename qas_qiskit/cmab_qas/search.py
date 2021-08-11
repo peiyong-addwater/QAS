@@ -68,8 +68,10 @@ def searchNonParameterized(
     current_best_arc = None
     current_best_node = None
     current_best_reward = None
+    controller.setRoot()
 
     for epoch in range(num_iterations):
+        start = time.time()
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
             print("="*10+"Warming at Epoch {}".format(epoch+1)+"="*10)
@@ -80,18 +82,21 @@ def searchNonParameterized(
         else:
             print("=" * 10 + "Searching at Epoch {}".format(epoch + 1) + "=" * 10)
             for _ in range(arc_batchsize):
-                k, node = controller.sampleArc()
+                k, node = controller.sampleArc(placeholder_params)
                 arcs.append(k)
                 nodes.append(node)
         for k, node in zip(arcs, nodes):
+            # TODO: Need parallel process
             reward = controller.simulation(k, placeholder_params)
             controller.backPropagate(node, reward)
-        current_best_arc, current_best_node = controller.exploitArc()
+        current_best_arc, current_best_node = controller.exploitArc(placeholder_params)
         current_best_reward = controller.simulation(current_best_arc, placeholder_params)
+        end = time.time()
         print("Current Best Reward: {}".format(current_best_reward))
         print("Current Best k:\n", current_best_arc)
         print("Current Ops:")
         print(current_best_node.state)
+        print("="*10+"Epoch Time: {}".format(end-start)+"="*10)
 
     return current_best_arc, current_best_node, current_best_reward
 
