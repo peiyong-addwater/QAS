@@ -211,7 +211,6 @@ class QCircFromK(ABC):
     def get_gradient(self, *args):
         pass
 
-
     @abstractmethod
     def get_extracted_QuantumCircuit_object(self, *args):
         pass
