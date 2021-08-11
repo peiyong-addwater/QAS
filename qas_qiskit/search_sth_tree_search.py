@@ -1,5 +1,5 @@
 from cmab_qas.search import searchNonParameterized
-from cmab_qas.standard_ops import default_complete_graph_non_parameterized_pool
+from cmab_qas.standard_ops import default_complete_graph_non_parameterized_pool, simple_complete_graph_non_parameterized_pool
 from cmab_qas.circuits import (
     BitFlipSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_BIT_FLIP,
@@ -31,7 +31,7 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
-    pool = default_complete_graph_non_parameterized_pool(4)
+    pool = simple_complete_graph_non_parameterized_pool(4)
     searched_k, searched_node, searched_reward = searchNonParameterized(
         model=FourTwoTwoDetectionDensityMatrixNoiseless,
         data = FOUR_TWO_TWO_DETECTION_CODE_DATA,
