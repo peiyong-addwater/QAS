@@ -69,18 +69,19 @@ def searchNonParameterized(
     current_best_node = None
     current_best_reward = None
     controller.setRoot()
+    pool_size = len(op_pool)
 
     for epoch in range(num_iterations):
         start = time.time()
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
-            print("="*10+"Warming at Epoch {}".format(epoch+1)+"="*10)
+            print("="*10+"Warming at Epoch {}, Pool Size: {}".format(epoch+1, pool_size)+"="*10)
             for _ in range(arc_batchsize):
                 k, node = controller.randomSample()
                 arcs.append(k)
                 nodes.append(node)
         else:
-            print("=" * 10 + "Searching at Epoch {}".format(epoch + 1) + "=" * 10)
+            print("=" * 10 + "Searching at Epoch {}, Pool Size: {}".format(epoch + 1, pool_size) + "=" * 10)
             for _ in range(arc_batchsize):
                 k, node = controller.sampleArc(placeholder_params)
                 arcs.append(k)
