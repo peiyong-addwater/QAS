@@ -197,13 +197,14 @@ class MCTSController():
             for key in node.children.keys():
                 child = node.children[key]
                 child_avg_reward = child.totalReward/child.numVisits
-                if child_avg_reward<threshold and child.numVisits>(self.iteration_limit*10):
+                if child_avg_reward<threshold and child.numVisits>(self.iteration_limit*100): # also a magic number
                     pruned_key.append(key)
+            random.shuffle(pruned_key)
             for i, item in enumerate(pruned_key):
+                if i >= len(pruned_key) - 500: # some magic number, set a threshold for the length pruned key list
+                    break
                 node.children.pop(item)
                 self.prune_counter += 1
-                if i >= len(pruned_key) - 3: # some magic number
-                    break
             node = self.getBestChild(node, self.alpha, policy=self.first_policy)
         else:
             node = self.expand(node)

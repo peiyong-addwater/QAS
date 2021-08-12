@@ -1,5 +1,5 @@
 from cmab_qas.search import searchNonParameterized
-from cmab_qas.standard_ops import default_complete_graph_non_parameterized_pool, simple_complete_graph_non_parameterized_pool
+from cmab_qas.standard_ops import GatePool
 from cmab_qas.circuits import (
     BitFlipSearchDensityMatrixNoiseless,
     SIMPLE_DATASET_BIT_FLIP,
@@ -31,16 +31,19 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
-    pool = simple_complete_graph_non_parameterized_pool(4)
+    d_np = ["CXGate"]
+    s_np = ["XGate", "YGate", "ZGate", "HGate", "TGate", "TdgGate", "SGate","SdgGate"]
+    pool = GatePool(4, s_np, d_np)
     searched_k, searched_node, searched_reward = searchNonParameterized(
         model=FourTwoTwoDetectionDensityMatrixNoiseless,
         data = FOUR_TWO_TWO_DETECTION_CODE_DATA,
         init_qubit_with_actions={0, 1},
         num_iterations=1000,
         num_warmup_iterations=100,
-        arc_batchsize=40,
-        alpha=1/np.sqrt(2),
-        prune_constant=0.9,
+        iteration_limit=10,
+        arc_batchsize=300,
+        alpha=1,
+        prune_constant=0.5,
         eval_expansion_factor=100,
         op_pool=pool,
         target_circuit_depth=6,

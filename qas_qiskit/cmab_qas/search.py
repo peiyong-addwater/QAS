@@ -38,6 +38,7 @@ def searchNonParameterized(
         init_qubit_with_actions: Set,
         num_iterations = 500,
         num_warmup_iterations = 20,
+        iteration_limit = 5,
         arc_batchsize = 20,
         alpha=1 / np.sqrt(2),
         prune_constant=0.9,
@@ -56,7 +57,7 @@ def searchNonParameterized(
     assert num_warmup_iterations >= 10
     controller = MCTSController(model,
                                 data,
-                                iteration_limit=5,
+                                iteration_limit=iteration_limit,
                                 alpha=alpha,
                                 prune_constant=prune_constant,
                                 eval_expansion_factor=eval_expansion_factor,
@@ -93,6 +94,7 @@ def searchNonParameterized(
         current_best_arc, current_best_node = controller.exploitArc(placeholder_params)
         current_best_reward = controller.simulation(current_best_arc, placeholder_params)
         end = time.time()
+        print("Prune Count: {}".format(controller.prune_counter))
         print("Current Best Reward: {}".format(current_best_reward))
         print("Current Best k:\n", current_best_arc)
         print("Current Ops:")
