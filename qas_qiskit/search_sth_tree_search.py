@@ -31,6 +31,14 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
+
+    filename = nowtime()
+    task = "FOUR_TWO_TWO"
+    model = FourTwoTwoDetectionDensityMatrixNoiseless
+    data = FOUR_TWO_TWO_DETECTION_CODE_DATA
+    init_qubit_with_actions = {0,1}
+
+
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
     pool = GatePool(4, s_np, d_np)
@@ -39,9 +47,9 @@ if __name__ == "__main__":
     c = len(pool)
     init_params = np.random.randn(p,c,l)
     final_params, final_best_arc, final_best_node, final_best_reward = searchParameterized(
-        model=FourTwoTwoDetectionDensityMatrixNoiseless,
-        data=FOUR_TWO_TWO_DETECTION_CODE_DATA,
-        init_qubit_with_actions={0,1},
+        model=model,
+        data=data,
+        init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=500,
         num_warmup_iterations=50,
@@ -59,3 +67,12 @@ if __name__ == "__main__":
         super_circ_train_gradient_noise_factor=1/20,
         super_circ_train_lr=0.01
     )
+    res_dict = {
+        'task':task,
+        'pool':pool.pool,
+        'params':final_params,
+        'k':final_best_arc,
+        'ops':model(p,c,l,final_best_arc,pool).get_circuit_ops(final_params)
+    }
+    with open(filename, 'w') as f:
+        json.dump(res_dict, f, indent=4, cls=NpEncoder)
