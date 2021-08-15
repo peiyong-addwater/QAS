@@ -89,7 +89,9 @@ def searchNonParameterized(
         op_pool: GatePool = None,
         target_circuit_depth=20,
         first_policy='local_optimal',
-        second_policy='local_optimal'
+        second_policy='local_optimal',
+        iteration_limit_ratio = 10,
+        num_minimum_children=10
 ):
     p = target_circuit_depth
     l = 3
@@ -108,7 +110,9 @@ def searchNonParameterized(
                                 init_qubit_with_actions=init_qubit_with_actions,
                                 target_circuit_depth=target_circuit_depth,
                                 first_policy=first_policy,
-                                second_policy=second_policy)
+                                second_policy=second_policy,
+                                iteration_limit_ratio=iteration_limit_ratio,
+                                num_minimum_children=num_minimum_children)
     current_best_arc = None
     current_best_node = None
     current_best_reward = None
@@ -166,7 +170,9 @@ def searchParameterized(
         super_circ_train_iterations = 20,
         super_circ_train_optimizer = optax.adam,
         super_circ_train_gradient_noise_factor = 1/20,
-        super_circ_train_lr = 0.01
+        super_circ_train_lr = 0.01,
+        iteration_limit_ratio = 10,
+        num_minimum_children=10
 ):
     p = target_circuit_depth
     l = init_params.shape[2]
@@ -184,7 +190,9 @@ def searchParameterized(
                                 init_qubit_with_actions=init_qubit_with_actions,
                                 target_circuit_depth=target_circuit_depth,
                                 first_policy=first_policy,
-                                second_policy=second_policy)
+                                second_policy=second_policy,
+                                iteration_limit_ratio=iteration_limit_ratio,
+                                num_minimum_children=num_minimum_children)
     current_best_arc = None
     current_best_node = None
     current_best_reward = None

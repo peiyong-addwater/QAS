@@ -102,7 +102,9 @@ class MCTSController():
                  init_qubit_with_actions:Set = None,
                  target_circuit_depth = 2,
                  first_policy='local_optimal',
-                 second_policy='local_optimal'):
+                 second_policy='local_optimal',
+                 iteration_limit_ratio = 10,
+                 num_minimum_children=10):
         assert len(data) == 2
         self.model = model
         self.data_list = data
@@ -122,6 +124,8 @@ class MCTSController():
                                       qubit_with_actions=self.init_qubit_with_actions)
         self.first_policy = first_policy
         self.second_policy = second_policy
+        self.iteration_limit_ratio = iteration_limit_ratio
+        self.num_minimum_children = num_minimum_children
 
     def _reset(self):
         self.root = TreeNode(self.initial_state, None)
@@ -197,11 +201,11 @@ class MCTSController():
             for key in node.children.keys():
                 child = node.children[key]
                 child_avg_reward = child.totalReward/child.numVisits
-                if child_avg_reward<threshold and child.numVisits>(self.iteration_limit*10): # also a magic number
+                if child_avg_reward<threshold and child.numVisits>(self.iteration_limit*self.iteration_limit_ratio): # also a magic number
                     pruned_key.append(key)
             random.shuffle(pruned_key)
             for i, item in enumerate(pruned_key):
-                if i >= len(pruned_key) - 10: # some magic number, set a threshold for the length pruned key list
+                if i >= len(pruned_key) - self.num_minimum_children: # some magic number, set a threshold for the length pruned key list
                     break
                 node.children.pop(item)
                 self.prune_counter += 1
