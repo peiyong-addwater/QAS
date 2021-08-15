@@ -33,16 +33,16 @@ def nowtime():
 if __name__ == "__main__":
 
     filename = nowtime()
-    task = "FOUR_TWO_TWO"
-    model = FourTwoTwoDetectionDensityMatrixNoiseless
-    data = FOUR_TWO_TWO_DETECTION_CODE_DATA
-    init_qubit_with_actions = {0,1}
+    task = "PHASE_FLIP"
+    model = PhaseFlipDensityMatrixNoiseless
+    data = SIMPLE_DATASET_PHASE_FLIP
+    init_qubit_with_actions = {0}
 
 
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(4, s_np, d_np)
-    p = 6
+    pool = GatePool(3, s_np, d_np)
+    p = 3
     l = 3
     c = len(pool)
     init_params = np.random.randn(p,c,l)
@@ -51,12 +51,12 @@ if __name__ == "__main__":
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500,
-        num_warmup_iterations=50,
+        num_iterations=1000,
+        num_warmup_iterations=100,
         iteration_limit=5,
         arc_batchsize=200,
-        alpha=1,
-        prune_constant=0.9,
+        alpha=2,
+        prune_constant=0.5,
         eval_expansion_factor=100,
         op_pool=pool,
         target_circuit_depth=p,
