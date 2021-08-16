@@ -32,7 +32,7 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    filename = nowtime()
+    filename = nowtime()+'.json'
     task = "PHASE_FLIP"
     model = PhaseFlipDensityMatrixNoiseless
     data = SIMPLE_DATASET_PHASE_FLIP

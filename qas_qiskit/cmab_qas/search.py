@@ -199,6 +199,11 @@ def searchParameterized(
     controller.setRoot()
     pool_size = len(op_pool)
     params = init_params
+    optimizer = super_circ_train_optimizer(super_circ_train_lr)
+    opt_state = optimizer.init(params)
+    assert len(data) == 2
+    input_state = data[0]
+    target_state = data[1]
     for epoch in range(num_iterations):
         start = time.time()
         arcs, nodes = [], []
@@ -223,19 +228,30 @@ def searchParameterized(
                 k, node = controller.sampleArc(params)
                 arcs.append(k)
                 nodes.append(node)
-        print("Batch Training, {} Iterations in Total...".format(super_circ_train_iterations))
-        params, loss_list = batch_training(
-            initial_param_proxy=params,
-            circ_constructor=model,
-            num_epochs=super_circ_train_iterations,
-            k_list=arcs,
-            op_pool=op_pool,
-            training_data=data,
-            optimizer_callable=super_circ_train_optimizer,
-            lr = super_circ_train_lr,
-            circ_noise_factor=super_circ_train_gradient_noise_factor
+        print("Batch Training, Update the Parameter Pool for One Iteration".format(super_circ_train_iterations))
+        batch_circs = [model(p,c,l,k,op_pool) for k in arcs]
+        circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(
+            delayed(_circ_obj_get_gradient_dm)(constructed_circ, params, input_state, target_state)
+            for constructed_circ in batch_circs
         )
-        reward_list = [1-l for l in loss_list]
+        circ_batch_gradients = jnp.stack(circ_batch_gradients, axis=0)
+        circ_batch_gradients = jnp.nan_to_num(circ_batch_gradients)
+        circ_gradient = jnp.mean(circ_batch_gradients, axis=0)
+        # add some noise to the circuit gradient
+        seed = np.random.randint(0, 1000000000)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key, shape=(p, c, l))
+        circ_gradient = circ_gradient + noise * super_circ_train_gradient_noise_factor
+        circ_updates, opt_state = optimizer.update(circ_gradient, opt_state)
+        params = optax.apply_updates(params, circ_updates)
+        params = np.array(params)
+        loss_list = Parallel(n_jobs=-1, verbose=0)(
+            delayed(_circ_obj_get_loss_dm)(constructed_circ, params, input_state, target_state)
+            for constructed_circ in batch_circs
+        )
+
+        reward_list = [1-c for c in loss_list]
+
         for r, node in zip(reward_list, nodes):
             controller.backPropagate(node, r)
         current_best_arc, current_best_node = controller.exploitArc(params)
