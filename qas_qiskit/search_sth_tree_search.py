@@ -33,25 +33,25 @@ def nowtime():
 if __name__ == "__main__":
 
     filename = nowtime()+'.json'
-    task = "PHASE_FLIP"
-    model = PhaseFlipDensityMatrixNoiseless
-    data = SIMPLE_DATASET_PHASE_FLIP
+    task = "FIVE_BIT_CODE"
+    model = FiveBitCodeSearchDensityMatrixNoiseless
+    data = SIMPLE_DATASET_FIVE_BIT_CODE
     init_qubit_with_actions = {0}
-
-
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(3, s_np, d_np)
-    p = 3
+    pool = GatePool(5, s_np, d_np)
+    p = 20
     l = 3
     c = len(pool)
+
+
     init_params = np.random.randn(p,c,l)
     final_params, final_best_arc, final_best_node, final_best_reward = searchParameterized(
         model=model,
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
+        num_iterations=500,
         num_warmup_iterations=100,
         iteration_limit=5,
         arc_batchsize=200,

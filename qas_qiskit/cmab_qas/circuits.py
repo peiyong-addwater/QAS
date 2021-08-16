@@ -517,7 +517,7 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
         backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
         loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
 
-        return loss + self.penalty_terms(circ_params)
+        return loss
 
     def get_gradient(self, circ_params,init_states, target_states):
         assert self.p == circ_params.shape[0]
