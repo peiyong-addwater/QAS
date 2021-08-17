@@ -33,7 +33,7 @@ def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
 
-    random.seed(2077) # Thessia
+    # random.seed(2077) # Thessia
 
     filename = nowtime()+'.json'
     task = "FIVE_BIT_CODE"
