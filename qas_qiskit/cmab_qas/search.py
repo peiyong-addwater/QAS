@@ -224,6 +224,7 @@ def searchParameterized(
                                                                                                   pool_size,
                                                                                                   arc_batchsize)
                   + "=" * 10)
+            controller._reset()
             for _ in range(arc_batchsize):
                 k, node = controller.sampleArc(params)
                 arcs.append(k)
@@ -245,10 +246,8 @@ def searchParameterized(
         circ_updates, opt_state = optimizer.update(circ_gradient, opt_state)
         params = optax.apply_updates(params, circ_updates)
         params = np.array(params)
-        loss_list = Parallel(n_jobs=-1, verbose=0)(
-            delayed(_circ_obj_get_loss_dm)(constructed_circ, params, input_state, target_state)
-            for constructed_circ in batch_circs
-        )
+        loss_list = [_circ_obj_get_loss_dm(constructed_circ, params, input_state, target_state)
+                     for constructed_circ in batch_circs]
 
         reward_list = [1-c for c in loss_list]
 
