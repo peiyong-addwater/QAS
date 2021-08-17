@@ -52,7 +52,7 @@ if __name__ == "__main__":
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=500,
-        num_warmup_iterations=100,
+        num_warmup_iterations=50,
         iteration_limit=5,
         arc_batchsize=200,
         alpha=2,
