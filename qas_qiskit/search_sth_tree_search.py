@@ -16,6 +16,7 @@ import optax
 import jax.numpy as jnp
 import jax
 import time
+import random
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -31,6 +32,8 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
+
+    random.seed(2077) # Thessia
 
     filename = nowtime()+'.json'
     task = "FIVE_BIT_CODE"
@@ -54,7 +57,7 @@ if __name__ == "__main__":
         num_iterations=500,
         num_warmup_iterations=50,
         iteration_limit=5,
-        arc_batchsize=200,
+        arc_batchsize=100,
         alpha=2,
         prune_constant=0.5,
         eval_expansion_factor=100,
@@ -66,7 +69,7 @@ if __name__ == "__main__":
         super_circ_train_optimizer=optax.adam,
         super_circ_train_gradient_noise_factor=1/20,
         super_circ_train_lr=0.01,
-        iteration_limit_ratio=10,
+        iteration_limit_ratio=5,
         num_minimum_children=10
     )
     res_dict = {
