@@ -128,6 +128,7 @@ def searchParameterized(
     assert len(data) == 2
     input_state = data[0]
     target_state = data[1]
+    # TODO: Add decaying of alpha and prune rate
     for epoch in range(num_iterations):
         start = time.time()
         arcs, nodes = [], []

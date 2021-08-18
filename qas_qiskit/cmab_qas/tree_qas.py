@@ -226,6 +226,7 @@ class MCTSController():
     def exploitArc(self, params:np.ndarray):
         curr = self.root
         while not curr.state.isTerminal():
+            # execute the round from a node multiple times, then select the best child
             for i in range(self.iteration_limit * self.eval_expansion_factor):
                 self.executeRound(node=curr, params=params)
             curr = self.getBestChild(curr, 0, policy=self.second_policy)
