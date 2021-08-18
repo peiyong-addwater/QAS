@@ -32,6 +32,29 @@ for c in [ket0, ket1]:
     for d in [ket0, ket1]:
         FOUR_TWO_TWO_DETECTION_CODE_INPUT.append(np.kron(c, d))
 
+TOFFOLI_INPUT = []
+for a in [ket0, ket1]:
+    for b in [ket0, ket1]:
+        for c in [ket0, ket1]:
+            temp = np.kron(a, b)
+            s = np.kron(temp, c)
+            TOFFOLI_INPUT.append(s)
+
+def get_data_ccx_gate(init_states:List[np.ndarray])->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(3)
+    backbone_circ.ccx(0, 1, 2)
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(3)
+        qc.initialize(state, [0,1,2])
+        qc.append(backbone_circ.to_instruction(), [0, 1, 2])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result))
+    return encoded_states
+
 
 def generate_single_qubit_state(theta_B:float, phi_B:float)->np.ndarray:
     return np.cos(theta_B/2)*ket0 + np.sin(theta_B/2)*np.exp(1j*phi_B)*ket1
@@ -196,6 +219,10 @@ FOUR_TWO_TWO_DETECTION_CODE_DATA = []
 FOUR_TWO_TWO_DETECTION_CODE_DATA.append(FOUR_TWO_TWO_DETECTION_CODE_INPUT)
 FOUR_TWO_TWO_DETECTION_CODE_DATA.append(get_code_space_422_detection_code(FOUR_TWO_TWO_DETECTION_CODE_INPUT))
 
+TOFFOLI_DATA = []
+TOFFOLI_DATA.append(TOFFOLI_INPUT)
+TOFFOLI_DATA.append(get_data_ccx_gate(TOFFOLI_INPUT))
+
 
 class QCircFromK(ABC):
 
@@ -286,6 +313,61 @@ class SearchDensityMatrix(QCircFromK):
         return 1-np.average(fid_list)
 
     def penalty_terms(self, *args):
+        raise NotImplementedError
+
+class ToffoliCircuitDensityMatrixNoiseless(SearchDensityMatrix):
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p,c,l
+        self.num_qubits = 3
+
+        # self.gradient = self.parameter_shift_gradient()
+
+    def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
+        shift = np.pi/2
+        all_param_indices = []
+        for gate_param_indices in param_indices:
+            for index in gate_param_indices:
+                all_param_indices.append(index)
+        gradients = Parallel(n_jobs=-1, verbose=0)(delayed(self.gradient_parameter_shift_single_parameter)(
+            self.num_qubits, circ_params, index, init_states, target_states, shift
+        ) for index in all_param_indices)
+        gradients = jnp.stack(gradients, axis=0)
+        gradients = jnp.sum(gradients, axis=0)
+        return gradients
+
+
+    def get_extracted_QuantumCircuit_object(self, circ_params):
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
+        return backbone_circ
+
+
+    def get_loss(self, circ_params, init_states, target_states):
+        assert self.p == circ_params.shape[0]
+        assert self.c == circ_params.shape[1]
+        assert self.l == circ_params.shape[2]
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
+        loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
+
+        return loss
+
+    def get_gradient(self, circ_params,init_states, target_states):
+        assert self.p == circ_params.shape[0]
+        assert self.c == circ_params.shape[1]
+        assert self.l == circ_params.shape[2]
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+
+        return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
+
+    def get_circuit_ops(self, circ_params):
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        op_list = [str(c) for c in extracted_gates]
+        return op_list
+
+    def penalty_terms(self, circ_params):
         raise NotImplementedError
 
 class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):

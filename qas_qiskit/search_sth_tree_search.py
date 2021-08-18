@@ -8,7 +8,9 @@ from cmab_qas.circuits import (
     FourTwoTwoDetectionDensityMatrixNoiseless,
     FOUR_TWO_TWO_DETECTION_CODE_DATA,
     FiveBitCodeSearchDensityMatrixNoiseless,
-    SIMPLE_DATASET_FIVE_BIT_CODE
+    SIMPLE_DATASET_FIVE_BIT_CODE,
+    TOFFOLI_DATA,
+    ToffoliCircuitDensityMatrixNoiseless
 )
 import json
 import numpy as np
@@ -36,14 +38,14 @@ if __name__ == "__main__":
     # random.seed(2077) # Thessia
 
     filename = nowtime()+'.json'
-    task = "FIVE_BIT_CODE"
-    model = FiveBitCodeSearchDensityMatrixNoiseless
-    data = SIMPLE_DATASET_FIVE_BIT_CODE
-    init_qubit_with_actions = {0}
+    task = "TOFFOLI"
+    model = ToffoliCircuitDensityMatrixNoiseless
+    data = TOFFOLI_DATA
+    init_qubit_with_actions = {0, 1, 2}
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(5, s_np, d_np)
-    p = 20
+    pool = GatePool(3, s_np, d_np)
+    p = 16
     l = 3
     c = len(pool)
 
