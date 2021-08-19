@@ -121,8 +121,10 @@ def searchParameterized(
         num_warmup_iterations = 20,
         iteration_limit = 5,
         arc_batchsize = 200,
-        alpha=1 / np.sqrt(2),
-        prune_constant=0.9,
+        alpha_max = 2,
+        alpha_min=1 / np.sqrt(2),
+        prune_constant_max=0.9,
+        prune_constant_min = 0.5,
         eval_expansion_factor=100,
         op_pool: GatePool = None,
         target_circuit_depth=20,
@@ -141,11 +143,13 @@ def searchParameterized(
     assert len(data) == 2
     assert p == init_params.shape[0]
     assert c == init_params.shape[1]
+    assert alpha_min<=alpha_max
+    assert prune_constant_min<=prune_constant_max
     controller = MCTSController(model,
                                 data,
                                 iteration_limit=iteration_limit,
-                                alpha=alpha,
-                                prune_constant=prune_constant,
+                                alpha=alpha_max,
+                                prune_constant=prune_constant_min,
                                 eval_expansion_factor=eval_expansion_factor,
                                 op_pool=op_pool,
                                 init_qubit_with_actions=init_qubit_with_actions,
@@ -188,6 +192,11 @@ def searchParameterized(
                                                                                                   arc_batchsize)
                   + "=" * 10)
             controller._reset()
+            new_alpha = alpha_max - (alpha_max-alpha_min)/(num_iterations-num_warmup_iterations) * (epoch+1-num_warmup_iterations)
+            controller.alpha = new_alpha # alpha decreases as epoch increases
+            new_prune_rate = prune_constant_min + (prune_constant_max-prune_constant_min)/(num_iterations-num_warmup_iterations)* (epoch+1-num_warmup_iterations)
+            controller.prune_constant = new_prune_rate # prune rate increases as epoch increases
+
             for _ in range(arc_batchsize):
                 k, node = controller.sampleArc(params)
                 arcs.append(k)
