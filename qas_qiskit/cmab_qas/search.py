@@ -93,7 +93,12 @@ def single_circuit_training(
     assert len(training_data) == 2
     input_state = training_data[0]
     target_state = training_data[1]
+    loss_list = []
     for epoch in range(num_epochs):
+        loss = _circ_obj_get_loss_dm(circ, circ_params, input_state, target_state)
+        loss_list.append(loss)
+        if verbose >= 1:
+            print('Training Circuit at Epoch {}/{}; Loss: {}'.format(epoch+1, num_epochs, loss))
         gradients = _circ_obj_get_gradient_dm(circ, circ_params, input_state, target_state)
         gradients = jnp.nan_to_num(gradients)
         seed = np.random.randint(0, 1000000000)
@@ -104,7 +109,7 @@ def single_circuit_training(
         circ_params = optax.apply_updates(circ_params, circ_updates)
         circ_params = np.array(circ_params)
 
-    return circ_params
+    return circ_params, loss_list
 
 
 def searchParameterized(
