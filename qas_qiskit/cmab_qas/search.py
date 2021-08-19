@@ -133,10 +133,11 @@ def searchParameterized(
         start = time.time()
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
-            print("="*10+"Warming at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, Arc Batch Size: {}".format(epoch+1,
-                                                                                                 num_iterations,
-                                                                                                 num_warmup_iterations,
-                                                                                                 pool_size,
+            print("="*10+"Sampling at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, Arc Batch Size: {}".format(
+                                                                                                epoch+1,
+                                                                                                num_iterations,
+                                                                                                num_warmup_iterations,
+                                                                                                pool_size,
                                                                                                 arc_batchsize)
                   +"="*10)
             for _ in range(arc_batchsize):
