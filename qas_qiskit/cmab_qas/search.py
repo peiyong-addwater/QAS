@@ -72,7 +72,39 @@ def batch_training(initial_param_proxy:np.ndarray,
     final_loss_list = [circ_obj.get_loss(final_params, input_state, target_state) for circ_obj in batch_circs]
     return final_params, final_loss_list
 
+def single_circuit_training(
+        initial_params:np.ndarray,
+        circ_constructor:Callable,
+        num_epochs:int,
+        k:List[int],
+        op_pool:GatePool,
+        training_data:List[List],
+        optimizer_callable:Callable=optax.adam,
+        lr = 0.01,
+        grad_noise_factor = 1/20,
+        verbose = 1
+):
+    p, c, l = initial_params.shape[0], initial_params.shape[1], initial_params.shape[2]
+    circ = circ_constructor(p, c, l, k, op_pool)
+    optimizer = optimizer_callable(lr)
+    circ_params = initial_params
+    opt_state = optimizer.init(circ_params)
 
+    assert len(training_data) == 2
+    input_state = training_data[0]
+    target_state = training_data[1]
+    for epoch in range(num_epochs):
+        gradients = _circ_obj_get_gradient_dm(circ, circ_params, input_state, target_state)
+        gradients = jnp.nan_to_num(gradients)
+        seed = np.random.randint(0, 1000000000)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key, shape=(p, c, l))
+        gradients = gradients + noise*grad_noise_factor
+        circ_updates, opt_state = optimizer.update(gradients, opt_state)
+        circ_params = optax.apply_updates(circ_params, circ_updates)
+        circ_params = np.array(circ_params)
+
+    return circ_params
 
 
 def searchParameterized(
