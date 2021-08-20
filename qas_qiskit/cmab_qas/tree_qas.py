@@ -80,7 +80,6 @@ class QASState():
 
 class TreeNode():
     # https://github.com/pbsinclair42/MCTS/blob/master/mcts.py
-    # TODO: Add initial reward?
     def __init__(self, state:QASState, parent):
         self.state = state
         self.isTerminal = state.isTerminal()
