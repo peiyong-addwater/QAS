@@ -39,13 +39,13 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI"
-    model = ToffoliCircuitDensityMatrixNoiseless
-    data = TOFFOLI_DATA
-    init_qubit_with_actions = {0, 1, 2}
+    task = "FIVE_BIT_CODE"
+    model = FiveBitCodeSearchDensityMatrixNoiseless
+    data = SIMPLE_DATASET_FIVE_BIT_CODE
+    init_qubit_with_actions = {0}
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(3, s_np, d_np, complete_undirected_graph=True, two_qubit_gate_map=None)
+    pool = GatePool(5, s_np, d_np, complete_undirected_graph=True, two_qubit_gate_map=None)
     p = 16
     l = 3
     c = len(pool)

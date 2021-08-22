@@ -28,7 +28,7 @@ class QASState():
         assert self.current_depth <= self.max_depth
         self.pool_obj = op_pool
         self.op_name_dict = op_pool.pool
-        self.pool_keys = op_pool.pool.keys()
+        self.pool_keys = list(op_pool.pool.keys())
         self.state = None
         self.qubit_with_actions = qubit_with_actions
 
@@ -117,7 +117,7 @@ class MCTSController():
         self.prune_counter = 0
         self.op_pool = op_pool
         self.op_pool_dict = op_pool.pool
-        self.pool_keys = self.op_pool_dict.keys()
+        self.pool_keys = list(self.op_pool_dict.keys())
         self.max_depth = target_circuit_depth
         self.init_qubit_with_actions = set() if init_qubit_with_actions is None else init_qubit_with_actions
         self.initial_state = QASState(op_pool=self.op_pool, maxDepth=self.max_depth,
@@ -198,7 +198,7 @@ class MCTSController():
             node_avg_reward = node.totalReward/node.numVisits
             threshold = node_avg_reward*self.prune_constant
             pruned_key = []
-            for key in node.children.keys():
+            for key in list(node.children.keys()):
                 child = node.children[key]
                 child_avg_reward = child.totalReward/child.numVisits
                 if child_avg_reward<threshold and child.numVisits>(self.iteration_limit*self.iteration_limit_ratio): # also a magic number
