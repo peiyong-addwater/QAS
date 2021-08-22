@@ -1,4 +1,6 @@
 import itertools
+import pickle
+import os
 import time
 import optax
 from joblib import Parallel, delayed
@@ -135,8 +137,11 @@ def searchParameterized(
         super_circ_train_gradient_noise_factor = 1/20,
         super_circ_train_lr = 0.01,
         iteration_limit_ratio = 10,
-        num_minimum_children=10
+        num_minimum_children=10,
+        checkpoint_file_name_start:str=None
 ):
+    if not os.path.isdir(os.path.join(os.getcwd(), 'checkpoints')):
+        os.mkdir(os.path.join(os.getcwd(), 'checkpoints'))
     p = target_circuit_depth
     l = init_params.shape[2]
     c = len(op_pool)
@@ -233,5 +238,34 @@ def searchParameterized(
         print("Current Ops:")
         print(current_best_node.state)
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
+        if epoch%10 == 0:
+            # save the controller every 10 epochs
+            checkpt = {"controller":controller,
+                       "params":params,
+                       "model":model,
+                       "pool":op_pool,
+                       "curr_best_k":current_best_arc,
+                       "curr_best_r":current_best_reward}
+            pkl_filename = checkpoint_file_name_start+"_epoch={}".format(epoch)+".pkl"
+            checkpt_filename = os.path.join(os.getcwd(),'checkpoints')
+            checkpt_filename = os.path.join(checkpt_filename, pkl_filename)
+            outfile = open(checkpt_filename, 'wb')
+            pickle.dump(checkpt, outfile)
+            outfile.close()
 
-    return params, current_best_arc, current_best_node, current_best_reward
+        if epoch==num_iterations-1:
+            # save the controller every 10 epochs
+            checkpt = {"controller":controller,
+                       "params":params,
+                       "model":model,
+                       "pool":op_pool,
+                       "curr_best_k":current_best_arc,
+                       "curr_best_r":current_best_reward}
+            pkl_filename = checkpoint_file_name_start + "_epoch=final" + ".pkl"
+            checkpt_filename = os.path.join(os.getcwd(), 'checkpoints')
+            checkpt_filename = os.path.join(checkpt_filename, pkl_filename)
+            outfile = open(checkpt_filename, 'wb')
+            pickle.dump(checkpt, outfile)
+            outfile.close()
+
+    return params, current_best_arc, current_best_node, current_best_reward, controller

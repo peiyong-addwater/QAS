@@ -1,4 +1,4 @@
-from cmab_qas.search import searchParameterized
+from cmab_qas.search import searchParameterized, single_circuit_training
 from cmab_qas.standard_ops import GatePool
 from cmab_qas.circuits import (
     BitFlipSearchDensityMatrixNoiseless,
@@ -37,7 +37,8 @@ if __name__ == "__main__":
 
     # random.seed(2077) # Thessia
 
-    filename = nowtime()+'.json'
+    marker = nowtime()
+    filename = marker+'.json'
     task = "TOFFOLI"
     model = ToffoliCircuitDensityMatrixNoiseless
     data = TOFFOLI_DATA
@@ -51,7 +52,7 @@ if __name__ == "__main__":
 
 
     init_params = np.random.randn(p,c,l)
-    final_params, final_best_arc, final_best_node, final_best_reward = searchParameterized(
+    final_params, final_best_arc, final_best_node, final_best_reward, final_controller = searchParameterized(
         model=model,
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
@@ -74,14 +75,36 @@ if __name__ == "__main__":
         super_circ_train_gradient_noise_factor=1/20,
         super_circ_train_lr=0.01,
         iteration_limit_ratio=5,
-        num_minimum_children=10
+        num_minimum_children=10,
+        checkpoint_file_name_start=marker
     )
+
+    # train the best arc:
+    final_params, loss_list = single_circuit_training(
+        initial_params=final_params,
+        circ_constructor=model,
+        num_epochs=200,
+        k = final_best_arc,
+        op_pool=pool,
+        training_data=data,
+        optimizer_callable=optax.adam,
+        lr=0.01,
+        grad_noise_factor=1/20,
+        verbose=1
+    )
+
+
+
     res_dict = {
         'task':task,
         'pool':pool.pool,
         'params':final_params,
         'k':final_best_arc,
-        'ops':model(p,c,l,final_best_arc,pool).get_circuit_ops(final_params)
+        'ops':model(p,c,l,final_best_arc,pool).get_circuit_ops(final_params),
+        'final_training_res':{
+            'params':final_params,
+            'loss_list':loss_list
+        }
     }
     with open(filename, 'w') as f:
         json.dump(res_dict, f, indent=4, cls=NpEncoder)
