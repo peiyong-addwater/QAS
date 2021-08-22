@@ -174,6 +174,7 @@ def searchParameterized(
     assert len(data) == 2
     input_state = data[0]
     target_state = data[1]
+    best_rewards = []
     for epoch in range(num_iterations):
         start = time.time()
         arcs, nodes = [], []
@@ -238,6 +239,7 @@ def searchParameterized(
         print("Current Ops:")
         print(current_best_node.state)
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
+        best_rewards.append(current_best_reward)
         if epoch%10 == 0:
             # save the controller every 10 epochs
             checkpt = {"controller":controller,
@@ -268,4 +270,4 @@ def searchParameterized(
             pickle.dump(checkpt, outfile)
             outfile.close()
 
-    return params, current_best_arc, current_best_node, current_best_reward, controller
+    return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards

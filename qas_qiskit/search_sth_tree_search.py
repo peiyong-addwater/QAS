@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
 
     init_params = np.random.randn(p,c,l)
-    final_params, final_best_arc, final_best_node, final_best_reward, final_controller = searchParameterized(
+    final_params, final_best_arc, final_best_node, final_best_reward, final_controller, reward_list = searchParameterized(
         model=model,
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
@@ -101,6 +101,7 @@ if __name__ == "__main__":
         'params':final_params,
         'k':final_best_arc,
         'ops':model(p,c,l,final_best_arc,pool).get_circuit_ops(final_params),
+        "reward_list":reward_list,
         'final_training_res':{
             'params':final_params,
             'loss_list':loss_list
