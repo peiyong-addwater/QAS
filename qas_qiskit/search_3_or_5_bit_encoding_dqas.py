@@ -242,7 +242,7 @@ if __name__ == "__main__":
 
     # Fine tune the circuit after architecture search
     tuned_circ_param, tuned_circ, tuned_op_list, _, fine_tune_loss_list = \
-        train_circuit(500,
+        train_circuit(1000,
                     circ_constructor=circ_constructor,
                     init_params=np.random.randn(p*c*l).reshape((p,c,l)),
                     k=final_k,

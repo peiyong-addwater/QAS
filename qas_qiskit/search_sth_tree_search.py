@@ -39,14 +39,14 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI"
-    model = ToffoliCircuitDensityMatrixNoiseless
-    data = TOFFOLI_DATA
-    init_qubit_with_actions = {0,1,2}
+    task = "FIVE_BIT_CODE"
+    model = FiveBitCodeSearchDensityMatrixNoiseless
+    data = SIMPLE_DATASET_FIVE_BIT_CODE
+    init_qubit_with_actions = {0}
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(3, s_np, d_np, complete_undirected_graph=True, two_qubit_gate_map=None)
-    p = 16
+    pool = GatePool(5, s_np, d_np, complete_undirected_graph=True, two_qubit_gate_map=None)
+    p = 20
     l = 3
     c = len(pool)
 
@@ -57,8 +57,8 @@ if __name__ == "__main__":
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500,
-        num_warmup_iterations=50,
+        num_iterations=800,
+        num_warmup_iterations=100,
         iteration_limit=5,
         arc_batchsize=100,
         alpha_max=2,
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     final_params, loss_list = single_circuit_training(
         initial_params=final_params,
         circ_constructor=model,
-        num_epochs=200,
+        num_epochs=500,
         k = final_best_arc,
         op_pool=pool,
         training_data=data,
