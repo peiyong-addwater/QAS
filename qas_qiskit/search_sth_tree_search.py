@@ -104,7 +104,8 @@ if __name__ == "__main__":
         "reward_list":reward_list,
         'final_training_res':{
             'params':final_params,
-            'loss_list':loss_list
+            'loss_list':loss_list,
+            'ops':model(p,c,l,final_best_arc,pool).get_circuit_ops(final_params)
         }
     }
     with open(filename, 'w') as f:
