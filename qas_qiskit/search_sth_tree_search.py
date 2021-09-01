@@ -1,4 +1,4 @@
-from cmab_qas.search import searchParameterized, single_circuit_training
+from cmab_qas.search import searchParameterized, single_circuit_training, TreeNode
 from cmab_qas.standard_ops import GatePool
 from cmab_qas.circuits import (
     BitFlipSearchDensityMatrixNoiseless,
@@ -39,16 +39,33 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "FIVE_BIT_CODE"
-    model = FiveBitCodeSearchDensityMatrixNoiseless
-    data = SIMPLE_DATASET_FIVE_BIT_CODE
-    init_qubit_with_actions = {0}
+    task = "TOFFOLI_RESTRICTED_POOL"
+    model = ToffoliCircuitDensityMatrixNoiseless
+    data = TOFFOLI_DATA
+    init_qubit_with_actions = {0,1,2}
     d_np = ["CU3Gate"]
     s_np = ["U3Gate"]
-    pool = GatePool(5, s_np, d_np, complete_undirected_graph=True, two_qubit_gate_map=None)
-    p = 20
+    cu3_map = [(0,1), (0,2), (1,2)]
+    pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
+    p = 13
     l = 3
     c = len(pool)
+    print("CU3" in list(pool[5].keys())[0])
+    exit(0)
+
+    # penalty function:
+    def max_six_cu3(r:float, node:TreeNode):
+        k = node.state.current_k
+        cu3_count = 0
+        for op_index in k:
+            op_name = list(pool[op_index].keys())[0]
+            if "CU3" in op_name:
+                cu3_count = cu3_count + 1
+        if cu3_count>=6:
+            return r - 1
+        return r
+
+
 
 
     init_params = np.random.randn(p,c,l)
@@ -57,7 +74,7 @@ if __name__ == "__main__":
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=800,
+        num_iterations=500,
         num_warmup_iterations=100,
         iteration_limit=5,
         arc_batchsize=100,
@@ -76,7 +93,8 @@ if __name__ == "__main__":
         super_circ_train_lr=0.01,
         iteration_limit_ratio=5,
         num_minimum_children=10,
-        checkpoint_file_name_start=marker
+        checkpoint_file_name_start=marker,
+        penalty_function=max_six_cu3
     )
 
     # train the best arc:
@@ -89,7 +107,7 @@ if __name__ == "__main__":
         training_data=data,
         optimizer_callable=optax.adam,
         lr=0.01,
-        grad_noise_factor=1/20,
+        grad_noise_factor=1/50,
         verbose=1
     )
 

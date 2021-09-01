@@ -138,7 +138,8 @@ def searchParameterized(
         super_circ_train_lr = 0.01,
         iteration_limit_ratio = 10,
         num_minimum_children=10,
-        checkpoint_file_name_start:str=None
+        checkpoint_file_name_start:str=None,
+        penalty_function:Callable=None # a function that takes reward and node as input and returns the penalized reward
 ):
     if not os.path.isdir(os.path.join(os.getcwd(), 'checkpoints')):
         os.mkdir(os.path.join(os.getcwd(), 'checkpoints'))
@@ -229,6 +230,7 @@ def searchParameterized(
         reward_list = [1-c for c in loss_list]
 
         for r, node in zip(reward_list, nodes):
+            r = penalty_function(r, node) if penalty_function is not None else r
             controller.backPropagate(node, r)
         current_best_arc, current_best_node = controller.exploitArc(params)
         current_best_reward = controller.simulation(current_best_arc, params)
@@ -239,7 +241,7 @@ def searchParameterized(
         print("Current Ops:")
         print(current_best_node.state)
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
-        best_rewards.append(current_best_reward)
+        best_rewards.append((current_best_arc, current_best_reward))
         if epoch%10 == 0:
             # save the controller every 10 epochs
             checkpt = {"controller":controller,
