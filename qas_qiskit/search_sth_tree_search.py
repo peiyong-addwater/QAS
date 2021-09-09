@@ -42,7 +42,7 @@ if __name__ == "__main__":
     model = ToffoliCircuitDensityMatrixNoiseless
     data = TOFFOLI_DATA
     init_qubit_with_actions = {0,1,2}
-    d_np = ["CU3Gate"]
+    d_np = ["CXGate"]
     s_np = ["U3Gate"]
     cu3_map = [(0,1), (0,2), (1,2)]
     pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
@@ -51,14 +51,14 @@ if __name__ == "__main__":
     c = len(pool)
 
     # penalty function:
-    def max_six_cu3(r:float, node:TreeNode):
+    def penalty_func(r:float, node:TreeNode):
         k = node.state.current_k
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
             if "CU3" in op_name:
                 cu3_count = cu3_count + 1
-        if cu3_count>=6:
+        if cu3_count>=5:
             return r - (cu3_count-4)
         return r
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=500,
-        num_warmup_iterations=50,
+        num_warmup_iterations=100,
         iteration_limit=5,
         arc_batchsize=100,
         alpha_max=2,
@@ -86,12 +86,12 @@ if __name__ == "__main__":
         second_policy='local_optimal',
         super_circ_train_iterations=10,
         super_circ_train_optimizer=optax.adam,
-        super_circ_train_gradient_noise_factor=1/20,
+        super_circ_train_gradient_noise_factor=1/40,
         super_circ_train_lr=0.01,
         iteration_limit_ratio=5,
         num_minimum_children=10,
         checkpoint_file_name_start=marker,
-        penalty_function=max_six_cu3
+        penalty_function=penalty_func
     )
 
     # train the best arc:

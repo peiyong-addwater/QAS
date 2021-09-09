@@ -1,4 +1,4 @@
-from .standard_ops import GatePool
+from .standard_ops import GatePool, parameterized
 from .standard_ops import QuantumGate
 from .circuits import QuantumCircuit, extract_ops, QCircFromK, FiveBitCodeSearchDensityMatrixNoiseless,\
     BitFlipSearchDensityMatrixNoiseless
@@ -47,7 +47,7 @@ class QASState():
         assert len(op.keys()) == 1 # in case some weird things happen
         op_name = list(op.keys())[0]
         op_qubit = op[op_name]
-        if len(self.current_k)>=1 and action==self.current_k[-1]:
+        if len(self.current_k)>=1 and action==self.current_k[-1] and self.pool_obj[action] in parameterized:
             return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False

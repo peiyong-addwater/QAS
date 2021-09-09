@@ -1,4 +1,8 @@
 from .standard_ops import *
+from .standard_ops import (_two_qubit_gate_1_param,
+                           _two_qubit_gate_3_params,
+                           _single_qubit_gate_3_params,
+                           _single_qubit_gate_1_param)
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import state_fidelity, DensityMatrix
@@ -74,9 +78,12 @@ def extract_ops(num_qubits:int, k:List[int],op_pool:GatePool, circ_params:np.nda
         assert len(gate_info.keys()) == 1
         gate_name = list(gate_info.keys())[0]
         gate_pos = gate_info[gate_name]
-        #TODO: make modifications to the code for single- and two-parameter gates
+        #TODO: make modifications to the code for two-parameter gates
         gate_param = circ_params[i, k[i], :]
-        param_indices.append([[i, k[i], 0], [i, k[i], 1], [i, k[i], 2]])
+        if gate_name in _two_qubit_gate_3_params or _single_qubit_gate_3_params:
+            param_indices.append([[i, k[i], 0], [i, k[i], 1], [i, k[i], 2]])
+        if gate_name in _single_qubit_gate_1_param or _two_qubit_gate_1_param:
+            param_indices.append([[i, k[i], 0]])
         gate = QuantumGate(gate_name, gate_pos, gate_param)
         extracted_gates.append(gate)
     return extracted_gates, param_indices
