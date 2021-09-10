@@ -49,9 +49,9 @@ class QASState():
         op_qubit = op[op_name]
         # don't want two consecutive parameterized gates or Pauli gates or CNOT gates
         if len(self.current_k)>=1 and action==self.current_k[-1]:
-            if self.pool_obj[action] in parameterized:
+            if op_name in parameterized:
                 return False
-            if self.pool_obj[action] in ["XGate", "YGate", "ZGate", "CXGate"]:
+            if op_name in ["XGate", "YGate", "ZGate", "CXGate"]:
                 return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
