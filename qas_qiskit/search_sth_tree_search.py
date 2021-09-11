@@ -38,15 +38,17 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_6_CU3_PENALTY"
-    model = ToffoliCircuitDensityMatrixNoiseless
-    data = TOFFOLI_DATA
-    init_qubit_with_actions = {0,1,2}
+    #task = "TOFFOLI_RESTRICTED_POOL_6_CU3_PENALTY"
+    task = "422_FULL_CONNECTION_CX_U3"
+    model = FourTwoTwoDetectionDensityMatrixNoiseless
+    data = FOUR_TWO_TWO_DETECTION_CODE_DATA
+    init_qubit_with_actions = {0,1}
     d_np = ["CXGate"]
     s_np = ["U3Gate"]
     cu3_map = [(0,1), (0,2), (1,2)]
-    pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
-    p = 13
+    #pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
+    pool = GatePool(4, s_np, d_np)
+    p = 6
     l = 3
     c = len(pool)
 
@@ -59,7 +61,7 @@ if __name__ == "__main__":
             if "CU3" in op_name:
                 cu3_count = cu3_count + 1
         if cu3_count>=5:
-            return r - (cu3_count-4)
+            return r - (cu3_count-5)
         return r
 
 

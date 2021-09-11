@@ -120,7 +120,10 @@ class QuantumGate(Op):
         self.name = name
 
     def __str__(self):
-        return "({}, {}, {})".format(self.name, list(self.pos), list(self.param))
+        if self.param is not None:
+            return "({}, {}, {})".format(self.name, list(self.pos), list(self.param))
+        else:
+            return "({}, {}, {})".format(self.name, list(self.pos), None)
 
     def get_op(self):
         return self.op
