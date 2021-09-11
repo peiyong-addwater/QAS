@@ -132,7 +132,6 @@ def searchParameterized(
         target_circuit_depth=20,
         first_policy='local_optimal',
         second_policy='local_optimal',
-        super_circ_train_iterations = 20,
         super_circ_train_optimizer = optax.adam,
         super_circ_train_gradient_noise_factor = 1/20,
         super_circ_train_lr = 0.01,
@@ -207,7 +206,7 @@ def searchParameterized(
                 k, node = controller.sampleArc(params)
                 arcs.append(k)
                 nodes.append(node)
-        print("Batch Training, Update the Parameter Pool for One Iteration".format(super_circ_train_iterations))
+        print("Batch Training, Update the Parameter Pool for One Iteration")
         batch_circs = [model(p,c,l,k,op_pool) for k in arcs]
         circ_batch_gradients = Parallel(n_jobs=-1, verbose=0)(
             delayed(_circ_obj_get_gradient_dm)(constructed_circ, params, input_state, target_state)
