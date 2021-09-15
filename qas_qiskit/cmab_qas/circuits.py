@@ -8,6 +8,7 @@ from qiskit import QuantumCircuit
 from qiskit.quantum_info import state_fidelity, DensityMatrix
 import numpy as np
 from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
+from qiskit.test.mock import FakeSantiago
 # Import from Qiskit Aer noise module
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.aer.noise import QuantumError, ReadoutError
@@ -32,9 +33,9 @@ STATE_DIC = {'|0>': ket0, '|1>': ket1, '|+>': (ket0 + ket1) / np.sqrt(2), '|->':
 STATE_DICT_KEYS = list(STATE_DIC.keys())
 
 FOUR_TWO_TWO_DETECTION_CODE_INPUT = []
-for c in [ket0, ket1]:
-    for d in [ket0, ket1]:
-        FOUR_TWO_TWO_DETECTION_CODE_INPUT.append(np.kron(c, d))
+for c in PAULI_EIGENSTATES_T_STATE:
+    for d in PAULI_EIGENSTATES_T_STATE:
+        FOUR_TWO_TWO_DETECTION_CODE_INPUT.append([c,d])
 
 TOFFOLI_INPUT = []
 for a in [ket0, ket1]:
@@ -197,7 +198,8 @@ def get_code_space_422_detection_code(init_states:List[np.ndarray])->List[Densit
     encoded_states = []
     for state in init_states:
         qc = QuantumCircuit(4)
-        qc.initialize(state, [0,1])
+        qc.initialize(state[0], [0])
+        qc.initialize(state[1], [1])
         qc.append(backbone_circ.to_instruction(), [0,1,2,3])
         qc.save_density_matrix(label='encoded_state')
         simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
@@ -450,7 +452,8 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
         for i in range(len(init_states)):
             target = target_states[i]
             qc = QuantumCircuit(num_qubits)
-            qc.initialize(init_states[i], [0,1]) # initial state is a two-qubit state
+            qc.initialize(init_states[i][0], [0])
+            qc.initialize(init_states[i][1], [1])
             qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
             qc.save_density_matrix(label='encoded_state')
             qc = qiskit.transpile(qc, simulator)
@@ -482,7 +485,80 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
     def penalty_terms(self, circ_params):
         raise NotImplementedError
 
+class ToffoliCircuitDMNoisyMockDevice(SearchDensityMatrix):
+    def __init__(self,p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 3
+        self.simulator = AerSimulator.from_backend(FakeSantiago(),max_parallel_threads=0, max_parallel_experiments=0)
 
+    def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
+        shift = np.pi / 2
+        all_param_indices = []
+        for gate_param_indices in param_indices:
+            for index in gate_param_indices:
+                all_param_indices.append(index)
+        gradients = Parallel(n_jobs=-1, verbose=0)(delayed(self.gradient_parameter_shift_single_parameter)(
+            self.num_qubits, circ_params, index, init_states, target_states, shift
+        ) for index in all_param_indices)
+        gradients = jnp.stack(gradients, axis=0)
+        gradients = jnp.sum(gradients, axis=0)
+        return gradients
+
+    def get_extracted_QuantumCircuit_object(self, circ_params):
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
+        return backbone_circ
+
+    def get_loss(self, circ_params, init_states, target_states):
+        assert self.p == circ_params.shape[0]
+        assert self.c == circ_params.shape[1]
+        assert self.l == circ_params.shape[2]
+        extracted_gates, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        backbone_circ = construct_backbone_circuit_from_gate_list(self.num_qubits, extracted_gates)
+        loss = self.calculate_avg_loss_with_prepend_states(init_states, target_states, backbone_circ)
+
+        return loss
+    def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
+                                               target_states:List[DensityMatrix],
+                                               backbone_circ:QuantumCircuit,)->np.float64:
+        num_qubits = backbone_circ.num_qubits
+        fid_list = []
+        for i in range(len(init_states)):
+            target = target_states[i]
+            qc = QuantumCircuit(num_qubits)
+            qc.initialize(init_states[i], [0,1,2]) # initial state is a three-qubit state
+            qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
+            qc.save_density_matrix(label='encoded_state')
+            qc = qiskit.transpile(qc, self.simulator, optimization_level=3)
+            result = self.simulator.run(qc).result().data()['encoded_state']
+            result = DensityMatrix(result)
+            try:
+                fidelity = state_fidelity(result, target, validate=False)
+            except:
+                if not result.is_valid():
+                    print("Invalid Result State Encountered, Setting Fidelity To Zero")
+                fidelity = 0
+                pass
+            fid_list.append(fidelity)
+        return 1-np.average(fid_list)
+
+    def get_gradient(self, circ_params,init_states, target_states):
+        assert self.p == circ_params.shape[0]
+        assert self.c == circ_params.shape[1]
+        assert self.l == circ_params.shape[2]
+        _, param_indices = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+
+        return self.parameter_shift_gradient(circ_params, param_indices, init_states, target_states)
+
+    def get_circuit_ops(self, circ_params):
+        extracted_gates, _ = extract_ops(self.num_qubits, self.k, self.pool, circ_params)
+        op_list = [str(c) for c in extracted_gates]
+        return op_list
+
+    def penalty_terms(self, circ_params):
+        raise NotImplementedError
 
 class PhaseFlipDensityMatrixNoiseless(SearchDensityMatrix):
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
@@ -649,30 +725,4 @@ class FiveBitCodeSearchDensityMatrixNoiseless(SearchDensityMatrix):
     def penalty_terms(self, circ_params):
         raise NotImplementedError
 
-"""
-pool = default_complete_graph_parameterized_pool(3)
-p = 7
-c = len(pool)
-l = 3
-print(pool)
-k = [3,4,4,6,8,3,2]
-params = np.random.rand(p*c*l).reshape((p,c,l))
-
-start_learning_rate = 1e-1
-optimizer = optax.adam(start_learning_rate)
-opt_state = optimizer.init(params)
-for i in range(50):
-    print(i)
-    circ = BitFlipSearchDensityMatrix(p,c,l, k, pool)
-    print(circ.get_circuit_ops(params))
-    grads = circ.get_gradient(params)
-    grads = jnp.nan_to_num(grads)
-    loss = circ.get_loss(params)
-    print(loss)
-    #print(grads)
-    updates, opt_state = optimizer.update(grads, opt_state)
-    #print(updates)
-    params = optax.apply_updates(params, updates)
-    params = np.array(params)
-"""
 

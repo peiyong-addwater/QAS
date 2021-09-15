@@ -1,17 +1,6 @@
 from cmab_qas.search import searchParameterized, single_circuit_training, TreeNode
 from cmab_qas.standard_ops import GatePool
-from cmab_qas.circuits import (
-    BitFlipSearchDensityMatrixNoiseless,
-    SIMPLE_DATASET_BIT_FLIP,
-    PhaseFlipDensityMatrixNoiseless,
-    SIMPLE_DATASET_PHASE_FLIP,
-    FourTwoTwoDetectionDensityMatrixNoiseless,
-    FOUR_TWO_TWO_DETECTION_CODE_DATA,
-    FiveBitCodeSearchDensityMatrixNoiseless,
-    SIMPLE_DATASET_FIVE_BIT_CODE,
-    TOFFOLI_DATA,
-    ToffoliCircuitDensityMatrixNoiseless
-)
+from cmab_qas.circuits import *
 import json
 import numpy as np
 import optax
@@ -38,17 +27,19 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    #task = "TOFFOLI_RESTRICTED_POOL_6_CU3_PENALTY"
-    task = "422_FULL_CONNECTION_CX_U3"
-    model = FourTwoTwoDetectionDensityMatrixNoiseless
-    data = FOUR_TWO_TWO_DETECTION_CODE_DATA
-    init_qubit_with_actions = {0,1}
+    task = "TOFFOLI_RESTRICTED_POOL_6_CX_PENALTY_NOISY"
+    # task = "422_FULL_CONNECTION_CX_U3"
+    model = ToffoliCircuitDMNoisyMockDevice
+    #model = FourTwoTwoDetectionDensityMatrixNoiseless
+    data = TOFFOLI_DATA
+    #data = FOUR_TWO_TWO_DETECTION_CODE_DATA
+    init_qubit_with_actions = {0,1,2}
     d_np = ["CXGate"]
     s_np = ["U3Gate"]
     cu3_map = [(0,1), (0,2), (1,2)]
-    #pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
-    pool = GatePool(4, s_np, d_np)
-    p = 6
+    pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
+    #pool = GatePool(4, s_np, d_np)
+    p = 20
     l = 3
     c = len(pool)
 
@@ -60,8 +51,8 @@ if __name__ == "__main__":
             op_name = list(pool[op_index].keys())[0]
             if "CU3" in op_name:
                 cu3_count = cu3_count + 1
-        if cu3_count>=5:
-            return r - (cu3_count-5)
+        if cu3_count>=6:
+            return r - (cu3_count-7)
         return r
 
 
@@ -73,14 +64,14 @@ if __name__ == "__main__":
         data=data,
         init_qubit_with_actions=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
-        num_warmup_iterations=20,
+        num_iterations=500,
+        num_warmup_iterations=100,
         iteration_limit=10,
-        arc_batchsize=300,
-        alpha_max=2,
+        arc_batchsize=100,
+        alpha_max=3,
         alpha_min=1/np.sqrt(2),
         prune_constant_min=0.5,
-        prune_constant_max=0.9,
+        prune_constant_max=0.95,
         eval_expansion_factor=100,
         op_pool=pool,
         target_circuit_depth=p,
