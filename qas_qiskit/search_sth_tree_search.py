@@ -27,12 +27,12 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_6_CX_PENALTY_NOISY"
+    task = "TOFFOLI_RESTRICTED_POOL_6_CX_PENALTY_DP_NOISE"
     # task = "422_FULL_CONNECTION_CX_U3"
-    model = ToffoliCircuitDMNoisyMockDevice
-    #model = FourTwoTwoDetectionDensityMatrixNoiseless
+    model = ToffoliCircuitDMNoisy
+    # model = FourTwoTwoDetectionDensityMatrixNoiseless
     data = TOFFOLI_DATA
-    #data = FOUR_TWO_TWO_DETECTION_CODE_DATA
+    # data = FOUR_TWO_TWO_DETECTION_CODE_DATA
     init_qubit_with_actions = {0,1,2}
     d_np = ["CXGate"]
     s_np = ["U3Gate"]
@@ -49,10 +49,10 @@ if __name__ == "__main__":
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CU3" in op_name:
+            if "CU3" in op_name or "CX" in op_name or "CR" in op_name or "CY" in op_name or "CZ" in op_name:
                 cu3_count = cu3_count + 1
-        if cu3_count>=6:
-            return r - (cu3_count-7)
+        if cu3_count>=10:
+            return r - (cu3_count-11)
         return r
 
 
@@ -67,8 +67,8 @@ if __name__ == "__main__":
         num_iterations=500,
         num_warmup_iterations=100,
         iteration_limit=10,
-        arc_batchsize=100,
-        alpha_max=3,
+        arc_batchsize=50,
+        alpha_max=2,
         alpha_min=1/np.sqrt(2),
         prune_constant_min=0.5,
         prune_constant_max=0.95,

@@ -75,8 +75,8 @@ standard_quantum_ops.update(_single_qubit_gate_3_params)
 standard_quantum_ops.update(_two_qubit_gate_3_params)
 standard_quantum_ops.update(_single_qubit_gate_no_param)
 standard_quantum_ops.update(_two_qubit_gate_no_param)
-single_qubit_ops.update(_single_qubit_gate_1_param)
-single_qubit_ops.update(_two_qubit_gate_1_param)
+standard_quantum_ops.update(_single_qubit_gate_1_param)
+standard_quantum_ops.update(_two_qubit_gate_1_param)
 
 def supported_ops():
     pprint(standard_quantum_ops)

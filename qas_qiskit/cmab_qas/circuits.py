@@ -485,13 +485,19 @@ class FourTwoTwoDetectionDensityMatrixNoiseless(SearchDensityMatrix):
     def penalty_terms(self, circ_params):
         raise NotImplementedError
 
-class ToffoliCircuitDMNoisyMockDevice(SearchDensityMatrix):
+class ToffoliCircuitDMNoisy(SearchDensityMatrix):
     def __init__(self,p:int, c:int, l:int, structure_list:List[int], op_pool:GatePool):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 3
-        self.simulator = AerSimulator.from_backend(FakeSantiago(),max_parallel_threads=0, max_parallel_experiments=0)
+        prob_1 = 0.01
+        prob_2 = 0.1
+        error_1 = depolarizing_error(prob_1, 1)
+        error_2 = depolarizing_error(prob_2, 2)
+        self.noise_model = NoiseModel()
+        self.noise_model.add_all_qubit_quantum_error(error_1, ['u3'])
+        self.noise_model.add_all_qubit_quantum_error(error_2,['cx'])
 
     def parameter_shift_gradient(self, circ_params, param_indices, init_states, target_states):
         shift = np.pi / 2
@@ -523,6 +529,7 @@ class ToffoliCircuitDMNoisyMockDevice(SearchDensityMatrix):
     def calculate_avg_loss_with_prepend_states(self, init_states:List[np.ndarray],
                                                target_states:List[DensityMatrix],
                                                backbone_circ:QuantumCircuit,)->np.float64:
+        simulator = AerSimulator()
         num_qubits = backbone_circ.num_qubits
         fid_list = []
         for i in range(len(init_states)):
@@ -531,8 +538,9 @@ class ToffoliCircuitDMNoisyMockDevice(SearchDensityMatrix):
             qc.initialize(init_states[i], [0,1,2]) # initial state is a three-qubit state
             qc.append(backbone_circ.to_instruction(), [i for i in range(num_qubits)])
             qc.save_density_matrix(label='encoded_state')
-            qc = qiskit.transpile(qc, self.simulator, optimization_level=3)
-            result = self.simulator.run(qc).result().data()['encoded_state']
+
+            qc = qiskit.transpile(qc.decompose(), simulator)
+            result = simulator.run(qc, noise_model = self.noise_model).result().data()['encoded_state']
             result = DensityMatrix(result)
             try:
                 fidelity = state_fidelity(result, target, validate=False)
@@ -541,6 +549,7 @@ class ToffoliCircuitDMNoisyMockDevice(SearchDensityMatrix):
                     print("Invalid Result State Encountered, Setting Fidelity To Zero")
                 fidelity = 0
                 pass
+
             fid_list.append(fidelity)
         return 1-np.average(fid_list)
 
