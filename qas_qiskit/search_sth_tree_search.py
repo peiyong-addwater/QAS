@@ -27,19 +27,19 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_6_CX_PENALTY_DP_NOISE"
+    task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CX"
     # task = "422_FULL_CONNECTION_CX_U3"
-    model = ToffoliCircuitDMNoisy
+    model = ToffoliCircuitDensityMatrixNoiseless
     # model = FourTwoTwoDetectionDensityMatrixNoiseless
     data = TOFFOLI_DATA
     # data = FOUR_TWO_TWO_DETECTION_CODE_DATA
     init_qubit_with_actions = {0,1,2}
     d_np = ["CXGate"]
-    s_np = ["U3Gate"]
-    cu3_map = [(0,1), (0,2), (1,2)]
+    s_np = ["XGate", "SXGate", "RZGate"]
+    cu3_map = [(0,1), (1,2)]
     pool = GatePool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
     #pool = GatePool(4, s_np, d_np)
-    p = 20
+    p = 35
     l = 3
     c = len(pool)
 
@@ -71,14 +71,14 @@ if __name__ == "__main__":
         alpha_max=2,
         alpha_min=1/np.sqrt(2),
         prune_constant_min=0.5,
-        prune_constant_max=0.95,
+        prune_constant_max=0.6,
         eval_expansion_factor=100,
         op_pool=pool,
         target_circuit_depth=p,
         first_policy='local_optimal',
         second_policy='local_optimal',
         super_circ_train_optimizer=optax.adam,
-        super_circ_train_gradient_noise_factor=1/40,
+        super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.01,
         iteration_limit_ratio=5,
         num_minimum_children=10,

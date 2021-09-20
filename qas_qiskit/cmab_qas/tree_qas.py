@@ -51,8 +51,6 @@ class QASState():
         if len(self.current_k)>=1 and action==self.current_k[-1]:
             if op_name in parameterized:
                 return False
-            if op_name in ["XGate", "YGate", "ZGate", "CXGate"]:
-                return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
         return True
@@ -177,7 +175,10 @@ class MCTSController():
             return random.choice(list(node.children.values()))
         best_value = float("-inf")
         best_nodes, suboptimal_nodes = [], []
+        if len(node.children.values()) == 0:
+            raise ValueError("No Legal Child for Node at: %s"%node.state.current_k)
         for child in node.children.values():
+            #TODO: Deal with when there is no child
             node_value = child.totalReward/child.numVisits + alpha * np.sqrt(2*np.log(node.numVisits)/child.numVisits)
             if node_value > best_value:
                 if best_value == float("-inf"):
@@ -189,9 +190,9 @@ class MCTSController():
             elif node_value == best_value:
                 best_nodes.append(child)
         if policy == 'local_sub_optimal':
-            node = random.choice(suboptimal_nodes)
+            node = np.random.choice(suboptimal_nodes)
         elif policy == 'local_optimal':
-            node = random.choice(best_nodes)
+            node = np.random.choice(best_nodes)
         else:
             raise ValueError("No such policy: %s" % policy)
         return node
