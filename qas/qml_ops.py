@@ -89,3 +89,4 @@ SUPPORTED_OPS_DICT = {
     'IsingYY':IsingYY,
     'IsingZZ':IsingZZ
 }
+
