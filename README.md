@@ -1,2 +1,2 @@
-# QAS-Qiskit
+# QAS
  
