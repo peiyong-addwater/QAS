@@ -391,6 +391,7 @@ def search(
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
         circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
         params = optax.apply_updates(params, circ_updates)
+        print("Parameter Updated!")
 
         reward_list = Parallel(n_jobs=-1, verbose=0)(
             delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
