@@ -6,6 +6,7 @@ from .qml_ops import (
     QMLGate
 )
 import pennylane.numpy as pnp
+from pennylane.operation import Operation, AnyWires
 import numpy as np
 import jax.numpy as jnp
 import pennylane as qml
@@ -23,6 +24,10 @@ from typing import (
     Dict,
     AnyStr
 )
+import qiskit
+from qiskit import QuantumCircuit
+from qiskit.quantum_info import state_fidelity, DensityMatrix
+from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -34,43 +39,6 @@ STATE_DIC = {'|0>': ket0, '|1>': ket1, '|+>': (ket0 + ket1) / np.sqrt(2), '|->':
              '|+i>': (ket0 + ket1 * 1j) / np.sqrt(2), '|-i>': (ket0 - ket1 * 1j) / np.sqrt(2),
              'magic': (ket0 + np.exp(np.pi * 1j / 4) * ket1) / np.sqrt(2)}
 STATE_DICT_KEYS = list(STATE_DIC.keys())
-
-def extractParamIndices(k:List[int], op_pool:QMLPool, circ_params:Union[np.ndarray, jnp.ndarray, pnp.ndarray, Sequence])->List:
-    p, c, l = circ_params.shape[0], circ_params.shape[1], circ_params.shape[2]
-    assert min(k) >= 0
-    assert max(k) < c
-    assert p == len(k)
-    assert c == len(op_pool)
-    param_indices = []
-    for i in range(p):
-        gate_dict = op_pool[k[i]]
-        assert len(gate_dict.keys()) == 1
-        gate_name = list(gate_dict.keys())[0]
-        gate_obj = SUPPORTED_OPS_DICT[gate_name]
-        num_params = gate_obj.num_params
-        if num_params > 0:
-            for j in range(num_params):
-                param_indices.append((i, k[i], j))
-    return param_indices
-
-def extractGates(k:List[int], op_pool:QMLPool, circ_params:Union[np.ndarray, jnp.ndarray, pnp.ndarray, Sequence])->List:
-    p, c, l = circ_params.shape[0], circ_params.shape[1], circ_params.shape[2]
-    assert min(k) >= 0
-    assert max(k) < c
-    assert p == len(k)
-    assert c == len(op_pool)
-    extracted_gates = []
-    for i in range(p):
-        gate_info = op_pool[k[i]]
-        assert len(gate_info.keys()) == 1
-        gate_name = list(gate_info.keys())[0]
-        gate_obj = SUPPORTED_OPS_DICT[gate_name]
-        num_params = gate_obj.num_params
-        gate_pos = gate_info[gate_name]
-        gate_param = circ_params[i, k[i], :] if num_params > 0 else None
-        qml_gate = QMLGate(gate_name, gate_pos, gate_param)
-        extracted_gates.append(qml_gate)
-    return extracted_gates
 
 FOUR_TWO_TWO_DETECTION_CODE_INPUT = []
 for c in PAULI_EIGENSTATES_T_STATE:
@@ -84,5 +52,234 @@ for a in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
+
+def extractParamIndices(k:List[int], op_pool:QMLPool)->List:
+    assert min(k) >= 0
+    p = len(k)
+    c = len(op_pool)
+    assert max(k) < c
+    param_indices = []
+    for i in range(p):
+        gate_dict = op_pool[k[i]]
+        assert len(gate_dict.keys()) == 1
+        gate_name = list(gate_dict.keys())[0]
+        gate_obj = SUPPORTED_OPS_DICT[gate_name]
+        num_params = gate_obj.num_params
+        if num_params > 0:
+            for j in range(num_params):
+                param_indices.append((i, k[i], j))
+    return param_indices
+
+
+def get_data_ccx_gate(init_states:List[np.ndarray])->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(3)
+    backbone_circ.ccx(0, 1, 2)
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(3)
+        qc.initialize(state, [0,1,2])
+        qc.append(backbone_circ.to_instruction(), [0, 1, 2])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+def generate_single_qubit_state(theta_B:float, phi_B:float)->np.ndarray:
+    return np.cos(theta_B/2)*ket0 + np.sin(theta_B/2)*np.exp(1j*phi_B)*ket1
+
+def get_encoded_states_ideal_bit_flip_code(init_states:List[np.ndarray])->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(3)
+    backbone_circ.cnot(control_qubit=0,target_qubit=1)
+    backbone_circ.cnot(control_qubit=0, target_qubit=2)
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(3)
+        qc.initialize(state, 0)
+        qc.append(backbone_circ.to_instruction(), [0,1,2])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+def get_encoded_states_ideal_phase_flip_code(init_states:List[np.ndarray])->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(3)
+    backbone_circ.h(0)
+    backbone_circ.cnot(control_qubit=0,target_qubit=1)
+    backbone_circ.cnot(control_qubit=0, target_qubit=2)
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(3)
+        qc.initialize(state, 0)
+        qc.append(backbone_circ.to_instruction(), [0, 1, 2])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+def get_encoded_states_ideal_shor_9_bit_code(init_states:List[np.ndarray])->List[DensityMatrix]:
+    phase_flip = QuantumCircuit(3)
+    phase_flip.cnot(control_qubit=0, target_qubit=1)
+    phase_flip.cnot(control_qubit=0, target_qubit=2)
+    phase_flip.h(0)
+    phase_flip.h(1)
+    phase_flip.h(2)
+    bit_flip = QuantumCircuit(3)
+    bit_flip.cnot(0,1)
+    bit_flip.cnot(0,2)
+
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(9)
+        qc.initialize(state, 0)
+        qc.append(phase_flip.to_gate(), [0,3,6])
+        qc.append(bit_flip.to_gate(), [0,1,2])
+        qc.append(bit_flip.to_gate(), [3,4,5])
+        qc.append(bit_flip.to_gate(), [6,7,8])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+def get_encoded_states_ideal_five_bit_code(init_states:List[np.ndarray])->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(5)
+    backbone_circ.z(0)
+    backbone_circ.h(2)
+    backbone_circ.sdg(0)
+    backbone_circ.cnot(2,4)
+    backbone_circ.h(3)
+    backbone_circ.cnot(3,1)
+    backbone_circ.x(4)
+    backbone_circ.h(1)
+    backbone_circ.cu(0,0,-np.pi/2, 0, control_qubit=3, target_qubit=4) #csdg3,4
+    backbone_circ.cnot(1,0)
+    backbone_circ.s(3)
+    backbone_circ.s(0)
+    backbone_circ.s(1)
+    backbone_circ.cnot(4,0)
+    backbone_circ.h(4)
+    backbone_circ.cnot(4,1)
+    backbone_circ.sdg(2)
+    backbone_circ.z(2)
+
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(5)
+        qc.initialize(state, 0)
+        qc.append(backbone_circ.to_instruction(), [0, 1, 2, 3, 4])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+def get_code_space_422_detection_code(init_states)->List[DensityMatrix]:
+    backbone_circ = QuantumCircuit(4)
+    backbone_circ.cnot(0,2)
+    backbone_circ.h(3)
+    backbone_circ.cnot(1,2)
+    backbone_circ.cnot(3,2)
+    backbone_circ.cnot(3,1)
+    backbone_circ.cnot(3,0)
+    encoded_states = []
+    for state in init_states:
+        qc = QuantumCircuit(4)
+        qc.initialize(state[0], [0])
+        qc.initialize(state[1], [1])
+        qc.append(backbone_circ.to_instruction(), [0,1,2,3])
+        qc.save_density_matrix(label='encoded_state')
+        simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
+        result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
+            'encoded_state']
+        encoded_states.append(DensityMatrix(result).data)
+    return encoded_states
+
+SIMPLE_DATASET_BIT_FLIP = []
+SIMPLE_DATASET_BIT_FLIP.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_BIT_FLIP.append(get_encoded_states_ideal_bit_flip_code(PAULI_EIGENSTATES_T_STATE))
+
+SIMPLE_DATASET_PHASE_FLIP = []
+SIMPLE_DATASET_PHASE_FLIP.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_PHASE_FLIP.append(get_encoded_states_ideal_phase_flip_code(PAULI_EIGENSTATES_T_STATE))
+
+SIMPLE_DATASET_FIVE_BIT_CODE = []
+SIMPLE_DATASET_FIVE_BIT_CODE.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_FIVE_BIT_CODE.append(get_encoded_states_ideal_five_bit_code(PAULI_EIGENSTATES_T_STATE))
+
+SIMPLE_DATASET_NINE_BIT_CODE = []
+SIMPLE_DATASET_NINE_BIT_CODE.append(PAULI_EIGENSTATES_T_STATE)
+SIMPLE_DATASET_NINE_BIT_CODE.append(get_encoded_states_ideal_shor_9_bit_code(PAULI_EIGENSTATES_T_STATE))
+
+FOUR_TWO_TWO_DETECTION_CODE_DATA = []
+FOUR_TWO_TWO_DETECTION_CODE_DATA.append(FOUR_TWO_TWO_DETECTION_CODE_INPUT)
+FOUR_TWO_TWO_DETECTION_CODE_DATA.append(get_code_space_422_detection_code(FOUR_TWO_TWO_DETECTION_CODE_INPUT))
+
+TOFFOLI_DATA = []
+TOFFOLI_DATA.append(TOFFOLI_INPUT)
+TOFFOLI_DATA.append(get_data_ccx_gate(TOFFOLI_INPUT))
+
+#class
+
+
+
+
+class ToffoliQMLNoiseless(ModelFromK):
+    num_wires = 3
+    dev = qml.device('default.qubit.jax', wires=num_wires)
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = self.num_wires
+        self.param_indices = extractParamIndices(self.k, self.pool)
+
+    @qml.template
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            num_params = gate_obj.num_params
+            wires = gate_dict[gate_name]
+            if num_params > 0:
+                gate_params = []
+                for j in range(num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            else:
+                gate_params = None
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            qml_gate_obj.getOp()
+
+
+    def constructFullCirc(self):
+
+        @qml.qnode(self.dev, interface='jax')
+        def fullCirc(extracted_params, x=None, y = None):
+            qml.QubitStateVector(x, wires=[0,1,2])
+            self.backboneCirc(extracted_params)
+            return qml.expval(qml.Hermitian(y, wires=[0,1,2]))
+        return fullCirc
+
+    def getLoss(self, *args):
+        pass
+
+    def getGradient(self, *args):
+        pass
+
+
+
+
 
 

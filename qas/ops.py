@@ -21,14 +21,13 @@ class QuantumGate(ABC):
     def __str__(self):
         raise NotImplementedError
     @abstractmethod
-    def get_op(self):
+    def getOp(self):
         raise NotImplementedError
 
 class Pool(dict):
     @abstractmethod
     def __init__(self, *args):
         super(Pool, self).__init__()
-        raise NotImplementedError
     @abstractmethod
     def __getitem__(self, key):
         raise NotImplementedError

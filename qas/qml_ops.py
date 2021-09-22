@@ -99,7 +99,7 @@ class QMLGate(QuantumGate):
     def __init__(self, name:str, pos:List[int], param:Optional[Sequence]=None):
         assert name in SUPPORTED_OPS_NAME
         op_constructor = SUPPORTED_OPS_DICT[name]
-        self.num_params = op_constructor.base_name
+        self.num_params = op_constructor.num_params
         self.num_wires = op_constructor.num_wires
         if param is not None:
             assert len(param) == self.num_params
@@ -109,10 +109,10 @@ class QMLGate(QuantumGate):
         self.op = op_constructor(*param, wires=self.wires) if param is not None else op_constructor(wires=self.wires)
         self.param = param if param is not None else None
 
-    def get_op(self):
+    def getOp(self):
         return self.op
 
-    def get_qreg_pos(self):
+    def getQregPos(self):
         return list(self.wires)
 
     def __str__(self):

@@ -5,9 +5,9 @@ class ModelFromK(ABC):
     def __init__(self, *args):
         raise NotImplementedError
     @abstractmethod
-    def get_loss(self, *args):
+    def getLoss(self, *args):
         raise NotImplementedError
     @abstractmethod
-    def get_gradient(self, *args):
+    def getGradient(self, *args):
         raise NotImplementedError
 
