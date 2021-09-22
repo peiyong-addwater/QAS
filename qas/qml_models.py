@@ -226,20 +226,16 @@ TOFFOLI_DATA = []
 TOFFOLI_DATA.append(TOFFOLI_INPUT)
 TOFFOLI_DATA.append(get_data_ccx_gate(TOFFOLI_INPUT))
 
-#class
-
-
-
-
 class ToffoliQMLNoiseless(ModelFromK):
-    num_wires = 3
-    dev = qml.device('default.qubit.jax', wires=num_wires)
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
-        self.num_qubits = self.num_wires
+        self.num_qubits = 3
         self.param_indices = extractParamIndices(self.k, self.pool)
+        self.x_list = TOFFOLI_DATA[0]
+        self.y_list = TOFFOLI_DATA[1]
+        self.dev = qml.device('default.qubit.jax', wires=self.num_qubits)
 
     @qml.template
     def backboneCirc(self, extracted_params):
@@ -262,9 +258,7 @@ class ToffoliQMLNoiseless(ModelFromK):
                 qml_gate_obj = QMLGate(gate_name, wires, gate_params)
             qml_gate_obj.getOp()
 
-
     def constructFullCirc(self):
-
         @qml.qnode(self.dev, interface='jax')
         def fullCirc(extracted_params, x=None, y = None):
             qml.QubitStateVector(x, wires=[0,1,2])
@@ -272,11 +266,44 @@ class ToffoliQMLNoiseless(ModelFromK):
             return qml.expval(qml.Hermitian(y, wires=[0,1,2]))
         return fullCirc
 
-    def getLoss(self, *args):
-        pass
+    def costFunc(self, extracted_params):
+        loss = 0
+        circ_func = self.constructFullCirc()
+        num_data = len(self.x_list)
+        for i in range(num_data):
+            loss = loss + circ_func(extracted_params, self.x_list[i], self.y_list[i])
+        return loss/num_data
 
-    def getGradient(self, *args):
-        pass
+    def getLoss(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = jnp.array(extracted_params)
+        return self.costFunc(extracted_params)
+
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        cost_grad = jax.grad(self.costFunc, argnums=0)
+
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        extracted_gradients = cost_grad(extracted_params)
+        gradients = np.zeros(super_circ_params.shape)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+
+        return gradients
+
+
+
 
 
 
