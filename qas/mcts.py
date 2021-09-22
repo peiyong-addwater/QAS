@@ -22,6 +22,10 @@ import pennylane.numpy as pnp
 from abc import ABC, abstractmethod
 from .qml_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
 from .models import ModelFromK
+import optax
+import os
+import time
+from joblib import Parallel, delayed
 
 
 class StateOfMCTS(ABC):
@@ -279,4 +283,131 @@ class MCTSController():
             curr = self.getBestChild(curr, 0, policy=self.second_policy) # alpha = 0, no exploration
         return curr.state.getCurrK(), curr
 
+def getGradientFromModel(model, params):
+    return model.getGradient(params)
 
+def getLossFromModel(model, params):
+    return model.getLoss(params)
+
+def search(
+        model,
+        op_pool,
+        target_circuit_depth,
+        init_qubit_with_controls:Set,
+        init_params:Union[np.ndarray, jnp.ndarray, Sequence],
+        num_iterations = 500,
+        num_warmup_iterations = 20,
+        super_circ_train_optimizer = optax.adam,
+        super_circ_train_gradient_noise_factor = 1/100,
+        super_circ_train_lr = 0.01,
+        penalty_function:Callable=None,
+        arc_batchsize = 200,
+        alpha_max = 2,
+        alpha_min=1 / np.sqrt(2),
+        prune_constant_max=0.9,
+        prune_constant_min = 0.5,
+        max_visits_prune_threshold=100,
+        min_num_children=5,
+        sampling_execute_rounds=200,
+        exploit_execute_rounds=200,
+        sample_policy='local_optimal',
+        exploit_policy='local_optimal'
+):
+    p = target_circuit_depth
+    l = init_params.shape[2]
+    c = len(op_pool)
+    assert p == init_params.shape[0]
+    assert c == init_params.shape[1]
+    assert alpha_min <= alpha_max
+    assert prune_constant_min <= prune_constant_max
+    controller = MCTSController(
+        model=model,
+        op_pool=op_pool,
+        target_circuit_depth=target_circuit_depth,
+        reward_penalty_function=penalty_function,
+        initial_legal_control_qubit_choice=init_qubit_with_controls,
+        alpha=alpha_max,
+        prune_reward_ratio=prune_constant_min,
+        max_visits_prune_threshold=max_visits_prune_threshold,
+        min_num_children=min_num_children,
+        sampling_execute_rounds=sampling_execute_rounds,
+        exploit_execute_rounds=exploit_execute_rounds,
+        sample_policy=sample_policy,
+        exploit_policy=exploit_policy
+    )
+    current_best_arc = None
+    current_best_node = None
+    current_best_reward = None
+    controller.setRoot()
+    pool_size = len(op_pool)
+    params = init_params
+    optimizer = super_circ_train_optimizer(super_circ_train_lr)
+    opt_state = optimizer.init(params)
+    best_rewards = []
+    for epoch in range(num_iterations):
+        start = time.time()
+        arcs, nodes = [], []
+        if epoch<num_warmup_iterations:
+            print("="*10+"Sampling at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, Arc Batch Size: {}".format(
+                                                                                                epoch+1,
+                                                                                                num_iterations,
+                                                                                                num_warmup_iterations,
+                                                                                                pool_size,
+                                                                                                arc_batchsize)
+                  +"="*10)
+            for _ in range(arc_batchsize):
+                k, node = controller.randomSample()
+                arcs.append(k)
+                nodes.append(node)
+        else:
+            print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, Arc Batch Size: {}".format(epoch + 1,
+                                                                                                  num_iterations,
+                                                                                                  pool_size,
+                                                                                                  arc_batchsize)
+                  + "=" * 10)
+            controller._reset() # CMAB reset
+            new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
+                        epoch + 1 - num_warmup_iterations)
+            controller.alpha = new_alpha  # alpha decreases as epoch increases
+            new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
+                        num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
+            controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
+            for _ in range(arc_batchsize):
+                k, node = controller.sampleArcWithSuperCircParams(params)
+                arcs.append(k)
+                nodes.append(node)
+        print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(arc_batchsize))
+        batch_models = [model(p,c,l,k,op_pool) for k in arcs]
+        batch_gradients = Parallel(n_jobs=-1, verbose=0)(
+            delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
+        )
+        batch_gradients = jnp.stack(batch_gradients, axis=0)
+        batch_gradients = jnp.nan_to_num(batch_gradients)
+        batch_gradients = jnp.mean(batch_gradients, axis=0)
+        # add some noise to the circuit gradient
+        seed = np.random.randint(0, 1000000000)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key, shape=(p, c, l))
+        batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
+        circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
+        params = optax.apply_updates(params, circ_updates)
+
+        reward_list = Parallel(n_jobs=-1, verbose=0)(
+            delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
+        )
+        for r, node in zip(reward_list, nodes):
+            r = penalty_function(r, node) if penalty_function is not None else r
+            controller.backPropagate(node, r)
+
+        current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
+        current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
+        end = time.time()
+        print("Prune Count: {}".format(controller.prune_counter))
+        print("Current Best Reward: {}".format(current_best_reward))
+        print("Current Best k:\n", current_best_arc)
+        print("Current Ops:")
+        print(current_best_node.state)
+        print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
+        best_rewards.append((current_best_arc, current_best_reward))
+
+    return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
