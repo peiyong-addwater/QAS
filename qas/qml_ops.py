@@ -116,7 +116,7 @@ class QMLGate(QuantumGate):
         return list(self.wires)
 
     def __str__(self):
-        disp = "{}, {}, {}".format(self.name, self.wires, self.param)
+        disp = "{}, {}, {}".format(self.name, self.wires, list(self.param))
         return disp
 
 class QMLPool(Pool):
