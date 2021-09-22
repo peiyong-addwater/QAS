@@ -391,7 +391,7 @@ def search(
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
         circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
         params = optax.apply_updates(params, circ_updates)
-        print("Parameter Updated!")
+        print("Parameters Updated!")
 
         reward_list = Parallel(n_jobs=-1, verbose=0)(
             delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
@@ -399,7 +399,8 @@ def search(
         for r, node in zip(reward_list, nodes):
             r = penalty_function(r, node) if penalty_function is not None else r
             controller.backPropagate(node, r)
-
+        print("Reward BPed!")
+        print("Finding the best arc...")
         current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         end = time.time()
