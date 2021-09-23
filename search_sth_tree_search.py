@@ -27,14 +27,13 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CX"
-    # task = "422_FULL_CONNECTION_CX_U3"
+    task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
     model = ToffoliQMLNoiseless
     init_qubit_with_actions = {0,1,2}
     d_np = ["CNOT"]
     s_np = ["PauliX", "SX", "RZ"]
-    cu3_map = [[0,1], [1,2]]
-    pool = QMLPool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
+    control_map = [[0,1], [1,2]]
+    pool = QMLPool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
     #pool = GatePool(4, s_np, d_np)
     p = 35
@@ -81,5 +80,7 @@ if __name__ == "__main__":
         sample_policy='local_optimal',
         exploit_policy='local_optimal'
     )
+
+
 
 
