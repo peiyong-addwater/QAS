@@ -267,12 +267,12 @@ class ToffoliQMLNoiseless(ModelFromK):
         return fullCirc
 
     def costFunc(self, extracted_params):
-        loss = 0
+        fid = 0
         circ_func = self.constructFullCirc()
         num_data = len(self.x_list)
         for i in range(num_data):
-            loss = loss + circ_func(extracted_params, self.x_list[i], self.y_list[i])
-        return loss/num_data
+            fid = fid + circ_func(extracted_params, self.x_list[i], self.y_list[i])
+        return fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -282,7 +282,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = jnp.array(extracted_params)
-        return self.costFunc(extracted_params)
+        return 1-self.costFunc(extracted_params)
 
 
     def getGradient(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):

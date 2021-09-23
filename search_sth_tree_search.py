@@ -47,7 +47,7 @@ if __name__ == "__main__":
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CU3" in op_name or "CX" in op_name or "CR" in op_name or "CY" in op_name or "CZ" in op_name:
+            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name:
                 cu3_count = cu3_count + 1
         if cu3_count>=10:
             return r - (cu3_count-11)
@@ -76,8 +76,8 @@ if __name__ == "__main__":
         prune_constant_min=0.5,
         max_visits_prune_threshold=100,
         min_num_children=5,
-        sampling_execute_rounds=200,
-        exploit_execute_rounds=200,
+        sampling_execute_rounds=100,
+        exploit_execute_rounds=100,
         sample_policy='local_optimal',
         exploit_policy='local_optimal'
     )

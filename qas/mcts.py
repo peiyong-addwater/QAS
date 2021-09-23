@@ -348,22 +348,29 @@ def search(
         start = time.time()
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
-            print("="*10+"Sampling at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, Arc Batch Size: {}".format(
-                                                                                                epoch+1,
-                                                                                                num_iterations,
-                                                                                                num_warmup_iterations,
-                                                                                                pool_size,
-                                                                                                arc_batchsize)
+            print("="*10+"Random Sampling at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
+                         "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                  .format(epoch+1,
+                          num_iterations,
+                          num_warmup_iterations,
+                          pool_size,
+                          arc_batchsize,
+                          sampling_execute_rounds,
+                          exploit_execute_rounds)
                   +"="*10)
             for _ in range(arc_batchsize):
                 k, node = controller.randomSample()
                 arcs.append(k)
                 nodes.append(node)
         else:
-            print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, Arc Batch Size: {}".format(epoch + 1,
-                                                                                                  num_iterations,
-                                                                                                  pool_size,
-                                                                                                  arc_batchsize)
+            print("=" * 10 + "Searching at Epoch {}, Pool Size: {}, "
+                             "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                  .format(epoch + 1,
+                          num_iterations,
+                          pool_size,
+                          arc_batchsize,
+                          sampling_execute_rounds,
+                          exploit_execute_rounds)
                   + "=" * 10)
             controller._reset() # CMAB reset
             new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
@@ -413,3 +420,4 @@ def search(
         best_rewards.append((current_best_arc, current_best_reward))
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
+
