@@ -83,6 +83,8 @@ class QMLState(StateOfMCTS):
         if len(self.current_k)>=1 and action==self.current_k[-1]:
             if op_num_params>0:
                 return False
+            elif op_name in ['PauliX', 'PauliY', 'PauliZ', 'CNOT', 'CZ', 'CY', 'Hadamard']:
+                return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
         return True
