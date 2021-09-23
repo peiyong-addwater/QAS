@@ -424,3 +424,35 @@ def search(
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
 
+def circuitModelTuning(
+        initial_params,
+        model,
+        num_epochs,
+        k,
+        op_pool,
+        opt_callable=optax.adam,
+        lr = 0.01,
+        grad_noise_factor = 1/100,
+        verbose = 1
+):
+    p, c, l = initial_params.shape[0], initial_params.shape[1], initial_params.shape[2]
+    circ = model(p, c, l, k, op_pool)
+    optimizer = opt_callable(lr)
+    circ_params = initial_params
+    opt_state = optimizer.init(circ_params)
+    loss_list = []
+    for epoch in range(num_epochs):
+        loss = circ.getLoss(circ_params)
+        loss_list.append(loss)
+        if verbose >= 1:
+            print('Training Circuit at Epoch {}/{}; Loss: {}'.format(epoch + 1, num_epochs, loss))
+        gradients = circ.getGradient(circ_params)
+        gradients = jnp.nan_to_num(gradients)
+        seed = np.random.randint(0, 1000000000)
+        key = jax.random.PRNGKey(seed)
+        noise = jax.random.normal(key, shape=(p, c, l))
+        gradients = gradients + noise * grad_noise_factor
+        circ_updates, opt_state = optimizer.update(gradients, opt_state)
+        circ_params = optax.apply_updates(circ_params, circ_updates)
+        circ_params = np.array(circ_params)
+    return circ_params, loss_list
