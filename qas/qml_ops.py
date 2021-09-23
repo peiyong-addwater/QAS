@@ -122,7 +122,7 @@ class QMLGate(QuantumGate):
 class QMLPool(Pool):
     def __init__(self, num_qubits: int, single_qubit_op_generator: List[AnyStr],
                  two_qubit_op_generator: List[AnyStr],
-                 complete_undirected_graph: bool = True, two_qubit_gate_map: Optional[List[List[int, int]]] = None):
+                 complete_undirected_graph: bool = True, two_qubit_gate_map: Optional[List[List[int]]] = None):
         super(QMLPool, self).__init__()
         for c in single_qubit_op_generator:
             op_constructor = SUPPORTED_OPS_DICT[c]
