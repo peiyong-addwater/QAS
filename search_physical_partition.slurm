@@ -1,27 +1,27 @@
 #!/bin/bash
 # Created by the University of Melbourne job script generator for SLURM
-# Sat Jul 17 2021 08:50:42 GMT+1000 (Australian Eastern Standard Time)
+# Fri Sep 17 2021 15:59:20 GMT+1000 (Australian Eastern Standard Time)
 
 # Partition for the job:
-#SBATCH --partition=gpgpu
+#SBATCH --partition=physical
 
-# Multithreaded (SMP) job: must run on one node
+# Multithreaded (SMP) job: must run on one node 
 #SBATCH --nodes=1
 
 # The name of the job:
-#SBATCH --job-name="CQAS"
+#SBATCH --job-name="S_PHY_S"
 
 # The project ID which this job should run under:
-#SBATCH --account="punim0619"
+#SBATCH --account="punim0147"
 
 # Maximum number of tasks/CPU cores used by the job:
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=1
 
-# Number of GPUs requested per node:
-#SBATCH --gres=gpu:2
+
+
 # The amount of memory in megabytes per process in the job:
-#SBATCH --mem=8768
+#SBATCH --mem=65536
 
 # Use this email address:
 #SBATCH --mail-user=addwater0315@gmail.com
@@ -47,7 +47,6 @@ fi
 
 # The modules to load:
 module load anaconda3/2020.11
-module load cuda/11.1.1
 
 # The job command(s):
 python search_sth_tree_search.py
