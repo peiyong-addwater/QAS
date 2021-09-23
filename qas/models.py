@@ -10,4 +10,11 @@ class ModelFromK(ABC):
     @abstractmethod
     def getGradient(self, super_circ_params):
         raise NotImplementedError
+    @abstractmethod
+    def toList(self, super_circ_params):
+        # convert model to a list of (op_name, op_qubits, op_param)
+        raise NotImplementedError
+    @abstractmethod
+    def getReward(self, super_circ_params):
+        raise NotImplementedError
 

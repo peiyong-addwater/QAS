@@ -33,7 +33,7 @@ if __name__ == "__main__":
     init_qubit_with_actions = {0,1,2}
     d_np = ["CNOT"]
     s_np = ["PauliX", "SX", "RZ"]
-    cu3_map = [(0,1), (1,2)]
+    cu3_map = [[0,1], [1,2]]
     pool = QMLPool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=cu3_map)
     print(pool)
     #pool = GatePool(4, s_np, d_np)

@@ -194,8 +194,8 @@ class MCTSController():
         assert len(k) == self.max_depth
         p, c, l = params.shape[0], params.shape[1], params.shape[2]
         circ = self.model(p, c, l, k, self.pool)
-        loss = circ.getLoss(params)
-        return -loss
+        r = circ.getReward(params)
+        return r
 
     def randomSample(self):
         node = self.root
@@ -288,6 +288,9 @@ def getGradientFromModel(model, params):
 
 def getLossFromModel(model, params):
     return model.getLoss(params)
+
+def getRewardFromModel(model, params):
+    return model.getReward(params)
 
 def search(
         model,

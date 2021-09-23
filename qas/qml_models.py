@@ -53,7 +53,7 @@ for a in [ket0, ket1]:
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
 
-def extractParamIndices(k:List[int], op_pool:QMLPool)->List:
+def extractParamIndicesQML(k:List[int], op_pool:QMLPool)->List:
     assert min(k) >= 0
     p = len(k)
     c = len(op_pool)
@@ -232,7 +232,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 3
-        self.param_indices = extractParamIndices(self.k, self.pool)
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.x_list = TOFFOLI_DATA[0]
         self.y_list = TOFFOLI_DATA[1]
         self.dev = qml.device('default.qubit.jax', wires=self.num_qubits)
@@ -284,6 +284,16 @@ class ToffoliQMLNoiseless(ModelFromK):
         extracted_params = jnp.array(extracted_params)
         return 1-self.costFunc(extracted_params)
 
+    def getReward(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = jnp.array(extracted_params)
+        return self.costFunc(extracted_params)
+
 
     def getGradient(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -301,6 +311,32 @@ class ToffoliQMLNoiseless(ModelFromK):
             gradients[self.param_indices[i]] = extracted_gradients[i]
 
         return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_pos = gate_dict[gate_name]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            gate_num_params = gate_obj.num_params
+            if gate_num_params > 0:
+                gate_params = []
+                for j in range(gate_num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                gate_list.append((gate_name, gate_pos, gate_params))
+            else:
+                gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
+
+
 
 
 
