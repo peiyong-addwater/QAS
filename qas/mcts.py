@@ -274,6 +274,7 @@ class MCTSController():
     def sampleArcWithSuperCircParams(self, params):
         curr = self.root
         for i in range(self.sampling_execute_rounds):
+            #execute multiple rounds, then sample the tree based on updated rewards
             self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
         while not curr.state.isTerminal():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
@@ -370,7 +371,7 @@ def search(
                 arcs.append(k)
                 nodes.append(node)
         else:
-            print("=" * 10 + "Searching at Epoch {}, Pool Size: {}, "
+            print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
