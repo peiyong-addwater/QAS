@@ -271,8 +271,10 @@ class MCTSController():
 
     def sampleArcWithSuperCircParams(self, params):
         curr = self.root
-        for i in range(self.sampling_execute_rounds):
-            self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
+        #for i in range(self.sampling_execute_rounds):
+       #     self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
+        Parallel(n_jobs=-1, verbose=0)(delayed(self.executeRoundWithSuperCircParamsFromAnyNode)(curr, params)
+                                       for _ in range(self.sampling_execute_rounds))
         while not curr.state.isTerminal():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
         return curr.state.getCurrK(), curr
@@ -280,8 +282,10 @@ class MCTSController():
     def exploitArcWithSuperCircParams(self, params):
         curr = self.root
         while not curr.state.isTerminal():
-            for i in range(self.exploit_execute_rounds):
-                self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
+            #for i in range(self.exploit_execute_rounds):
+            #    self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
+            Parallel(n_jobs=-1, verbose=0)(delayed(self.executeRoundWithSuperCircParamsFromAnyNode)(curr, params)
+                                           for _ in range(self.exploit_execute_rounds))
             curr = self.getBestChild(curr, 0, policy=self.second_policy) # alpha = 0, no exploration
         return curr.state.getCurrK(), curr
 

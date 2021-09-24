@@ -16,12 +16,12 @@
 
 # Maximum number of tasks/CPU cores used by the job:
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=24
 
 # Number of GPUs requested per node:
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:1
 # The amount of memory in megabytes per process in the job:
-#SBATCH --mem=8768
+#SBATCH --mem=65536
 
 # Use this email address:
 #SBATCH --mail-user=addwater0315@gmail.com

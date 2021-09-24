@@ -75,8 +75,8 @@ if __name__ == "__main__":
         prune_constant_min=0.5,
         max_visits_prune_threshold=100,
         min_num_children=5,
-        sampling_execute_rounds=150,
-        exploit_execute_rounds=50,
+        sampling_execute_rounds=100,
+        exploit_execute_rounds=10,
         sample_policy='local_optimal',
         exploit_policy='local_optimal'
     )
