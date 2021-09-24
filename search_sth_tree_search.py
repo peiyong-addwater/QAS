@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_ops import QMLPool
-from qas.qml_models import ToffoliQMLNoiseless
+from qas.qml_models import ToffoliQMLNoiseless, PhaseFlipQMLNoiseless
 import json
 import numpy as np
 import optax
@@ -27,16 +27,20 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
-    model = ToffoliQMLNoiseless
-    init_qubit_with_actions = {0,1,2}
-    d_np = ["CNOT"]
-    s_np = ["PauliX", "SX", "RZ"]
+    #task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
+    task = "PHASE_FLIP_TEST_MCTS_PARALLEL"
+    #model = ToffoliQMLNoiseless
+    model = PhaseFlipQMLNoiseless
+    #init_qubit_with_actions = {0,1,2}
+    init_qubit_with_actions = {0}
+    two_qubit_gate = ["CNOT"]
+    #single_qubit_gate = ["PauliX", "SX", "RZ"]
+    single_qubit_gate = ['U3']
     control_map = [[0,1], [1,2]]
-    pool = QMLPool(3, s_np, d_np, complete_undirected_graph=False, two_qubit_gate_map=control_map)
+    pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
     #pool = GatePool(4, s_np, d_np)
-    p = 35
+    p = 3
     l = 3
     c = len(pool)
 
@@ -46,7 +50,7 @@ if __name__ == "__main__":
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name:
+            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" in op_name:
                 cu3_count = cu3_count + 1
         if cu3_count>=10:
             return r - (cu3_count-11)
@@ -62,8 +66,8 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500,
-        num_warmup_iterations=50,
+        num_iterations=100,
+        num_warmup_iterations=2,
         super_circ_train_optimizer=optax.adam,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
@@ -71,7 +75,7 @@ if __name__ == "__main__":
         arc_batchsize=200,
         alpha_max=2,
         alpha_min=1/np.sqrt(2),
-        prune_constant_max=0.9,
+        prune_constant_max=0.6,
         prune_constant_min=0.5,
         max_visits_prune_threshold=100,
         min_num_children=5,

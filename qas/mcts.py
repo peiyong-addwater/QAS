@@ -60,7 +60,7 @@ class QMLState(StateOfMCTS):
         self.op_name_dict = op_pool.pool
         self.pool_keys = list(op_pool.pool.keys())
         self.state = None
-        self.qubit_with_actions = qubit_with_actions
+        self.qubit_with_actions = qubit_with_actions if qubit_with_actions is not None else set()
 
     def getLegalActions(self):
         if self.current_depth == self.max_depth:
@@ -112,7 +112,7 @@ class QMLState(StateOfMCTS):
         return self.current_k
 
     def __repr__(self):
-        disp = ""
+        disp = "LegalControlQubits: {}\nLegalActions: {}\n".format(self.qubit_with_actions,self.getLegalActions())
         for i, p in enumerate(self.current_k):
             disp = disp + "OpAtDepth: {}\tOpKey: {}\tOpName: {}\n".format(i, p, self.op_name_dict[p])
         return disp
@@ -127,6 +127,9 @@ class TreeNode():
         self.numVisits = 0
         self.totalReward = 0
         self.children = {}
+
+    def __repr__(self):
+        return "State: {}\nParent: {}\nNum Visits: {}\nTotal Reward: {}\nChildern: {}\nisTerminal: {}\nisFullyExpanded: {}".format(self.state, self.parent, self.numVisits, self.totalReward, self.children, self.isTerminal, self.isFullyExpanded)
 
 class MCTSController():
     # https://github.com/pbsinclair42/MCTS/blob/master/mcts.py
@@ -209,14 +212,13 @@ class MCTSController():
         return node.state.getCurrK(), node
 
     def getBestChild(self, node:TreeNode, alpha, policy='local_optimal'):
-        if list(node.children.values()) == 0:
-            raise("Empty Actions")
+        if len(list(node.children.values())) == 0:
+            print(node)
+            raise ValueError("No Legal Child for Node at: %s"%node.state.getCurrK())
         if policy == 'random':
             return random.choice(list(node.children.values()))
         best_value = float("-inf")
         best_nodes, suboptimal_nodes = [], []
-        if len(node.children.values()) == 0:
-            raise ValueError("No Legal Child for Node at: %s"%node.state.getCurrK())
         for child in node.children.values():
             node_value = child.totalReward / child.numVisits + alpha * np.sqrt(
                 2 * np.log(node.numVisits) / child.numVisits)
@@ -271,10 +273,8 @@ class MCTSController():
 
     def sampleArcWithSuperCircParams(self, params):
         curr = self.root
-        #for i in range(self.sampling_execute_rounds):
-       #     self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
-        Parallel(n_jobs=-1, verbose=0)(delayed(self.executeRoundWithSuperCircParamsFromAnyNode)(curr, params)
-                                       for _ in range(self.sampling_execute_rounds))
+        for i in range(self.sampling_execute_rounds):
+            self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
         while not curr.state.isTerminal():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
         return curr.state.getCurrK(), curr
@@ -282,10 +282,8 @@ class MCTSController():
     def exploitArcWithSuperCircParams(self, params):
         curr = self.root
         while not curr.state.isTerminal():
-            #for i in range(self.exploit_execute_rounds):
-            #    self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
-            Parallel(n_jobs=-1, verbose=0)(delayed(self.executeRoundWithSuperCircParamsFromAnyNode)(curr, params)
-                                           for _ in range(self.exploit_execute_rounds))
+            for i in range(self.exploit_execute_rounds):
+                self.executeRoundWithSuperCircParamsFromAnyNode(node=curr, params=params)
             curr = self.getBestChild(curr, 0, policy=self.second_policy) # alpha = 0, no exploration
         return curr.state.getCurrK(), curr
 
