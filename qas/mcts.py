@@ -371,7 +371,7 @@ def search(
                 arcs.append(k)
                 nodes.append(node)
         else:
-            print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
+            print("=" * 10 + "Searching (Sampling According to UCT and CMAB) at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
@@ -407,7 +407,7 @@ def search(
         circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
         params = optax.apply_updates(params, circ_updates)
         print("Parameters Updated!")
-
+        print("Calculating Rewards for Sampled Arcs...")
         reward_list = Parallel(n_jobs=-1, verbose=0)(
             delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
         )
@@ -415,7 +415,7 @@ def search(
             r = penalty_function(r, node) if penalty_function is not None else r
             controller.backPropagate(node, r)
         print("Reward BPed!")
-        print("Finding the best arc...")
+        print("Exploiting and finding the best arc...")
         current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         end = time.time()
