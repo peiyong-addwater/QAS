@@ -300,13 +300,14 @@ class ToffoliQMLNoiseless(ModelFromK):
         assert super_circ_params.shape[1] == self.c
         assert super_circ_params.shape[2] == self.l
         extracted_params = []
-        cost_grad = jax.grad(self.costFunc, argnums=0)
-
+        gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
 
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = jax.grad(self.costFunc, argnums=0)
         extracted_gradients = cost_grad(extracted_params)
-        gradients = np.zeros(super_circ_params.shape)
         for i in range(len(self.param_indices)):
             gradients[self.param_indices[i]] = extracted_gradients[i]
 
@@ -409,13 +410,14 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         assert super_circ_params.shape[1] == self.c
         assert super_circ_params.shape[2] == self.l
         extracted_params = []
-        cost_grad = jax.grad(self.costFunc, argnums=0)
-
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
 
-        extracted_gradients = cost_grad(extracted_params)
         gradients = np.zeros(super_circ_params.shape)
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = jax.grad(self.costFunc, argnums=0)
+        extracted_gradients = cost_grad(extracted_params)
         for i in range(len(self.param_indices)):
             gradients[self.param_indices[i]] = extracted_gradients[i]
 
