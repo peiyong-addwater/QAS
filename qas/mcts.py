@@ -393,9 +393,10 @@ def search(
                 nodes.append(node)
         print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
-        batch_gradients = Parallel(n_jobs=-1, verbose=0)(
-            delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
-        )
+        #batch_gradients = Parallel(n_jobs=-1, verbose=0)(
+        #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
+        #)
+        batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
         batch_gradients = jnp.stack(batch_gradients, axis=0)
         batch_gradients = jnp.nan_to_num(batch_gradients)
         batch_gradients = jnp.mean(batch_gradients, axis=0)
@@ -406,11 +407,13 @@ def search(
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
         circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
         params = optax.apply_updates(params, circ_updates)
+        params = np.array(params)
         print("Parameters Updated!")
         print("Calculating Rewards for Sampled Arcs...")
-        reward_list = Parallel(n_jobs=-1, verbose=0)(
-            delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
-        )
+        #reward_list = Parallel(n_jobs=-1, verbose=0)(
+        #    delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
+        #)
+        reward_list = [controller.simulationWithSuperCircuitParamsAndK(k, params) for k in arcs]
         for r, node in zip(reward_list, nodes):
             r = penalty_function(r, node) if penalty_function is not None else r
             controller.backPropagate(node, r)

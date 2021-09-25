@@ -235,7 +235,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.x_list = TOFFOLI_DATA[0]
         self.y_list = TOFFOLI_DATA[1]
-        self.dev = qml.device('default.qubit.jax', wires=self.num_qubits)
+        self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
 
     @qml.template
     def backboneCirc(self, extracted_params):
@@ -259,7 +259,7 @@ class ToffoliQMLNoiseless(ModelFromK):
             qml_gate_obj.getOp()
 
     def constructFullCirc(self):
-        @qml.qnode(self.dev, interface='jax')
+        @qml.qnode(self.dev)
         def fullCirc(extracted_params, x=None, y = None):
             qml.QubitStateVector(x, wires=[0,1,2])
             self.backboneCirc(extracted_params)
@@ -271,7 +271,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         circ_func = self.constructFullCirc()
         num_data = len(self.x_list)
         for i in range(num_data):
-            fid = fid + circ_func(extracted_params, self.x_list[i], self.y_list[i])
+            fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
         return fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, jnp.ndarray, Sequence]):
@@ -306,7 +306,8 @@ class ToffoliQMLNoiseless(ModelFromK):
 
         if len(extracted_params) == 0:
             return gradients
-        cost_grad = jax.grad(self.costFunc, argnums=0)
+        #cost_grad = jax.grad(self.costFunc, argnums=0)
+        cost_grad = qml.grad(self.costFunc)
         extracted_gradients = cost_grad(extracted_params)
         for i in range(len(self.param_indices)):
             gradients[self.param_indices[i]] = extracted_gradients[i]
