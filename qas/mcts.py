@@ -26,7 +26,7 @@ import optax
 import os
 import time
 from joblib import Parallel, delayed
-
+#from memory_profiler import profile
 
 class StateOfMCTS(ABC):
 
@@ -297,6 +297,7 @@ def getLossFromModel(model, params):
 def getRewardFromModel(model, params):
     return model.getReward(params)
 
+
 def search(
         model,
         op_pool,
@@ -431,6 +432,7 @@ def search(
         best_rewards.append((current_best_arc, current_best_reward))
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
+
 
 def circuitModelTuning(
         initial_params,
