@@ -320,7 +320,8 @@ def search(
         sampling_execute_rounds=200,
         exploit_execute_rounds=200,
         sample_policy='local_optimal',
-        exploit_policy='local_optimal'
+        exploit_policy='local_optimal',
+        verbose = 1
 ):
     p = target_circuit_depth
     l = init_params.shape[2]
@@ -426,8 +427,10 @@ def search(
         print("Prune Count: {}".format(controller.prune_counter))
         print("Current Best Reward: {}".format(current_best_reward))
         print("Current Best k:\n", current_best_arc)
-        print("Current Ops:")
-        print(current_best_node.state)
+        print("Pool: {}", op_pool)
+        if verbose > 1:
+            print("Current Ops:")
+            print(current_best_node.state)
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
         best_rewards.append((current_best_arc, current_best_reward))
 
