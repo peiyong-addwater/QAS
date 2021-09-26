@@ -427,11 +427,11 @@ def search(
         print("Prune Count: {}".format(controller.prune_counter))
         print("Current Best Reward: {}".format(current_best_reward))
         print("Current Best k:\n", current_best_arc)
-        print("Pool: {}", op_pool)
+        print("Pool:\n {}".format(op_pool))
         if verbose > 1:
             print("Current Ops:")
             print(current_best_node.state)
-        print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10)
+        print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
         best_rewards.append((current_best_arc, current_best_reward))
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
