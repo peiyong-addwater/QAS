@@ -3,9 +3,7 @@ from qas.qml_ops import QMLPool
 from qas.qml_models import ToffoliQMLNoiseless, PhaseFlipQMLNoiseless
 import json
 import numpy as np
-import optax
-import jax.numpy as jnp
-import jax
+import pennylane as qml
 import time
 import random
 
@@ -28,8 +26,10 @@ if __name__ == "__main__":
     marker = nowtime()
     filename = marker+'.json'
     task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
+    #task = "PHASE_FLIP_TEST"
+    #model = PhaseFlipQMLNoiseless
     model = ToffoliQMLNoiseless
-    init_qubit_with_actions = {0,1,2}
+    init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["SX", "RZ"]
     #single_qubit_gate = ['U3']
@@ -64,18 +64,18 @@ if __name__ == "__main__":
         init_params=init_params,
         num_iterations=200,
         num_warmup_iterations=10,
-        super_circ_train_optimizer=optax.adam,
+        super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
-        arc_batchsize=50,
-        alpha_max=4,
-        alpha_min=1/np.sqrt(2),
+        arc_batchsize=300,
+        alpha_max=3,
+        alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.6,
         prune_constant_min=0.5,
         max_visits_prune_threshold=50,
         min_num_children=5,
-        sampling_execute_rounds=300,
+        sampling_execute_rounds=5,
         exploit_execute_rounds=3,
         sample_policy='local_optimal',
         exploit_policy='local_optimal',
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         num_epochs=100,
         k=final_best_arc,
         op_pool=pool,
-        opt_callable=optax.adam,
+        opt_callable=qml.AdamOptimizer,
         lr=0.01,
         grad_noise_factor=0,
         verbose=1

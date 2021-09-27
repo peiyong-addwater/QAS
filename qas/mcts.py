@@ -15,17 +15,11 @@ from typing import (
     Set
 )
 import numpy as np
-import jax
-import jax.numpy as jnp
 import pennylane as qml
 import pennylane.numpy as pnp
 from abc import ABC, abstractmethod
 from .qml_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
-from .models import ModelFromK
-import optax
-import os
 import time
-from joblib import Parallel, delayed
 #from memory_profiler import profile
 
 class StateOfMCTS(ABC):
@@ -303,10 +297,10 @@ def search(
         op_pool,
         target_circuit_depth,
         init_qubit_with_controls:Set,
-        init_params:Union[np.ndarray, jnp.ndarray, Sequence],
+        init_params:Union[np.ndarray, pnp.ndarray, Sequence],
         num_iterations = 500,
         num_warmup_iterations = 20,
-        super_circ_train_optimizer = optax.adam,
+        super_circ_train_optimizer = qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor = 1/100,
         super_circ_train_lr = 0.01,
         penalty_function:Callable=None,
@@ -352,7 +346,6 @@ def search(
     pool_size = len(op_pool)
     params = init_params
     optimizer = super_circ_train_optimizer(super_circ_train_lr)
-    opt_state = optimizer.init(params)
     best_rewards = []
     for epoch in range(num_iterations):
         start = time.time()
@@ -399,16 +392,14 @@ def search(
         #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
         #)
         batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
-        batch_gradients = jnp.stack(batch_gradients, axis=0)
-        batch_gradients = jnp.nan_to_num(batch_gradients)
-        batch_gradients = jnp.mean(batch_gradients, axis=0)
+        batch_gradients = np.stack(batch_gradients, axis=0)
+        batch_gradients = np.nan_to_num(batch_gradients)
+        batch_gradients = np.mean(batch_gradients, axis=0)
         # add some noise to the circuit gradient
-        seed = np.random.randint(0, 1000000000)
-        key = jax.random.PRNGKey(seed)
-        noise = jax.random.normal(key, shape=(p, c, l))
+
+        noise = np.random.randn(p, c, l)
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
-        circ_updates, opt_state = optimizer.update(batch_gradients, opt_state)
-        params = optax.apply_updates(params, circ_updates)
+        params = optimizer.apply_grad(grad=batch_gradients, args=params)
         params = np.array(params)
         print("Parameters Updated!")
         print("Calculating Rewards for Sampled Arcs...")
@@ -443,16 +434,15 @@ def circuitModelTuning(
         num_epochs,
         k,
         op_pool,
-        opt_callable=optax.adam,
+        opt_callable=qml.AdamOptimizer,
         lr = 0.01,
         grad_noise_factor = 1/100,
         verbose = 1
 ):
     p, c, l = initial_params.shape[0], initial_params.shape[1], initial_params.shape[2]
     circ = model(p, c, l, k, op_pool)
-    optimizer = opt_callable(lr)
+    optimizer = opt_callable(stepsize=lr)
     circ_params = initial_params
-    opt_state = optimizer.init(circ_params)
     loss_list = []
     for epoch in range(num_epochs):
         loss = circ.getLoss(circ_params)
@@ -460,12 +450,8 @@ def circuitModelTuning(
         if verbose >= 1:
             print('Training Circuit at Epoch {}/{}; Loss: {}'.format(epoch + 1, num_epochs, loss))
         gradients = circ.getGradient(circ_params)
-        gradients = jnp.nan_to_num(gradients)
-        seed = np.random.randint(0, 1000000000)
-        key = jax.random.PRNGKey(seed)
-        noise = jax.random.normal(key, shape=(p, c, l))
+        gradients = np.nan_to_num(gradients)
+        noise = np.random.randn(p, c, l)
         gradients = gradients + noise * grad_noise_factor
-        circ_updates, opt_state = optimizer.update(gradients, opt_state)
-        circ_params = optax.apply_updates(circ_params, circ_updates)
-        circ_params = np.array(circ_params)
+        circ_params = optimizer.apply_grad(grad=gradients, args=circ_params)
     return circ_params, loss_list
