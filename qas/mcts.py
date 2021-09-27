@@ -304,7 +304,8 @@ def search(
         super_circ_train_gradient_noise_factor = 1/100,
         super_circ_train_lr = 0.01,
         penalty_function:Callable=None,
-        arc_batchsize = 200,
+        warmup_arc_batchsize = 200,
+        search_arc_batchsize = 20,
         alpha_max = 2,
         alpha_min=1 / np.sqrt(2),
         prune_constant_max=0.9,
@@ -357,21 +358,22 @@ def search(
                           num_iterations,
                           num_warmup_iterations,
                           pool_size,
-                          arc_batchsize,
+                          warmup_arc_batchsize,
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   +"="*10)
-            for _ in range(arc_batchsize):
+            for _ in range(warmup_arc_batchsize):
                 k, node = controller.randomSample()
                 arcs.append(k)
                 nodes.append(node)
+            print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             print("=" * 10 + "Searching (Sampling According to UCT and CMAB) at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
                           pool_size,
-                          arc_batchsize,
+                          search_arc_batchsize,
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
@@ -382,11 +384,11 @@ def search(
             new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
                         num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
-            for _ in range(arc_batchsize):
+            for _ in range(search_arc_batchsize):
                 k, node = controller.sampleArcWithSuperCircParams(params)
                 arcs.append(k)
                 nodes.append(node)
-        print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(arc_batchsize))
+            print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
         #batch_gradients = Parallel(n_jobs=-1, verbose=0)(
         #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
