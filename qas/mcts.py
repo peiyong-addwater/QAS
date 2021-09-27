@@ -369,7 +369,7 @@ def search(
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             print("=" * 10 + "Searching (Sampling According to UCT and CMAB) at Epoch {}/{}, Pool Size: {}, "
-                             "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                             "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
                           pool_size,

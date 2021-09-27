@@ -80,7 +80,7 @@ if __name__ == "__main__":
         exploit_execute_rounds=3,
         sample_policy='local_optimal',
         exploit_policy='local_optimal',
-        verbose=2
+        verbose=1
     )
 
 
