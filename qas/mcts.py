@@ -396,7 +396,6 @@ def search(
         batch_gradients = np.nan_to_num(batch_gradients)
         batch_gradients = np.mean(batch_gradients, axis=0)
         # add some noise to the circuit gradient
-
         noise = np.random.randn(p, c, l)
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
         params = optimizer.apply_grad(grad=batch_gradients, args=params)
@@ -418,10 +417,11 @@ def search(
         print("Prune Count: {}".format(controller.prune_counter))
         print("Current Best Reward: {}".format(current_best_reward))
         print("Current Best k:\n", current_best_arc)
-        print("Pool:\n {}".format(op_pool))
         if verbose > 1:
             print("Current Ops:")
             print(current_best_node.state)
+        else:
+            print("Pool:\n {}".format(op_pool))
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
         best_rewards.append((current_best_arc, current_best_reward))
 
@@ -454,4 +454,5 @@ def circuitModelTuning(
         noise = np.random.randn(p, c, l)
         gradients = gradients + noise * grad_noise_factor
         circ_params = optimizer.apply_grad(grad=gradients, args=circ_params)
+        circ_params = np.array(circ_params)
     return circ_params, loss_list

@@ -16,12 +16,12 @@
 
 # Maximum number of tasks/CPU cores used by the job:
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=4
 
 # Number of GPUs requested per node:
 #SBATCH --gres=gpu:1
 # The amount of memory in megabytes per process in the job:
-#SBATCH --mem=65536
+#SBATCH --mem=8000
 
 # Use this email address:
 #SBATCH --mail-user=addwater0315@gmail.com
@@ -48,9 +48,9 @@ fi
 # The modules to load:
 module load anaconda3/2020.11
 module load cuda/11.1.1
-module load web_proxy/1.0
-module load git/2.28.0-nodocs
-module load cmake/3.20.1
+# module load web_proxy/1.0
+# module load git/2.28.0-nodocs
+# module load cmake/3.20.1
 # pip install qulacs-gpu
 
 # The job command(s):

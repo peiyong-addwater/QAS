@@ -63,7 +63,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=200,
-        num_warmup_iterations=10,
+        num_warmup_iterations=100,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
@@ -73,13 +73,13 @@ if __name__ == "__main__":
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.6,
         prune_constant_min=0.5,
-        max_visits_prune_threshold=50,
+        max_visits_prune_threshold=100,
         min_num_children=5,
-        sampling_execute_rounds=5,
+        sampling_execute_rounds=100,
         exploit_execute_rounds=3,
         sample_policy='local_optimal',
         exploit_policy='local_optimal',
-        verbose=1
+        verbose=2
     )
 
 

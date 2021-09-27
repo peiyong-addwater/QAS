@@ -233,7 +233,8 @@ class ToffoliQMLNoiseless(ModelFromK):
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.x_list = TOFFOLI_DATA[0]
         self.y_list = TOFFOLI_DATA[1]
-        self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
+        #self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
+        self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
     @qml.template
     def backboneCirc(self, extracted_params):
