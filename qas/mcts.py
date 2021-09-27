@@ -363,7 +363,7 @@ def search(
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
             print("="*10+"Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
-                         "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                         "Arc Batch Size: {}, CMAB Sampling Rounds: {}, CMAB Exploiting Rounds: {}"
                   .format(epoch+1,
                           num_iterations,
                           num_warmup_iterations,
@@ -375,12 +375,15 @@ def search(
             for _ in range(warmup_arc_batchsize):
                 #k, node = controller.randomSample()
                 k, node = controller.uctSample(uct_sample_policy)
+                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
                 arcs.append(k)
                 nodes.append(node)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
-                             "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
+                             "Arc Batch Size: {}, CMAB Sampling Rounds: {}, CMAB Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
                           pool_size,
@@ -397,6 +400,9 @@ def search(
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
             for _ in range(search_arc_batchsize):
                 k, node = controller.cmabSampleArcWithSuperCircParams(params)
+                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
                 arcs.append(k)
                 nodes.append(node)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
@@ -414,15 +420,6 @@ def search(
         params = optimizer.apply_grad(grad=batch_gradients, args=params)
         params = np.array(params)
         print("Parameters Updated!")
-        print("Calculating Rewards for Sampled Arcs...")
-        #reward_list = Parallel(n_jobs=-1, verbose=0)(
-        #    delayed(controller.simulationWithSuperCircuitParamsAndK)(k, params) for k in arcs
-        #)
-        reward_list = [controller.simulationWithSuperCircuitParamsAndK(k, params) for k in arcs]
-        for r, node in zip(reward_list, nodes):
-            r = penalty_function(r, node) if penalty_function is not None else r
-            controller.backPropagate(node, r)
-        print("Reward BPed!")
         print("Exploiting and finding the best arc...")
         current_best_arc, current_best_node = controller.cmabExploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
