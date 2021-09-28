@@ -302,11 +302,11 @@ def getRewardFromModel(model, params):
 
 
 def search(
-        model,
-        op_pool,
-        target_circuit_depth,
-        init_qubit_with_controls:Set,
-        init_params:Union[np.ndarray, pnp.ndarray, Sequence],
+        model=None,
+        op_pool=None,
+        target_circuit_depth:int=None,
+        init_qubit_with_controls:Set=None,
+        init_params:Union[np.ndarray, pnp.ndarray, Sequence]=None,
         num_iterations = 500,
         num_warmup_iterations = 20,
         super_circ_train_optimizer = qml.AdamOptimizer,
@@ -439,11 +439,11 @@ def search(
 
 
 def circuitModelTuning(
-        initial_params,
-        model,
-        num_epochs,
-        k,
-        op_pool,
+        initial_params:Union[np.ndarray, pnp.ndarray, Sequence]=None,
+        model=None,
+        num_epochs:int=None,
+        k:List[int]=None,
+        op_pool=None,
         opt_callable=qml.AdamOptimizer,
         lr = 0.01,
         grad_noise_factor = 1/100,
