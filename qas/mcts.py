@@ -274,7 +274,7 @@ class MCTSController():
         self.backPropagate(node, reward)
         return node
 
-    def cmabSampleArcWithSuperCircParams(self, params):
+    def sampleArcWithSuperCircParams(self, params):
         curr = self.root
         for i in range(self.sampling_execute_rounds):
             #execute multiple rounds, then sample the tree based on updated rewards
@@ -283,7 +283,7 @@ class MCTSController():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
         return curr.state.getCurrK(), curr
 
-    def cmabExploitArcWithSuperCircParams(self, params):
+    def nestedExploitArcWithSuperCircParams(self, params):
         curr = self.root
         while not curr.state.isTerminal():
             for i in range(self.exploit_execute_rounds):
@@ -363,7 +363,7 @@ def search(
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
             print("="*10+"Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
-                         "Arc Batch Size: {}, CMAB Sampling Rounds: {}, CMAB Exploiting Rounds: {}"
+                         "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch+1,
                           num_iterations,
                           num_warmup_iterations,
@@ -383,7 +383,7 @@ def search(
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
-                             "Arc Batch Size: {}, CMAB Sampling Rounds: {}, CMAB Exploiting Rounds: {}"
+                             "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
                           pool_size,
@@ -391,7 +391,7 @@ def search(
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
-            # controller._reset() # CMAB reset
+            # controller._reset() # reset
             new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
                         epoch + 1 - num_warmup_iterations)
             controller.alpha = new_alpha  # alpha decreases as epoch increases
@@ -399,7 +399,7 @@ def search(
                         num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
             for _ in range(search_arc_batchsize):
-                k, node = controller.cmabSampleArcWithSuperCircParams(params)
+                k, node = controller.sampleArcWithSuperCircParams(params)
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
@@ -421,7 +421,7 @@ def search(
         params = np.array(params)
         print("Parameters Updated!")
         print("Exploiting and finding the best arc...")
-        current_best_arc, current_best_node = controller.cmabExploitArcWithSuperCircParams(params)
+        current_best_arc, current_best_node = controller.nestedExploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         end = time.time()
         print("Prune Count: {}".format(controller.prune_counter))
