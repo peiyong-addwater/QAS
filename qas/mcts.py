@@ -391,7 +391,7 @@ def search(
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
-            controller._reset() # CMAB reset
+            # controller._reset() # CMAB reset
             new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
                         epoch + 1 - num_warmup_iterations)
             controller.alpha = new_alpha  # alpha decreases as epoch increases
