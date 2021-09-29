@@ -363,7 +363,7 @@ def search(
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
             print("="*10+"Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
-                         "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                         "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch+1,
                           num_iterations,
                           num_warmup_iterations,
@@ -386,7 +386,7 @@ def search(
                 controller._reset()
                 print("Reset MCTS Controller")
             print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
-                             "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
+                             "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
                           num_iterations,
                           pool_size,
