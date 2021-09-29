@@ -369,7 +369,6 @@ def search(
                           num_warmup_iterations,
                           pool_size,
                           warmup_arc_batchsize,
-                          sampling_execute_rounds,
                           exploit_execute_rounds)
                   +"="*10)
             for _ in range(warmup_arc_batchsize):
