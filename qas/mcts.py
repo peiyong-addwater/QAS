@@ -363,7 +363,7 @@ def search(
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
             print("="*10+"Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
-                         "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
+                         "Arc Batch Size: {}, Exploiting Rounds: {}"
                   .format(epoch+1,
                           num_iterations,
                           num_warmup_iterations,
