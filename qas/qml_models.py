@@ -41,7 +41,7 @@ STATE_DICT_KEYS = list(STATE_DIC.keys())
 FOUR_TWO_TWO_DETECTION_CODE_INPUT = []
 for c in PAULI_EIGENSTATES_T_STATE:
     for d in PAULI_EIGENSTATES_T_STATE:
-        FOUR_TWO_TWO_DETECTION_CODE_INPUT.append([c,d])
+        FOUR_TWO_TWO_DETECTION_CODE_INPUT.append(np.kron(c,d))
 
 TOFFOLI_INPUT = []
 for a in [ket0, ket1]:
@@ -190,8 +190,7 @@ def get_code_space_422_detection_code(init_states)->List[DensityMatrix]:
     encoded_states = []
     for state in init_states:
         qc = QuantumCircuit(4)
-        qc.initialize(state[0], [0])
-        qc.initialize(state[1], [1])
+        qc.initialize(state, [0,1])
         qc.append(backbone_circ.to_instruction(), [0,1,2,3])
         qc.save_density_matrix(label='encoded_state')
         simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
@@ -346,7 +345,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.x_list = SIMPLE_DATASET_PHASE_FLIP[0]
         self.y_list = SIMPLE_DATASET_PHASE_FLIP[1]
-        self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
+        self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
     @qml.template
     def backboneCirc(self, extracted_params):
@@ -448,8 +447,117 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         return gate_list
 
 
+class FourTwoTwoNoiseless(ModelFromK):
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 4
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.x_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[0]
+        self.y_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[1]
+        #self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
+        self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
+    @qml.template
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            num_params = gate_obj.num_params
+            wires = gate_dict[gate_name]
+            if num_params > 0:
+                gate_params = []
+                for j in range(num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            else:
+                gate_params = None
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            qml_gate_obj.getOp()
 
+    def constructFullCirc(self):
+        @qml.qnode(self.dev)
+        def fullCirc(extracted_params, x=None, y = None):
+            qml.QubitStateVector(x, wires=[0,1])
+            self.backboneCirc(extracted_params)
+            return qml.expval(qml.Hermitian(y, wires=[0,1,2,3]))
+        return fullCirc
+
+    def costFunc(self, extracted_params):
+        fid = 0
+        circ_func = self.constructFullCirc()
+        num_data = len(self.x_list)
+        for i in range(num_data):
+            fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
+        return fid/num_data
+
+    def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return 1-self.costFunc(extracted_params)
+
+    def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return self.costFunc(extracted_params)
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        #cost_grad = jax.grad(self.costFunc, argnums=0)
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_pos = gate_dict[gate_name]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            gate_num_params = gate_obj.num_params
+            if gate_num_params > 0:
+                gate_params = []
+                for j in range(gate_num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                gate_list.append((gate_name, gate_pos, gate_params))
+            else:
+                gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
 
 
 

@@ -283,7 +283,7 @@ class MCTSController():
             curr = self.getBestChild(curr, self.alpha, policy=self.first_policy)
         return curr.state.getCurrK(), curr
 
-    def nestedExploitArcWithSuperCircParams(self, params):
+    def exploitArcWithSuperCircParams(self, params):
         curr = self.root
         while not curr.state.isTerminal():
             for i in range(self.exploit_execute_rounds):
@@ -421,7 +421,7 @@ def search(
         params = np.array(params)
         print("Parameters Updated!")
         print("Exploiting and finding the best arc...")
-        current_best_arc, current_best_node = controller.nestedExploitArcWithSuperCircParams(params)
+        current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         end = time.time()
         print("Prune Count: {}".format(controller.prune_counter))
