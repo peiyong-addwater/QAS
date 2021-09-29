@@ -373,8 +373,8 @@ def search(
                           exploit_execute_rounds)
                   +"="*10)
             for _ in range(warmup_arc_batchsize):
-                #k, node = controller.randomSample()
-                k, node = controller.uctSample(uct_sample_policy)
+                k, node = controller.randomSample()
+                #k, node = controller.uctSample(uct_sample_policy)
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
@@ -382,6 +382,9 @@ def search(
                 nodes.append(node)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
+            if epoch == num_warmup_iterations:
+                controller._reset()
+                print("Reset MCTS Controller")
             print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(epoch + 1,
