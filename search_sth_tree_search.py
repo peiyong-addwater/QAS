@@ -25,20 +25,21 @@ if __name__ == "__main__":
 
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
-    #task = "PHASE_FLIP_TEST"
+    #task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
+    task = "PHASE_FLIP_TEST"
     #task = "422_CODE"
-    model = ToffoliQMLNoiseless
+    model = PhaseFlipQMLNoiseless
+    #model = ToffoliQMLNoiseless
     #model = FourTwoTwoNoiseless
-    init_qubit_with_actions = {0,1,2}
+    init_qubit_with_actions = {0}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["SX", "RZ"]
-    #single_qubit_gate = ['U3']
+    #single_qubit_gate = ["SX", "RZ"]
+    single_qubit_gate = ['U3']
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
     control_map = [[0,1], [1,2], [1,0], [2,1]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 37
+    p = 3
     l = 3
     c = len(pool)
 
