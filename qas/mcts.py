@@ -106,7 +106,7 @@ class QMLState(StateOfMCTS):
         return self.current_k
 
     def __repr__(self):
-        disp = "LegalControlQubits: {}\nLegalActions: {}\n".format(self.qubit_with_actions,self.getLegalActions())
+        disp = ""
         for i, p in enumerate(self.current_k):
             disp = disp + "OpAtDepth: {}\tOpKey: {}\tOpName: {}\n".format(i, p, self.op_name_dict[p])
         return disp
