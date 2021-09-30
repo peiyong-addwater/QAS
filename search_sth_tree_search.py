@@ -38,7 +38,7 @@ if __name__ == "__main__":
     control_map = [[0,1],[1,2],[0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 10
+    p = 6
     l = 3
     c = len(pool)
 
