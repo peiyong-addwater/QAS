@@ -50,8 +50,8 @@ if __name__ == "__main__":
             op_name = list(pool[op_index].keys())[0]
             if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" in op_name:
                 cu3_count = cu3_count + 1
-        if cu3_count>=5:
-            return r - (cu3_count-5)
+        if cu3_count>=4:
+            return r - (cu3_count-4)
         return r
 
 
