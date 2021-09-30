@@ -81,6 +81,23 @@ class QMLState(StateOfMCTS):
                 return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
+        if op_num_params>0:
+            if len(self.current_k)>=1:
+                # back trace last gate that acted on the same qubit -> the same parameterized operation
+                action_qubits = set()
+                for i in range(1, len(self.current_k)+1):
+                    last_action = self.current_k[-i]
+                    last_op = self.op_name_dict[action]
+                    last_op_name = list(last_op.keys())[0]
+                    last_op_qubit = last_op[last_op_name]
+                    if last_action == action:
+                        if len(op_qubit) == 1 and op_qubit[0] not in action_qubits:
+                            return False
+                        if len(op_qubit) == 2 and (op_qubit[0] not in action_qubits and op_qubit[1] not in action_qubits):
+                            return False
+                    else:
+                        for c in last_op_qubit:
+                            action_qubits.add(c)
         return True
 
     def takeAction(self, action:int):

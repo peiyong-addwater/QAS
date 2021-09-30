@@ -23,7 +23,7 @@ def nowtime():
 if __name__ == "__main__":
     marker = nowtime()
     filename = marker+'.json'
-    task = "TOFFOLI_RESTRICTED_POOL_U3_CNOT"
+    task = "TOFFOLI_RESTRICTED_POOL_U3_CNOT_EXPANDED_DATASET"
     #task = "PHASE_FLIP_TEST"
     #task = "422_CODE"
     model = PhaseFlipQMLNoiseless
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     control_map = [[0,1],[1,2],[0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 10
+    p = 12
     l = 3
     c = len(pool)
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" in op_name:
+            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" or "CU3" in op_name:
                 cu3_count = cu3_count + 1
         if cu3_count>=4:
             return r - (cu3_count-4)
