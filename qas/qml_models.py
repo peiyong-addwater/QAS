@@ -270,7 +270,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         num_data = len(self.x_list)
         for i in range(num_data):
             fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
-        return fid/num_data
+        return 1 - fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -280,7 +280,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return 1-self.costFunc(extracted_params)
+        return self.costFunc(extracted_params)
 
     def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -290,7 +290,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return self.costFunc(extracted_params)
+        return 1-self.costFunc(extracted_params)
 
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
@@ -304,7 +304,6 @@ class ToffoliQMLNoiseless(ModelFromK):
 
         if len(extracted_params) == 0:
             return gradients
-        #cost_grad = jax.grad(self.costFunc, argnums=0)
         cost_grad = qml.grad(self.costFunc)
         extracted_gradients = cost_grad(extracted_params)
         for i in range(len(self.param_indices)):
@@ -382,7 +381,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         num_data = len(self.x_list)
         for i in range(num_data):
             fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
-        return fid/num_data
+        return 1-fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -392,7 +391,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = pnp.array(extracted_params)
-        return 1-self.costFunc(extracted_params)
+        return self.costFunc(extracted_params)
 
     def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -402,7 +401,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = pnp.array(extracted_params)
-        return self.costFunc(extracted_params)
+        return 1-self.costFunc(extracted_params)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -494,7 +493,7 @@ class FourTwoTwoNoiseless(ModelFromK):
         num_data = len(self.x_list)
         for i in range(num_data):
             fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
-        return fid/num_data
+        return 1-fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -504,7 +503,7 @@ class FourTwoTwoNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return 1-self.costFunc(extracted_params)
+        return self.costFunc(extracted_params)
 
     def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -514,7 +513,7 @@ class FourTwoTwoNoiseless(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return self.costFunc(extracted_params)
+        return 1-self.costFunc(extracted_params)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
