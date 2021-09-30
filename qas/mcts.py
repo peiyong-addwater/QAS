@@ -132,7 +132,7 @@ class MCTSController():
                  op_pool,
                  target_circuit_depth:int,
                  reward_penalty_function:Optional[Callable]=None, # should take simulation reward and node as input and return new reward
-                 initial_legal_control_qubit_choice:Optional=None,
+                 initial_legal_control_qubit_choice:Optional[Set]=None,
                  alpha = 1/np.sqrt(2),
                  prune_reward_ratio=0.9,
                  max_visits_prune_threshold=50,
