@@ -21,8 +21,6 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 if __name__ == "__main__":
-
-
     marker = nowtime()
     filename = marker+'.json'
     #task = "TOFFOLI_RESTRICTED_POOL_RZ_X_SX_CNOT"
@@ -39,7 +37,7 @@ if __name__ == "__main__":
     control_map = [[0,1], [1,2], [1,0], [2,1]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 3
+    p = 37
     l = 3
     c = len(pool)
 
