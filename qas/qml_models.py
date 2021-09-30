@@ -44,9 +44,9 @@ for c in PAULI_EIGENSTATES_T_STATE:
         FOUR_TWO_TWO_DETECTION_CODE_INPUT.append(np.kron(c,d))
 
 TOFFOLI_INPUT = []
-for a in [ket0, ket1]:
-    for b in [ket0, ket1]:
-        for c in [ket0, ket1]:
+for a in PAULI_EIGENSTATES_T_STATE:
+    for b in PAULI_EIGENSTATES_T_STATE:
+        for c in PAULI_EIGENSTATES_T_STATE:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
