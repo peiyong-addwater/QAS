@@ -400,12 +400,17 @@ def search(
                 k, node = controller.randomSample()
                 arcs.append(k)
                 nodes.append(node)
+                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
+            """
             reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
                 delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
             for r, _, node in reward_k_node_list:
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
-
+                print("BPed!")
+            """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             # No reset. Reset will lose all the reward information obtained during the warm up stage.
@@ -430,11 +435,16 @@ def search(
                 k, node = controller.sampleArcWithSuperCircParams(params)
                 arcs.append(k)
                 nodes.append(node)
+                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
+            """
             reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
                 delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
             for r, _, node in reward_k_node_list:
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
+            """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
         batch_gradients = Parallel(n_jobs=-1, verbose=0)(
@@ -452,11 +462,11 @@ def search(
         print("Parameters Updated!")
         print("Exploiting and finding the best arc...")
         current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
-        current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
-        current_penalized_best_reward = penalty_function(current_best_reward, current_best_node)
+        #current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         current_best_model = model(p, c, l, current_best_arc, op_pool)
         current_best_loss = current_best_model.getLoss(params)
-        current_best_circ = current_best_model.constructFullCirc()
+        current_best_reward = current_best_model.getReward(params)
+        current_penalized_best_reward = penalty_function(current_best_reward, current_best_node)
         # current_extracted_params = [params[index] for index in current_best_model.param_indices]
         # drawer = qml.draw(current_best_circ)
         end = time.time()

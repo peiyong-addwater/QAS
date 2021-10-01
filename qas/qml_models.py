@@ -44,12 +44,14 @@ for c in PAULI_EIGENSTATES_T_STATE:
         FOUR_TWO_TWO_DETECTION_CODE_INPUT.append(np.kron(c,d))
 
 TOFFOLI_INPUT = []
-for a in PAULI_EIGENSTATES_T_STATE:
-    for b in PAULI_EIGENSTATES_T_STATE:
-        for c in PAULI_EIGENSTATES_T_STATE:
+EXTENDED_TOFFILI_INPUT = []
+for a in [ket0, ket1]:
+    for b in [ket0, ket1]:
+        for c in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
+            EXTENDED_TOFFILI_INPUT.append(s)
 TWO_QUBIT_ENTANGLED_STATES = []
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+np.kron(ket1, ket1)))
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)-np.kron(ket1, ket1)))
@@ -63,15 +65,15 @@ for c in TWO_QUBIT_ENTANGLED_STATES:
     for d in PAULI_EIGENSTATES_T_STATE:
         s = np.kron(c, d)
         s1 = np.kron(d, c)
-        #TOFFOLI_INPUT.append(s)
-        #TOFFOLI_INPUT.append(s1)
+        EXTENDED_TOFFILI_INPUT.append(s)
+        EXTENDED_TOFFILI_INPUT.append(s1)
 
 THREE_QUBIT_GHZ_STATES = [] 
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+1j*np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1j*np.kron(ket1, np.kron(ket1, ket1))))
-#TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
+EXTENDED_TOFFILI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 
 
 FOUR_TWO_TWO_DETECTION_CODE_INPUT.extend(TWO_QUBIT_ENTANGLED_STATES)
@@ -247,6 +249,10 @@ FOUR_TWO_TWO_DETECTION_CODE_DATA.append(get_code_space_422_detection_code(FOUR_T
 TOFFOLI_DATA = []
 TOFFOLI_DATA.append(TOFFOLI_INPUT)
 TOFFOLI_DATA.append(get_data_ccx_gate(TOFFOLI_INPUT))
+
+EXTENDED_TOFFILI_DATA = []
+EXTENDED_TOFFILI_DATA.append(EXTENDED_TOFFILI_INPUT)
+EXTENDED_TOFFILI_DATA.append(get_data_ccx_gate(EXTENDED_TOFFILI_INPUT))
 
 class ToffoliQMLNoiseless(ModelFromK):
     name = "ToffoliQMLNoiseless"
