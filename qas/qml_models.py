@@ -74,7 +74,9 @@ THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1
 TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 
 
-def extractParamIndicesQML(k:List[int], op_pool:QMLPool)->List:
+FOUR_TWO_TWO_DETECTION_CODE_INPUT.extend(TWO_QUBIT_ENTANGLED_STATES)
+
+def extractParamIndicesQML(k:List[int], op_pool:Union[QMLPool, dict])->List:
     assert min(k) >= 0
     p = len(k)
     c = len(op_pool)
@@ -247,7 +249,8 @@ TOFFOLI_DATA.append(TOFFOLI_INPUT)
 TOFFOLI_DATA.append(get_data_ccx_gate(TOFFOLI_INPUT))
 
 class ToffoliQMLNoiseless(ModelFromK):
-    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
+    name = "ToffoliQMLNoiseless"
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
@@ -359,7 +362,8 @@ class ToffoliQMLNoiseless(ModelFromK):
         return gate_list
 
 class PhaseFlipQMLNoiseless(ModelFromK):
-    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
+    name = "PhaseFlipQMLNoiseless"
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
@@ -468,9 +472,9 @@ class PhaseFlipQMLNoiseless(ModelFromK):
 
         return gate_list
 
-
 class FourTwoTwoNoiseless(ModelFromK):
-    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:QMLPool):
+    name="FourTwoTwoNoiseless"
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l

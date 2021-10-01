@@ -81,6 +81,7 @@ class QMLState(StateOfMCTS):
                 return False
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
+        """
         if op_num_params>0:
             if len(self.current_k)>=1:
                 # back trace last gate that acted on the same qubit -> the same parameterized operation
@@ -98,6 +99,7 @@ class QMLState(StateOfMCTS):
                     else:
                         for c in last_op_qubit:
                             action_qubits.add(c)
+        """
         return True
 
     def takeAction(self, action:int):
@@ -210,8 +212,8 @@ class MCTSController():
         assert len(k) == self.max_depth
         p, c, l = params.shape[0], params.shape[1], params.shape[2]
         circ = self.model(p, c, l, k, self.pool)
-        r = circ.getReward(params)
-        return r
+        self.r = circ.getReward(params)
+        return self.r
 
     def randomSample(self):
         node = self.root
@@ -379,9 +381,10 @@ def search(
         start = time.time()
         arcs, nodes = [], []
         if epoch<num_warmup_iterations:
-            print("="*10+"Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
+            print("="*10+"Model: {}, Warming Up at Epoch {}/{}, Total Warmup Epochs: {}, Pool Size: {}, "
                          "Arc Batch Size: {}, Exploiting Rounds: {}"
-                  .format(epoch+1,
+                  .format(model.name,
+                        epoch+1,
                           num_iterations,
                           num_warmup_iterations,
                           pool_size,
@@ -399,9 +402,10 @@ def search(
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             # No reset. Reset will lose all the reward information obtained during the warm up stage.
-            print("=" * 10 + "Searching at Epoch {}/{}, Pool Size: {}, "
+            print("=" * 10 + "Model:{}, Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
-                  .format(epoch + 1,
+                  .format(model.name,
+                      epoch + 1,
                           num_iterations,
                           pool_size,
                           search_arc_batchsize,
@@ -440,13 +444,21 @@ def search(
         print("Exploiting and finding the best arc...")
         current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
         current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
+        current_penalized_best_reward = penalty_function(current_best_reward, current_best_node)
+        current_best_model = model(p, c, l, current_best_arc, op_pool)
+        current_best_loss = current_best_model.getLoss(params)
+        current_best_circ = current_best_model.constructFullCirc()
+        # current_extracted_params = [params[index] for index in current_best_model.param_indices]
+        # drawer = qml.draw(current_best_circ)
         end = time.time()
         print("Prune Count: {}".format(controller.prune_counter))
-        print("Current Best Reward: {}".format(current_best_reward))
+        print("Current Best Reward: {} (After Penalization: {}), Current Best Loss: {}".format(current_best_reward, current_penalized_best_reward, current_best_loss))
         print("Current Best k:\n", current_best_arc)
         if verbose > 1:
             print("Current Ops:")
             print(current_best_node.state)
+            #print("Current Circ:")
+            #print(drawer(current_extracted_params, x=current_best_model.x_list[0], y=current_best_model.y_list[0]))
         else:
             print("Pool:\n {}".format(op_pool))
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
