@@ -466,8 +466,6 @@ def search(
         if verbose > 1:
             print("Current Ops:")
             print(current_best_node.state)
-            #print("Current Circ:")
-            #print(drawer(current_extracted_params, x=current_best_model.x_list[0], y=current_best_model.y_list[0]))
         else:
             print("Pool:\n {}".format(op_pool))
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
