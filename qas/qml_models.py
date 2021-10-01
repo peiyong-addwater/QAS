@@ -51,6 +51,11 @@ for a in PAULI_EIGENSTATES_T_STATE:
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
 
+TOFFOLI_INPUT.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+np.kron(ket1, ket1)))
+TOFFOLI_INPUT.append(1/np.sqrt(2)*(np.kron(ket0, ket0)-np.kron(ket1, ket1)))
+TOFFOLI_INPUT.append(1/np.sqrt(2)*(np.kron(ket1, ket0)+np.kron(ket1, ket0)))
+TOFFOLI_INPUT.append(1/np.sqrt(2)*(np.kron(ket1, ket0)-np.kron(ket1, ket0)))
+
 def extractParamIndicesQML(k:List[int], op_pool:QMLPool)->List:
     assert min(k) >= 0
     p = len(k)
