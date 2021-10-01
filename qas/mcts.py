@@ -320,6 +320,10 @@ def getLossFromModel(model, params):
 def getRewardFromModel(model, params):
     return model.getReward(params)
 
+def getSimulationReward(controller:MCTSController, k:List[int], node:TreeNode, params):
+    r = controller.simulationWithSuperCircuitParamsAndK(k, params)
+    return (r, k, node)
+
 
 def search(
         model=None,
@@ -394,12 +398,14 @@ def search(
                   +"="*10)
             for _ in range(warmup_arc_batchsize):
                 k, node = controller.randomSample()
-                # k, node = controller.uctSample(uct_sample_policy)
-                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
-                r = penalty_function(r, node) if penalty_function is not None else r
-                controller.backPropagate(node, r)
                 arcs.append(k)
                 nodes.append(node)
+            reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
+                delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
+            for r, _, node in reward_k_node_list:
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
+
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
             # No reset. Reset will lose all the reward information obtained during the warm up stage.
@@ -422,11 +428,13 @@ def search(
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
             for _ in range(search_arc_batchsize):
                 k, node = controller.sampleArcWithSuperCircParams(params)
-                r = controller.simulationWithSuperCircuitParamsAndK(k, params)
-                r = penalty_function(r, node) if penalty_function is not None else r
-                controller.backPropagate(node, r)
                 arcs.append(k)
                 nodes.append(node)
+            reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
+                delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
+            for r, _, node in reward_k_node_list:
+                r = penalty_function(r, node) if penalty_function is not None else r
+                controller.backPropagate(node, r)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
         batch_gradients = Parallel(n_jobs=-1, verbose=0)(
