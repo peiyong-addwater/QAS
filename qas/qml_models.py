@@ -63,15 +63,15 @@ for c in TWO_QUBIT_ENTANGLED_STATES:
     for d in PAULI_EIGENSTATES_T_STATE:
         s = np.kron(c, d)
         s1 = np.kron(d, c)
-        TOFFOLI_INPUT.append(s)
-        TOFFOLI_INPUT.append(s1)
+        #TOFFOLI_INPUT.append(s)
+        #TOFFOLI_INPUT.append(s1)
 
 THREE_QUBIT_GHZ_STATES = [] 
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+1j*np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1j*np.kron(ket1, np.kron(ket1, ket1))))
-TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
+#TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 
 
 FOUR_TWO_TWO_DETECTION_CODE_INPUT.extend(TWO_QUBIT_ENTANGLED_STATES)

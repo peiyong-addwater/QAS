@@ -64,19 +64,19 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=100,
+        num_iterations=200,
         num_warmup_iterations=50,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         warmup_arc_batchsize=50,
-        search_arc_batchsize=100,
+        search_arc_batchsize=10,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.9,
         prune_constant_min=0.8,
-        max_visits_prune_threshold=500,
+        max_visits_prune_threshold=50,
         min_num_children=5,
         sampling_execute_rounds=2*len(pool),
         exploit_execute_rounds=5,
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         verbose=2
     )
 
-    """
+    
     final_params, loss_list = circuitModelTuning(
         initial_params=final_params,
         model=model,
@@ -98,7 +98,7 @@ if __name__ == "__main__":
         grad_noise_factor=0,
         verbose=1
     )
-    """
+    
 
     res_dict = {
         'task':task,
@@ -106,7 +106,8 @@ if __name__ == "__main__":
         'params':final_params,
         'k':final_best_arc,
         'op_list':model(p,c,l,final_best_arc,pool).toList(final_params),
-        'search_reward_list':reward_list
+        'search_reward_list':reward_list,
+        'fine_tune_loss':loss_list
     }
 
     with open(filename, 'w') as f:

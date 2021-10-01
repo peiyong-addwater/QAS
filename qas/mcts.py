@@ -21,6 +21,7 @@ from abc import ABC, abstractmethod
 from .qml_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
 import time
 #from memory_profiler import profile
+from joblib import Parallel, delayed
 
 class StateOfMCTS(ABC):
 
@@ -428,10 +429,10 @@ def search(
                 nodes.append(node)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
-        #batch_gradients = Parallel(n_jobs=-1, verbose=0)(
-        #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
-        #)
-        batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
+        batch_gradients = Parallel(n_jobs=-1, verbose=0)(
+            delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
+        )
+        #batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
         batch_gradients = np.stack(batch_gradients, axis=0)
         batch_gradients = np.nan_to_num(batch_gradients)
         batch_gradients = np.mean(batch_gradients, axis=0)
