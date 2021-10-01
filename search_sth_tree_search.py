@@ -70,7 +70,7 @@ if __name__ == "__main__":
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
-        warmup_arc_batchsize=100,
+        warmup_arc_batchsize=500,
         search_arc_batchsize=10,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
