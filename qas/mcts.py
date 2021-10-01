@@ -397,7 +397,7 @@ def search(
                           warmup_arc_batchsize,
                           exploit_execute_rounds)
                   +"="*10)
-            for _ in trange(warmup_arc_batchsize,):
+            for _ in tqdm(range(warmup_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:20}{r_bar}'):
                 k, node = controller.randomSample()
                 arcs.append(k)
                 nodes.append(node)
@@ -432,7 +432,7 @@ def search(
             new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
                         num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
-            for _ in trange(search_arc_batchsize):
+            for _ in tqdm(range(search_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:20}{r_bar}'):
                 k, node = controller.sampleArcWithSuperCircParams(params)
                 arcs.append(k)
                 nodes.append(node)
