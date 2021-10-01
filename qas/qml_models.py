@@ -55,6 +55,10 @@ TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+np.kron(ket1
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)-np.kron(ket1, ket1)))
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket1, ket0)+np.kron(ket0, ket1)))
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket1, ket0)-np.kron(ket0, ket1)))
+TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+1j*np.kron(ket1, ket1)))
+TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)-1j*np.kron(ket1, ket1)))
+TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket1, ket0)+1j*np.kron(ket0, ket1)))
+TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket1, ket0)-1j*np.kron(ket0, ket1)))
 for c in TWO_QUBIT_ENTANGLED_STATES:
     for d in PAULI_EIGENSTATES_T_STATE:
         s = np.kron(c, d)
@@ -62,8 +66,12 @@ for c in TWO_QUBIT_ENTANGLED_STATES:
         TOFFOLI_INPUT.append(s)
         TOFFOLI_INPUT.append(s1)
 
-THREE_QUBIT_GHZ_STATE = 1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1)))
-TOFFOLI_INPUT.append(THREE_QUBIT_GHZ_STATE)
+THREE_QUBIT_GHZ_STATES = [] 
+THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1))))
+THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-np.kron(ket1, np.kron(ket1, ket1))))
+THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+1j*np.kron(ket1, np.kron(ket1, ket1))))
+THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1j*np.kron(ket1, np.kron(ket1, ket1))))
+TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 
 
 def extractParamIndicesQML(k:List[int], op_pool:QMLPool)->List:
