@@ -31,9 +31,8 @@ if __name__ == "__main__":
     task = model.name
     init_qubit_with_actions = {0,1,2}
     two_qubit_gate = ["CNOT"]
-    #single_qubit_gate = ["SX", "RZ"]
+    #single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
     single_qubit_gate = ['U3', 'PlaceHolder']
-    #single_qubit_gate = ['U3']
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
     #control_map = [[0,1], [1,2], [1,0], [2,1]]
     control_map = [[0,1],[1,2],[0,2]]

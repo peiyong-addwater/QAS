@@ -491,7 +491,7 @@ def search(
         current_best_model = model(p, c, l, current_best_arc, op_pool)
         current_best_loss = current_best_model.getLoss(params)
         current_best_reward = current_best_model.getReward(params)
-        current_penalized_best_reward = penalty_function(current_best_reward, current_best_node)
+        current_penalized_best_reward = penalty_function(current_best_reward, current_best_node) if penalty_function is not None else current_best_reward
         # current_extracted_params = [params[index] for index in current_best_model.param_indices]
         # drawer = qml.draw(current_best_circ)
         end = time.time()
