@@ -120,7 +120,7 @@ class QMLState(StateOfMCTS):
 
         # control the number of gates
         if op_name in set(self.gate_limit_dict.keys()):
-            if self.gate_count[op_name] > self.gate_limit_dict[op_name]:
+            if self.gate_count[op_name] >= self.gate_limit_dict[op_name]:
                 return False
 
         return True
