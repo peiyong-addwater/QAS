@@ -47,7 +47,7 @@ class StateOfMCTS(ABC):
 
 
 class QMLState(StateOfMCTS):
-    def __init__(self, current_k:List[int]=[], op_pool:QMLPool=None, maxDepth = 30, qubit_with_actions:Set = None):
+    def __init__(self, current_k:List[int]=[], op_pool:QMLPool=None, maxDepth = 30, qubit_with_actions:Set = None, gate_limit_dict:Optional[dict] = None):
         self.max_depth = maxDepth
         self.current_k = current_k
         self.current_depth = len(self.current_k)
@@ -57,6 +57,16 @@ class QMLState(StateOfMCTS):
         self.pool_keys = list(op_pool.pool.keys())
         self.state = None
         self.qubit_with_actions = qubit_with_actions if qubit_with_actions is not None else set()
+        self.gate_limit_dict = gate_limit_dict if gate_limit_dict is not None else {}
+        self.gate_count = {}
+        for key in self.gate_limit_dict.keys():
+            self.gate_count[key] = 0
+        for action in current_k:
+            op = self.op_name_dict[action]
+            assert len(op.keys()) == 1  # in case some weird things happen
+            op_name = list(op.keys())[0]
+            if op_name in set(self.gate_limit_dict.keys()):
+                self.gate_count[op_name] +=1
 
     def getLegalActions(self):
         if self.current_depth == self.max_depth:
@@ -67,6 +77,17 @@ class QMLState(StateOfMCTS):
                 actions.append(key)
         return actions
 
+    def stackOpsOnQubit(self, k):
+        stacked_ops = [[] for _ in range(self.pool_obj.num_qubits)]
+        for action in k:
+            op = self.op_name_dict[action]
+            assert len(op.keys()) == 1 # in case some weird things happen
+            op_name = list(op.keys())[0]
+            op_qubit = op[op_name]
+            for qubit in op_qubit:
+                stacked_ops[qubit].append(action)
+        return stacked_ops
+
     def verifyDesirableAction(self, action:int):
         # many change with different tasks
         op = self.op_name_dict[action]
@@ -75,33 +96,32 @@ class QMLState(StateOfMCTS):
         op_qubit = op[op_name]
         op_obj = SUPPORTED_OPS_DICT[op_name]
         op_num_params = op_obj.num_params
+        stacked_ops = self.stackOpsOnQubit(self.current_k)
         # don't want two consecutive parameterized gates or Pauli gates or CNOT gates
-        if len(self.current_k)>=1 and action==self.current_k[-1]:
-            if op_num_params>0:
-                return False
-            elif op_name in ['PauliX', 'PauliY', 'PauliZ', 'CNOT', 'CZ', 'CY', 'Hadamard']:
-                return False
+        if len(self.current_k)>=1:
+            if len(op_qubit) == 1:
+                if op_num_params>0:
+                    if len(stacked_ops[op_qubit[0]])>=1:
+                        if stacked_ops[op_qubit[0]][-1] == action:
+                            return False
+                elif op_name in ['PauliX', 'PauliY', 'PauliZ','Hadamard']:
+                    if len(stacked_ops[op_qubit[0]])>=1:
+                        if stacked_ops[op_qubit[0]][-1] == action:
+                            return False
+            if len(op_qubit) == 2:
+                if len(stacked_ops[op_qubit[0]])>=1 and len(stacked_ops[op_qubit[1]])>=1:
+                    if stacked_ops[op_qubit[0]][-1] == action and stacked_ops[op_qubit[1]][-1] == action:
+                        if op_num_params>0: return False
+                        if op_name in ['CNOT', 'CZ', 'CY']: return False
+
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
-        """
-        if op_num_params>0:
-            if len(self.current_k)>=1:
-                # back trace last gate that acted on the same qubit -> the same parameterized operation
-                action_qubits = set()
-                for i in range(1, len(self.current_k)+1):
-                    last_action = self.current_k[-i]
-                    last_op = self.op_name_dict[action]
-                    last_op_name = list(last_op.keys())[0]
-                    last_op_qubit = last_op[last_op_name]
-                    if last_action == action:
-                        if len(op_qubit) == 1 and op_qubit[0] not in action_qubits:
-                            return False
-                        if len(op_qubit) == 2 and (op_qubit[0] not in action_qubits and op_qubit[1] not in action_qubits):
-                            return False
-                    else:
-                        for c in last_op_qubit:
-                            action_qubits.add(c)
-        """
+
+        # control the number of gates
+        if op_name in set(self.gate_limit_dict.keys()):
+            if self.gate_count[op_name] > self.gate_limit_dict[op_name]:
+                return False
+
         return True
 
     def takeAction(self, action:int):
@@ -113,7 +133,7 @@ class QMLState(StateOfMCTS):
         new_qubit_with_actions.add(op_qubit[-1])
         new_path = self.current_k + [action]
         new_state = QMLState(current_k=new_path, op_pool=self.pool_obj, maxDepth=self.max_depth,
-                             qubit_with_actions=new_qubit_with_actions)
+                             qubit_with_actions=new_qubit_with_actions, gate_limit_dict=self.gate_limit_dict)
         new_state.state = action
         return new_state
 
@@ -161,7 +181,8 @@ class MCTSController():
                  sampling_execute_rounds=20,
                  exploit_execute_rounds=200,
                  sample_policy='local_optimal',
-                 exploit_policy='local_optimal'
+                 exploit_policy='local_optimal',
+                 gate_limit_dict:Optional[dict] = None
                  ):
         self.model = model
         self.pool = op_pool
@@ -179,7 +200,7 @@ class MCTSController():
         self.sampling_execute_rounds = sampling_execute_rounds
         self.exploit_execute_rounds=exploit_execute_rounds
         self.prune_counter = 0
-        self.initial_state = QMLState(op_pool=self.pool, maxDepth=self.max_depth, qubit_with_actions=self.initial_legal_control_qubit_choice)
+        self.initial_state = QMLState(op_pool=self.pool, maxDepth=self.max_depth, qubit_with_actions=self.initial_legal_control_qubit_choice, gate_limit_dict=gate_limit_dict)
 
     def _reset(self):
         self.root = TreeNode(self.initial_state, None)
@@ -338,6 +359,7 @@ def search(
         super_circ_train_gradient_noise_factor = 1/100,
         super_circ_train_lr = 0.01,
         penalty_function:Callable=None,
+        gate_limit_dict:Optional[dict] = None,
         warmup_arc_batchsize = 200,
         search_arc_batchsize = 20,
         alpha_max = 2,
@@ -373,7 +395,8 @@ def search(
         sampling_execute_rounds=sampling_execute_rounds,
         exploit_execute_rounds=exploit_execute_rounds,
         sample_policy=cmab_sample_policy,
-        exploit_policy=cmab_exploit_policy
+        exploit_policy=cmab_exploit_policy,
+        gate_limit_dict=gate_limit_dict
     )
     current_best_arc = None
     current_best_node = None
@@ -397,8 +420,9 @@ def search(
                           warmup_arc_batchsize,
                           exploit_execute_rounds)
                   +"="*10)
-            for _ in tqdm(range(warmup_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:20}{r_bar}'):
+            for _ in tqdm(range(warmup_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
                 k, node = controller.randomSample()
+                #k, node = controller.uctSample(uct_sample_policy)
                 arcs.append(k)
                 nodes.append(node)
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
@@ -414,7 +438,6 @@ def search(
             """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
         else:
-            # No reset. Reset will lose all the reward information obtained during the warm up stage.
             print("=" * 10 + "Model:{}, Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
                   .format(model.name,
@@ -425,14 +448,15 @@ def search(
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
-            # controller._reset() # reset
+            #TODO: No reset? Reset will lose all the reward information obtained during the warm up stage.
+            #controller._reset() # reset
             new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
                         epoch + 1 - num_warmup_iterations)
             controller.alpha = new_alpha  # alpha decreases as epoch increases
             new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
                         num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
             controller.prune_reward_ratio = new_prune_rate  # prune rate increases as epoch increases
-            for _ in tqdm(range(search_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:20}{r_bar}'):
+            for _ in tqdm(range(search_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
                 k, node = controller.sampleArcWithSuperCircParams(params)
                 arcs.append(k)
                 nodes.append(node)

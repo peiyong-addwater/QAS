@@ -15,6 +15,7 @@ from typing import (
     AnyStr
 )
 import pennylane as qml
+from pennylane.operation import Operation
 from pennylane import (
     Hadamard,
     PauliX,
@@ -52,6 +53,16 @@ from pennylane import (
     IsingYY,
     IsingZZ
 )
+
+class PlaceHolder(Operation):
+    num_params = 0
+    num_wires = 1
+    par_domain = None
+    @staticmethod
+    def decomposition(wires):
+        return [qml.Identity( wires=wires)]
+
+
 SUPPORTED_OPS_DICT = {
     'Hadamard':Hadamard,
     'PauliX':PauliX,
@@ -87,7 +98,8 @@ SUPPORTED_OPS_DICT = {
     'U3':U3,
     'IsingXX':IsingXX,
     'IsingYY':IsingYY,
-    'IsingZZ':IsingZZ
+    'IsingZZ':IsingZZ,
+    'PlaceHolder':PlaceHolder
 }
 
 SUPPORTED_OPS_NAME = set(SUPPORTED_OPS_DICT.keys())

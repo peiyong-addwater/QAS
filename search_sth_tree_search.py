@@ -29,18 +29,23 @@ if __name__ == "__main__":
     marker = nowtime()
     filename = marker+'.json'
     task = model.name
-    init_qubit_with_actions = {0}
+    init_qubit_with_actions = {0,1,2}
     two_qubit_gate = ["CNOT"]
     #single_qubit_gate = ["SX", "RZ"]
-    single_qubit_gate = ['U3']
+    single_qubit_gate = ['U3', 'PlaceHolder']
+    #single_qubit_gate = ['U3']
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
     #control_map = [[0,1], [1,2], [1,0], [2,1]]
     control_map = [[0,1],[1,2],[0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 18
+    p = 15
     l = 3
     c = len(pool)
+    control_gate_limit = 6
+
+    # set a hard limit on the number of certain gate instead of using a penalty function
+    gate_limit = {two_qubit_gate[0]:control_gate_limit}
 
     # penalty function:
     def penalty_func(r:float, node:TreeNode):
@@ -48,10 +53,10 @@ if __name__ == "__main__":
         cu3_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" or "CU3" in op_name:
+            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" in op_name or "CU3" in op_name:
                 cu3_count = cu3_count + 1
-        if cu3_count>=5:
-            return r - (cu3_count-5)*10
+        if cu3_count>=control_gate_limit:
+            return r - (cu3_count-control_gate_limit)/10
         return r
 
 
@@ -64,21 +69,22 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
-        num_warmup_iterations=50,
+        num_iterations=400,
+        num_warmup_iterations=100,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
-        penalty_function=penalty_func,
-        warmup_arc_batchsize=500,
-        search_arc_batchsize=10,
+        penalty_function=None,
+        gate_limit_dict=gate_limit,
+        warmup_arc_batchsize=1000,
+        search_arc_batchsize=100,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.9,
-        prune_constant_min=0.8,
-        max_visits_prune_threshold=50,
-        min_num_children=5,
-        sampling_execute_rounds=2*len(pool),
+        prune_constant_min=0.3,
+        max_visits_prune_threshold=500,
+        min_num_children=3,
+        sampling_execute_rounds=300,
         exploit_execute_rounds=5,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',

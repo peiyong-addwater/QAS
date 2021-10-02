@@ -14,7 +14,7 @@ dev = qml.device('default.qubit', wires=3)
 cwd = os.getcwd() 
 print(cwd)
 
-res_file = "20211001-025711.json"
+res_file = "20211002-050514.json"
 with open(os.path.join(cwd, res_file)) as f:
     res_dict = json.load(f)
 print(res_dict.keys())
@@ -53,7 +53,7 @@ print(toffoli_model2.getLoss(full_params)+(toffoli_model.getReward(full_params))
 """
 
 
-
+"""
 final_params, loss_list = mcts.circuitModelTuning(
         initial_params=full_params,
         model=qml_models.ToffoliQMLNoiseless,
@@ -65,3 +65,4 @@ final_params, loss_list = mcts.circuitModelTuning(
         grad_noise_factor=0,
         verbose=1
     )
+"""
