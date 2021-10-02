@@ -66,7 +66,7 @@ class QMLState(StateOfMCTS):
             assert len(op.keys()) == 1  # in case some weird things happen
             op_name = list(op.keys())[0]
             if op_name in set(self.gate_limit_dict.keys()):
-                self.gate_count[op_name] +=1
+                self.gate_count[op_name] = self.gate_count[op_name] + 1
 
     def getLegalActions(self):
         if self.current_depth == self.max_depth:
@@ -85,7 +85,8 @@ class QMLState(StateOfMCTS):
             op_name = list(op.keys())[0]
             op_qubit = op[op_name]
             for qubit in op_qubit:
-                stacked_ops[qubit].append(action)
+                if op_name != "PlaceHolder":
+                    stacked_ops[qubit].append(action)
         return stacked_ops
 
     def verifyDesirableAction(self, action:int):
@@ -130,7 +131,8 @@ class QMLState(StateOfMCTS):
         assert len(op.keys()) == 1  # in case some weird things happen
         op_name = list(op.keys())[0]
         op_qubit = op[op_name]
-        new_qubit_with_actions.add(op_qubit[-1])
+        if op_name != "PlaceHolder":
+            new_qubit_with_actions.add(op_qubit[-1])
         new_path = self.current_k + [action]
         new_state = QMLState(current_k=new_path, op_pool=self.pool_obj, maxDepth=self.max_depth,
                              qubit_with_actions=new_qubit_with_actions, gate_limit_dict=self.gate_limit_dict)

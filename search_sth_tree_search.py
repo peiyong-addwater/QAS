@@ -75,7 +75,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=None,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=1000,
+        warmup_arc_batchsize=2000,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
