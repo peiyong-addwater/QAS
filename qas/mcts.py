@@ -450,8 +450,8 @@ def search(
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
-            #TODO: No reset? Reset will lose all the reward information obtained during the warm up stage.
-            #controller._reset() # reset
+            #TODO: No reset? Reset will (perhaps) lose all the reward information obtained during the warm up stage.
+            controller._reset() # reset
             new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
                         epoch + 1 - num_warmup_iterations)
             controller.alpha = new_alpha  # alpha decreases as epoch increases

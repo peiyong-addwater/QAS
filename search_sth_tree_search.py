@@ -42,7 +42,7 @@ if __name__ == "__main__":
     l = 3
     c = len(pool)
     control_gate_limit = 5
-    ph_count_limit = 8
+    ph_count_limit = 12
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {two_qubit_gate[0]:control_gate_limit}
@@ -74,17 +74,17 @@ if __name__ == "__main__":
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=1/50,
         super_circ_train_lr=0.1,
-        penalty_function=None,
+        penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=2000,
-        search_arc_batchsize=100,
+        warmup_arc_batchsize=3000,
+        search_arc_batchsize=400,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.9,
         prune_constant_min=0.5,
-        max_visits_prune_threshold=500,
+        max_visits_prune_threshold=1000,
         min_num_children=3,
-        sampling_execute_rounds=100,
+        sampling_execute_rounds=300,
         exploit_execute_rounds=5,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
