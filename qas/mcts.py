@@ -423,8 +423,8 @@ def search(
                           exploit_execute_rounds)
                   +"="*10)
             for _ in tqdm(range(warmup_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
-                k, node = controller.randomSample()
-                #k, node = controller.uctSample(uct_sample_policy)
+                #k, node = controller.randomSample()
+                k, node = controller.uctSample(uct_sample_policy)
                 arcs.append(k)
                 nodes.append(node)
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
