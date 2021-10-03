@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_ops import QMLPool
-from qas.qml_models import ToffoliQMLNoiseless, PhaseFlipQMLNoiseless, FourTwoTwoNoiseless
+from qas.qml_models import ToffoliQMLNoiseless, PhaseFlipQMLNoiseless, FourTwoTwoNoiseless, ToffoliQMLSwapTestNoiseless
 import json
 import numpy as np
 import pennylane as qml
@@ -23,14 +23,14 @@ def nowtime():
 if __name__ == "__main__":
 
 
-    model = ToffoliQMLNoiseless
+    model = ToffoliQMLSwapTestNoiseless
 
 
     marker = nowtime()
     filename = marker+'.json'
     task = model.name
-    init_qubit_with_actions = {0,1,2}
-    two_qubit_gate = ["CNOT"]
+    init_qubit_with_actions = {0, 1, 2}
+    two_qubit_gate = ["CZ"]
     #single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
     single_qubit_gate = ['U3', 'PlaceHolder']
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
@@ -38,10 +38,11 @@ if __name__ == "__main__":
     control_map = [[0,1],[1,2],[0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 15
+    p = 25
     l = 3
     c = len(pool)
-    control_gate_limit = 6
+    control_gate_limit = 5
+    ph_count_limit = 8
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {two_qubit_gate[0]:control_gate_limit}
@@ -49,13 +50,13 @@ if __name__ == "__main__":
     # penalty function:
     def penalty_func(r:float, node:TreeNode):
         k = node.state.getCurrK()
-        cu3_count = 0
+        ph_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
-            if "CNOT" in op_name or  "CR" in op_name or "CY" in op_name or "CZ" in op_name or "CRot" in op_name or "CU3" in op_name:
-                cu3_count = cu3_count + 1
-        if cu3_count>=control_gate_limit:
-            return r - (cu3_count-control_gate_limit)/10
+            if op_name == 'PlaceHolder':
+                ph_count = ph_count + 1
+        if ph_count>=ph_count_limit:
+            return r - (ph_count-ph_count_limit)/10
         return r
 
 
@@ -80,10 +81,10 @@ if __name__ == "__main__":
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.9,
-        prune_constant_min=0.3,
+        prune_constant_min=0.5,
         max_visits_prune_threshold=500,
         min_num_children=3,
-        sampling_execute_rounds=300,
+        sampling_execute_rounds=100,
         exploit_execute_rounds=5,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
