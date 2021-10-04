@@ -358,7 +358,9 @@ def search(
         num_iterations = 500,
         num_warmup_iterations = 20,
         super_circ_train_optimizer = qml.AdamOptimizer,
-        super_circ_train_gradient_noise_factor = 1/100,
+        early_stop_threshold = 0.95,
+        early_stop_lookback_count = 5,
+        super_circ_train_gradient_noise_factor = 0.,
         super_circ_train_lr = 0.01,
         penalty_function:Callable=None,
         gate_limit_dict:Optional[dict] = None,
@@ -408,6 +410,7 @@ def search(
     params = init_params
     optimizer = super_circ_train_optimizer(super_circ_train_lr)
     best_rewards = []
+    early_stop_list = []
     for epoch in range(num_iterations):
         start = time.time()
         arcs, nodes = [], []
@@ -510,6 +513,11 @@ def search(
             print("Pool:\n {}".format(op_pool))
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
         best_rewards.append((current_best_arc, current_best_reward))
+        early_stop_list.append(current_penalized_best_reward)
+
+        if epoch > early_stop_lookback_count:
+            if np.average(early_stop_list[-early_stop_lookback_count:]) >= early_stop_threshold:
+                print("Early Stopping at Epoch: {}".format(epoch+1))
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
 

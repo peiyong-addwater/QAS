@@ -1,6 +1,6 @@
 # Experiment Records
 
-## 1.
+## 1. Interrupted to add early stopping for search (20211004)
 
 ```python
     np.random.seed(106)
@@ -111,3 +111,5 @@ OpAtDepth: 24   OpKey: 1        OpName: {'PlaceHolder': [0]}
 
 
 ```
+
+## 2.
