@@ -423,8 +423,8 @@ def search(
                           exploit_execute_rounds)
                   +"="*10)
             for _ in tqdm(range(warmup_arc_batchsize),bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
-                #k, node = controller.randomSample()
-                k, node = controller.uctSample(uct_sample_policy)
+                k, node = controller.randomSample()
+                #k, node = controller.uctSample(uct_sample_policy)
                 arcs.append(k)
                 nodes.append(node)
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
@@ -474,9 +474,12 @@ def search(
             """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
-        batch_gradients = Parallel(n_jobs=-1, verbose=0)(
-            delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
-        )
+        #batch_gradients = Parallel(n_jobs=-1, verbose=0)(
+        #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
+        #)
+        batch_gradients = []
+        for constructed_model in tqdm(batch_models, bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
+            batch_gradients.append(getGradientFromModel(constructed_model, params))
         #batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
         batch_gradients = np.stack(batch_gradients, axis=0)
         batch_gradients = np.nan_to_num(batch_gradients)
