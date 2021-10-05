@@ -518,6 +518,7 @@ def search(
         if epoch > early_stop_lookback_count:
             if np.average(early_stop_list[-early_stop_lookback_count:]) >= early_stop_threshold:
                 print("Early Stopping at Epoch: {}".format(epoch+1))
+                break
 
     return params, current_best_arc, current_best_node, current_best_reward, controller, best_rewards
 
