@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_ops import QMLPool
-from qas.qml_models import ToffoliQMLNoiseless, PhaseFlipQMLNoiseless, FourTwoTwoNoiseless, ToffoliQMLSwapTestNoiseless
+from qas.qml_models import ToffoliQMLNoiseless,  ToffoliQMLSwapTestNoiseless
 import json
 import numpy as np
 import pennylane as qml
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     single_qubit_gate = ['Rot', 'PlaceHolder']
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
     #control_map = [[0,1], [1,2], [1,0], [2,1]]
-    control_map = [[0,1],[1,2]]
+    control_map = [[0,1],[1,2], [0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
     p = 25
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         num_warmup_iterations=5,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=0.99,
+        early_stop_threshold=0.95,
         early_stop_lookback_count=5,
         super_circ_train_lr=0.1,
         penalty_function=None,

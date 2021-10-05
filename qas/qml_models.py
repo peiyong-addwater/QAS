@@ -24,7 +24,7 @@ from typing import (
 )
 import qiskit
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import state_fidelity, DensityMatrix
+from qiskit.quantum_info import state_fidelity, DensityMatrix, Statevector
 from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
 
 ket0 = np.array([1, 0])
@@ -104,11 +104,11 @@ def get_data_ccx_gate(init_states:List[np.ndarray])->List[DensityMatrix]:
         qc = QuantumCircuit(3)
         qc.initialize(state, [0,1,2])
         qc.append(backbone_circ.to_instruction(), [0, 1, 2])
-        qc.save_density_matrix(label='encoded_state')
+        qc.save_statevector(label='encoded_state')
         simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
         result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
             'encoded_state']
-        encoded_states.append(DensityMatrix(result).data)
+        encoded_states.append(Statevector(result).data)
     return encoded_states
 
 def generate_single_qubit_state(theta_B:float, phi_B:float)->np.ndarray:
@@ -404,11 +404,13 @@ class ToffoliQMLSwapTestNoiseless(ModelFromK):
 
     def constructFullCirc(self):
         @qml.qnode(self.dev)
-        def fullCirc(extracted_params):
-            for i in range(self.num_qubits*2+1):
-                qml.Hadamard(wires=i)
+        def fullCirc(extracted_params, x=None):
+
+            qml.QubitStateVector(np.kron(x,x), wires=[0,1,2,3,4,5])
+
             self.backboneCirc(extracted_params)
             qml.Toffoli(wires=[3,4,5])
+            qml.Hadamard(wires=6)
             qml.CSWAP(wires=[6,5,2])
             qml.CSWAP(wires=[6,4,1])
             qml.CSWAP(wires=[6,3,0])
@@ -418,8 +420,10 @@ class ToffoliQMLSwapTestNoiseless(ModelFromK):
 
     def costFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
-        fid = (circ_func(extracted_params)-1/2)*2
-        return 1 - fid
+        fid = 0
+        for i in range(len(self.x_list)):
+            fid = fid +  (circ_func(extracted_params, x=self.x_list[i])-1/2)*2
+        return 1 - fid/len(self.x_list)
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -484,7 +488,7 @@ class ToffoliQMLSwapTestNoiseless(ModelFromK):
 
         return gate_list
 
-
+"""
 class PhaseFlipQMLNoiseless(ModelFromK):
     name = "PhaseFlipQMLNoiseless"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -595,7 +599,9 @@ class PhaseFlipQMLNoiseless(ModelFromK):
                 gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
+"""
 
+"""
 class FourTwoTwoNoiseless(ModelFromK):
     name="FourTwoTwoNoiseless"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -708,7 +714,7 @@ class FourTwoTwoNoiseless(ModelFromK):
                 gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
-
+"""
 
 
 
