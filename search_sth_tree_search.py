@@ -33,23 +33,23 @@ if __name__ == "__main__":
     task = model.name
     init_qubit_with_actions = {0, 1, 2}
     #two_qubit_gate = ["CZ"]
-    two_qubit_gate = ["CNOT"]
+    two_qubit_gate = ["CNOT", "CRot"]
     #single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
-    single_qubit_gate = ['Rot', 'PlaceHolder']
+    single_qubit_gate = ['PlaceHolder']
+
+    # set a hard limit on the number of certain gate instead of using a penalty function
+    gate_limit = {"CNOT": 2, "CRot": 3}
+
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
     #control_map = [[0,1], [1,2], [1,0], [2,1]]
     control_map = [[0,1],[1,2], [0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 30
+    p = 5
     l = 3
     c = len(pool)
-    control_gate_limit = 5
-    ph_count_limit = 12
+    ph_count_limit = 0
 
-    # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {two_qubit_gate[0]:control_gate_limit}
-    #gate_limit = {"CNOT":1, "CRot":2}
 
     # penalty function:
     def penalty_func(r:float, node:TreeNode):
@@ -60,7 +60,7 @@ if __name__ == "__main__":
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
         if ph_count>=ph_count_limit:
-            return r - (ph_count-ph_count_limit)/10
+            return r - (ph_count-ph_count_limit)/1
         return r
 
 
@@ -78,12 +78,12 @@ if __name__ == "__main__":
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.95,
-        early_stop_lookback_count=5,
+        early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
-        penalty_function=None,
+        penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=1000,
-        search_arc_batchsize=300,
+        warmup_arc_batchsize=2000,
+        search_arc_batchsize=200,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
         prune_constant_max=0.95,
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         max_visits_prune_threshold=50,
         min_num_children=3,
         sampling_execute_rounds=200,
-        exploit_execute_rounds=100,
+        exploit_execute_rounds=50,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',

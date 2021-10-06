@@ -98,6 +98,7 @@ class QMLState(StateOfMCTS):
         op_obj = SUPPORTED_OPS_DICT[op_name]
         op_num_params = op_obj.num_params
         stacked_ops = self.stackOpsOnQubit(self.current_k)
+
         # don't want two consecutive parameterized gates or Pauli gates or CNOT gates
         if len(self.current_k)>=1:
             if len(op_qubit) == 1:
