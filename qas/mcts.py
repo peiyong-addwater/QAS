@@ -513,7 +513,7 @@ def search(
         else:
             print("Pool:\n {}".format(op_pool))
         print("=" * 10 + "Epoch Time: {}".format(end - start) + "=" * 10+"\n")
-        best_rewards.append((current_best_arc, current_best_reward))
+        best_rewards.append((epoch, current_best_arc, current_best_reward, current_penalized_best_reward))
         early_stop_list.append(current_penalized_best_reward)
 
         if epoch > early_stop_lookback_count:
