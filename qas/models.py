@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class ModelFromK(ABC):
+    name:str
     @abstractmethod
     def __init__(self, p:int, c:int, l:int, structure_list, op_pool):
         raise NotImplementedError

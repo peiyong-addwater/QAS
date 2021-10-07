@@ -104,11 +104,11 @@ def get_data_ccx_gate(init_states:List[np.ndarray])->List[DensityMatrix]:
         qc = QuantumCircuit(3)
         qc.initialize(state, [0,1,2])
         qc.append(backbone_circ.to_instruction(), [0, 1, 2])
-        qc.save_statevector(label='encoded_state')
+        qc.save_density_matrix(label='encoded_state')
         simulator = AerSimulator(max_parallel_threads=0, max_parallel_experiments=0)
         result = simulator.run(qiskit.transpile(qc, simulator)).result().data()[
             'encoded_state']
-        encoded_states.append(Statevector(result).data)
+        encoded_states.append(DensityMatrix(result).data)
     return encoded_states
 
 def generate_single_qubit_state(theta_B:float, phi_B:float)->np.ndarray:

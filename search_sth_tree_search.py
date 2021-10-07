@@ -5,6 +5,7 @@ import json
 import numpy as np
 import pennylane as qml
 import time
+from qas.mcts import QMLStateBasicGates
 import random
 
 class NpEncoder(json.JSONEncoder):
@@ -25,30 +26,33 @@ if __name__ == "__main__":
     np.random.seed(106)
 
 
-    model = ToffoliQMLSwapTestNoiseless
+    model = ToffoliQMLNoiseless
+    state_class = QMLStateBasicGates
 
 
     marker = nowtime()
     filename = marker+'.json'
-    task = model.name
+    task = model.name + "_" + state_class.name
+    print(task)
     init_qubit_with_actions = {0, 1, 2}
     #two_qubit_gate = ["CZ"]
-    two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
-    #single_qubit_gate = ['PlaceHolder']
+    two_qubit_gate = ["CNOT", "CRot"]
+    #single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
+    single_qubit_gate = ['PlaceHolder', '']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 8}
+    #gate_limit = {"CNOT": 8}
+    gate_limit={"CNOT": 2, "CRot":3}
 
     #control_map = [[0,1], [1,2],[2,3], [1,0], [2,1], [3,2]]
-    control_map = [[0,1], [1,2], [1,0], [2,1]]
-    #control_map = [[0,1],[1,2], [0,2]]
+    #control_map = [[0,1], [1,2], [1,0], [2,1]]
+    control_map = [[0,1],[1,2], [0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 40
+    p = 10
     l = 3
     c = len(pool)
-    ph_count_limit = 100
+    ph_count_limit = 3
 
 
     # penalty function:
@@ -82,20 +86,21 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=2000,
-        search_arc_batchsize=200,
+        warmup_arc_batchsize=4000,
+        search_arc_batchsize=400,
         alpha_max=2,
         alpha_min=1/np.sqrt(2)/2,
-        prune_constant_max=0.95,
-        prune_constant_min=0.8,
-        max_visits_prune_threshold=20,
+        prune_constant_max=0.99,
+        prune_constant_min=0.80,
+        max_visits_prune_threshold=100,
         min_num_children=3,
-        sampling_execute_rounds=100,
-        exploit_execute_rounds=c,
+        sampling_execute_rounds=200,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
-        verbose=2
+        verbose=2,
+        state_class=state_class
     )
 
     

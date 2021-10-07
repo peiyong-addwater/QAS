@@ -25,6 +25,29 @@ from joblib import Parallel, delayed
 from tqdm import tqdm, trange
 
 class StateOfMCTS(ABC):
+    name:str
+
+    @abstractmethod
+    def __init__(self, current_k:List[int]=[], op_pool:QMLPool=None, maxDepth = 30, qubit_with_actions:Set = None, gate_limit_dict:Optional[dict] = None):
+        self.max_depth = maxDepth
+        self.current_k = current_k
+        self.current_depth = len(self.current_k)
+        assert self.current_depth <= self.max_depth
+        self.pool_obj = op_pool
+        self.op_name_dict = op_pool.pool
+        self.pool_keys = list(op_pool.pool.keys())
+        self.state = None
+        self.qubit_with_actions = qubit_with_actions if qubit_with_actions is not None else set()
+        self.gate_limit_dict = gate_limit_dict if gate_limit_dict is not None else {}
+        self.gate_count = {}
+        for key in self.gate_limit_dict.keys():
+            self.gate_count[key] = 0
+        for action in current_k:
+            op = self.op_name_dict[action]
+            assert len(op.keys()) == 1  # in case some weird things happen
+            op_name = list(op.keys())[0]
+            if op_name in set(self.gate_limit_dict.keys()):
+                self.gate_count[op_name] = self.gate_count[op_name] + 1
 
     @abstractmethod
     def getLegalActions(self, *args):
@@ -46,7 +69,9 @@ class StateOfMCTS(ABC):
         raise NotImplementedError
 
 
-class QMLState(StateOfMCTS):
+class QMLStateBasicGates(StateOfMCTS):
+    name = 'QMLStateBasicGates'
+
     def __init__(self, current_k:List[int]=[], op_pool:QMLPool=None, maxDepth = 30, qubit_with_actions:Set = None, gate_limit_dict:Optional[dict] = None):
         self.max_depth = maxDepth
         self.current_k = current_k
@@ -135,8 +160,8 @@ class QMLState(StateOfMCTS):
         if op_name != "PlaceHolder":
             new_qubit_with_actions.add(op_qubit[-1])
         new_path = self.current_k + [action]
-        new_state = QMLState(current_k=new_path, op_pool=self.pool_obj, maxDepth=self.max_depth,
-                             qubit_with_actions=new_qubit_with_actions, gate_limit_dict=self.gate_limit_dict)
+        new_state = QMLStateBasicGates(current_k=new_path, op_pool=self.pool_obj, maxDepth=self.max_depth,
+                                       qubit_with_actions=new_qubit_with_actions, gate_limit_dict=self.gate_limit_dict)
         new_state.state = action
         return new_state
 
@@ -175,6 +200,7 @@ class MCTSController():
                  model,
                  op_pool,
                  target_circuit_depth:int,
+                 state_class=QMLStateBasicGates,
                  reward_penalty_function:Optional[Callable]=None, # should take simulation reward and node as input and return new reward
                  initial_legal_control_qubit_choice:Optional[Set]=None,
                  alpha = 1/np.sqrt(2),
@@ -203,7 +229,7 @@ class MCTSController():
         self.sampling_execute_rounds = sampling_execute_rounds
         self.exploit_execute_rounds=exploit_execute_rounds
         self.prune_counter = 0
-        self.initial_state = QMLState(op_pool=self.pool, maxDepth=self.max_depth, qubit_with_actions=self.initial_legal_control_qubit_choice, gate_limit_dict=gate_limit_dict)
+        self.initial_state = state_class(op_pool=self.pool, maxDepth=self.max_depth, qubit_with_actions=self.initial_legal_control_qubit_choice, gate_limit_dict=gate_limit_dict)
 
     def _reset(self):
         self.root = TreeNode(self.initial_state, None)
@@ -356,6 +382,7 @@ def search(
         target_circuit_depth:int=None,
         init_qubit_with_controls:Set=None,
         init_params:Union[np.ndarray, pnp.ndarray, Sequence]=None,
+        state_class = QMLStateBasicGates,
         num_iterations = 500,
         num_warmup_iterations = 20,
         super_circ_train_optimizer = qml.AdamOptimizer,
@@ -401,7 +428,8 @@ def search(
         exploit_execute_rounds=exploit_execute_rounds,
         sample_policy=cmab_sample_policy,
         exploit_policy=cmab_exploit_policy,
-        gate_limit_dict=gate_limit_dict
+        gate_limit_dict=gate_limit_dict,
+        state_class=state_class
     )
     current_best_arc = None
     current_best_node = None
