@@ -1,7 +1,7 @@
 import pennylane as qml 
 import pennylane.numpy as pnp 
 import numpy as np 
-from qas import qml_ops 
+from qas import qml_gate_ops
 from qas import qml_models 
 from qas import mcts
 import os 

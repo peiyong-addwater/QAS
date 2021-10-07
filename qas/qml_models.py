@@ -1,5 +1,5 @@
 from .models import ModelFromK
-from .qml_ops import (
+from .qml_gate_ops import (
     SUPPORTED_OPS_DICT,
     SUPPORTED_OPS_NAME,
     QMLPool,

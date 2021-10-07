@@ -18,7 +18,7 @@ import numpy as np
 import pennylane as qml
 import pennylane.numpy as pnp
 from abc import ABC, abstractmethod
-from .qml_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
+from .qml_gate_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
 import time
 #from memory_profiler import profile
 from joblib import Parallel, delayed

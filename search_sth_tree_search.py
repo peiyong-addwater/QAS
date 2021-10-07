@@ -1,5 +1,5 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
-from qas.qml_ops import QMLPool
+from qas.qml_gate_ops import QMLPool
 from qas.qml_models import ToffoliQMLNoiseless,  ToffoliQMLSwapTestNoiseless
 import json
 import numpy as np
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     #two_qubit_gate = ["CZ"]
     two_qubit_gate = ["CNOT", "CRot"]
     #single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
-    single_qubit_gate = ['PlaceHolder', '']
+    single_qubit_gate = ['PlaceHolder', 'PhaseShift']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     #gate_limit = {"CNOT": 8}
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     p = 10
     l = 3
     c = len(pool)
-    ph_count_limit = 3
+    ph_count_limit = 10
 
 
     # penalty function:
