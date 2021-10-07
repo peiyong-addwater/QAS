@@ -602,9 +602,8 @@ class ToffoliQMLSwapTestNoiseless(ModelFromK):
         return gate_list
 
 
-"""
-class FourTwoTwoNoiseless(ModelFromK):
-    name="FourTwoTwoNoiseless"
+class FourTwoTwoQMLNoiseless(ModelFromK):
+    name="FourTwoTwoQMLNoiseless"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
@@ -613,7 +612,6 @@ class FourTwoTwoNoiseless(ModelFromK):
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.x_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[0]
         self.y_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[1]
-        #self.dev = qml.device('qulacs.simulator', wires=self.num_qubits, gpu=True)
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
     @qml.template
@@ -623,19 +621,20 @@ class FourTwoTwoNoiseless(ModelFromK):
             gate_dict = self.pool[self.k[i]]
             assert len(gate_dict.keys()) == 1
             gate_name = list(gate_dict.keys())[0]
-            gate_obj = SUPPORTED_OPS_DICT[gate_name]
-            num_params = gate_obj.num_params
-            wires = gate_dict[gate_name]
-            if num_params > 0:
-                gate_params = []
-                for j in range(num_params):
-                    gate_params.append(extracted_params[param_pos])
-                    param_pos = param_pos + 1
-                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
-            else:
-                gate_params = None
-                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
-            qml_gate_obj.getOp()
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
 
     def constructFullCirc(self):
         @qml.qnode(self.dev)
@@ -702,20 +701,21 @@ class FourTwoTwoNoiseless(ModelFromK):
             gate_dict = self.pool[i]
             assert len(gate_dict.keys()) == 1
             gate_name = list(gate_dict.keys())[0]
-            gate_pos = gate_dict[gate_name]
-            gate_obj = SUPPORTED_OPS_DICT[gate_name]
-            gate_num_params = gate_obj.num_params
-            if gate_num_params > 0:
-                gate_params = []
-                for j in range(gate_num_params):
-                    gate_params.append(extracted_params[param_pos])
-                    param_pos = param_pos + 1
-                gate_list.append((gate_name, gate_pos, gate_params))
-            else:
-                gate_list.append((gate_name, gate_pos, None))
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
-"""
+
 
 
 
