@@ -85,7 +85,7 @@ if __name__ == "__main__":
         warmup_arc_batchsize=200,
         search_arc_batchsize=100,
         alpha_max=2,
-        alpha_min=1 / np.sqrt(2) / 2,
+        alpha_decay_rate=1 / np.sqrt(2) / 2,
         prune_constant_max=0.99,
         prune_constant_min=0.80,
         max_visits_prune_threshold=100,

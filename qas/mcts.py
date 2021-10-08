@@ -324,8 +324,9 @@ class MCTSController():
                 child_avg_reward = child.totalReward/child.numVisits
                 if child_avg_reward<threshold and child.numVisits>self.max_visits_prune_threshold:
                     pruned_key.append(key)
-            random.shuffle(pruned_key)
-            for i, item in enumerate(pruned_key):
+            pruned_key_avg_reward = [(key, node.children[key].totalReward/node.children[key].numVisits) for key in pruned_key]
+            pruned_key_avg_reward_sorted = sorted(pruned_key_avg_reward, key=lambda item: item[1])
+            for i, (item,_) in enumerate(pruned_key_avg_reward_sorted):
                 if i > len(pruned_key)-self.min_num_children:
                     break
                 node.children.pop(item)
@@ -395,7 +396,7 @@ def search(
         warmup_arc_batchsize = 200,
         search_arc_batchsize = 20,
         alpha_max = 2,
-        alpha_min=1 / np.sqrt(2),
+        alpha_decay_rate=0.95,
         prune_constant_max=0.9,
         prune_constant_min = 0.2,
         max_visits_prune_threshold=100,
@@ -405,14 +406,15 @@ def search(
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy = 'local_optimal',
-        verbose = 1
+        verbose = 1,
+        search_reset = True
 ):
     p = target_circuit_depth
     l = init_params.shape[2]
     c = len(op_pool)
     assert p == init_params.shape[0]
     assert c == init_params.shape[1]
-    assert alpha_min <= alpha_max
+    assert alpha_decay_rate <= alpha_max
     assert prune_constant_min <= prune_constant_max
     controller = MCTSController(
         model=model,
@@ -462,15 +464,9 @@ def search(
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
-            """
-            reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
-                delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
-            for r, _, node in reward_k_node_list:
-                r = penalty_function(r, node) if penalty_function is not None else r
-                controller.backPropagate(node, r)
-                print("BPed!")
-            """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
+            print("Prune Count Reset...")
+            controller._reset()  # reset
         else:
             print("=" * 10 + "Model:{}, Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"
@@ -483,9 +479,11 @@ def search(
                           exploit_execute_rounds)
                   + "=" * 10)
             #TODO: No reset? Reset will (perhaps) lose all the reward information obtained during the warm up stage.
-            controller._reset() # reset
-            new_alpha = alpha_max - (alpha_max - alpha_min) / (num_iterations - num_warmup_iterations) * (
-                        epoch + 1 - num_warmup_iterations)
+            # However, the reward distribution will change after parameters being updated
+            if search_reset:
+                controller._reset() # reset
+                print("CMAB Reset...")
+            new_alpha = controller.alpha*alpha_decay_rate
             controller.alpha = new_alpha  # alpha decreases as epoch increases
             new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
                         num_iterations - num_warmup_iterations) * (epoch + 1 - num_warmup_iterations)
@@ -497,22 +495,12 @@ def search(
                 r = controller.simulationWithSuperCircuitParamsAndK(k, params)
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
-            """
-            reward_k_node_list = Parallel(n_jobs=-1, verbose=0)(
-                delayed(getSimulationReward)(controller, k, node, params) for k, node in zip(arcs, nodes))
-            for r, _, node in reward_k_node_list:
-                r = penalty_function(r, node) if penalty_function is not None else r
-                controller.backPropagate(node, r)
-            """
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(search_arc_batchsize))
         batch_models = [model(p,c,l,k,op_pool) for k in arcs]
-        #batch_gradients = Parallel(n_jobs=-1, verbose=0)(
-        #    delayed(getGradientFromModel)(constructed_model, params) for constructed_model in batch_models
-        #)
+
         batch_gradients = []
         for constructed_model in tqdm(batch_models, bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}'):
             batch_gradients.append(getGradientFromModel(constructed_model, params))
-        #batch_gradients = [getGradientFromModel(constructed_model, params) for constructed_model in batch_models]
         batch_gradients = np.stack(batch_gradients, axis=0)
         batch_gradients = np.nan_to_num(batch_gradients)
         batch_gradients = np.mean(batch_gradients, axis=0)
@@ -524,13 +512,10 @@ def search(
         print("Parameters Updated!")
         print("Exploiting and finding the best arc...")
         current_best_arc, current_best_node = controller.exploitArcWithSuperCircParams(params)
-        #current_best_reward = controller.simulationWithSuperCircuitParamsAndK(current_best_arc, params)
         current_best_model = model(p, c, l, current_best_arc, op_pool)
         current_best_loss = current_best_model.getLoss(params)
         current_best_reward = current_best_model.getReward(params)
         current_penalized_best_reward = penalty_function(current_best_reward, current_best_node) if penalty_function is not None else current_best_reward
-        # current_extracted_params = [params[index] for index in current_best_model.param_indices]
-        # drawer = qml.draw(current_best_circ)
         end = time.time()
         print("Prune Count: {}".format(controller.prune_counter))
         print("Current Best Reward: {} (After Penalization: {}), Current Best Loss: {}".format(current_best_reward, current_penalized_best_reward, current_best_loss))
@@ -544,7 +529,7 @@ def search(
         best_rewards.append((epoch, current_best_arc, current_best_reward, current_penalized_best_reward))
         early_stop_list.append(current_penalized_best_reward)
 
-        if epoch > early_stop_lookback_count:
+        if epoch > early_stop_lookback_count and epoch>num_warmup_iterations:
             if np.average(early_stop_list[-early_stop_lookback_count:]) >= early_stop_threshold:
                 print("Early Stopping at Epoch: {}".format(epoch+1))
                 break
