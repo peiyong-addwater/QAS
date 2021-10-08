@@ -38,7 +38,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["SX", "RZ", 'PlaceHolder']
+    single_qubit_gate = ["Hadamard", 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 2}
@@ -46,10 +46,10 @@ if __name__ == "__main__":
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=control_map)
     print(pool)
-    p = 5
+    p = 3
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -74,11 +74,11 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=50,
-        num_warmup_iterations=5,
+        num_warmup_iterations=0,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.95,
-        early_stop_lookback_count=1,
+        early_stop_lookback_count=10,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
@@ -90,13 +90,14 @@ if __name__ == "__main__":
         prune_constant_min=0.80,
         max_visits_prune_threshold=100,
         min_num_children=3,
-        sampling_execute_rounds=50,
-        exploit_execute_rounds=10,
+        sampling_execute_rounds=5,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
         verbose=2,
-        state_class=state_class
+        state_class=state_class,
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(
