@@ -35,12 +35,12 @@ if __name__ == "__main__":
     task = model.name + "_" + state_class.name
     print(task)
     init_qubit_with_actions = {0, 1, 2}
-    two_qubit_gate = ["CRot"]
+    two_qubit_gate = ["CRot", "CNOT"]
     single_qubit_gate = ["Rot", 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CRot": 10}
-    control_map = [[0,1], [1,2]]
+    gate_limit = {"CRot": 2, "CNOT":2}
+    control_map = [[0,1], [1,2],[0,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
     p = 15
@@ -75,21 +75,21 @@ if __name__ == "__main__":
         num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=0.95,
+        early_stop_threshold=0.90,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=200,
+        warmup_arc_batchsize=2000,
         search_arc_batchsize=200,
         alpha_max=2,
         alpha_decay_rate=0.95,
-        prune_constant_max=0.2,
-        prune_constant_min=0.00,
+        prune_constant_max=0.99,
+        prune_constant_min=0.7,
         max_visits_prune_threshold=100,
         min_num_children=len(pool)//2+1,
         sampling_execute_rounds=c,
-        exploit_execute_rounds=c * 100,
+        exploit_execute_rounds=c * 10,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
