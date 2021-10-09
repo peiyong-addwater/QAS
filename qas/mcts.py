@@ -144,6 +144,9 @@ class QMLStateBasicGates(StateOfMCTS):
         if len(op_qubit) == 2 and op_qubit[0] not in self.qubit_with_actions:
             return False
 
+        if op_name == "PlaceHolder" and op_qubit[0] not in self.qubit_with_actions:
+            return False
+
         # control the number of gates
         if op_name in set(self.gate_limit_dict.keys()):
             if self.gate_count[op_name] >= self.gate_limit_dict[op_name]:
@@ -482,7 +485,7 @@ def search(
             # However, the reward distribution will change after parameters being updated
             if search_reset:
                 controller._reset() # reset
-                print("CMAB Reset...")
+                print("Search Reset...")
             new_alpha = controller.alpha*alpha_decay_rate
             controller.alpha = new_alpha  # alpha decreases as epoch increases
             new_prune_rate = prune_constant_min + (prune_constant_max - prune_constant_min) / (
@@ -529,7 +532,7 @@ def search(
         best_rewards.append((epoch, current_best_arc, current_best_reward, current_penalized_best_reward))
         early_stop_list.append(current_penalized_best_reward)
 
-        if epoch > early_stop_lookback_count and epoch>num_warmup_iterations:
+        if epoch+1 >= early_stop_lookback_count + num_warmup_iterations:
             if np.average(early_stop_list[-early_stop_lookback_count:]) >= early_stop_threshold:
                 print("Early Stopping at Epoch: {}".format(epoch+1))
                 break

@@ -35,15 +35,15 @@ if __name__ == "__main__":
     task = model.name + "_" + state_class.name
     print(task)
     init_qubit_with_actions = {0, 1, 2}
-    two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["U3", 'PlaceHolder']
+    two_qubit_gate = ["CRot"]
+    single_qubit_gate = ["Rot", 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 6}
-    control_map = [[0,1], [1,2], [0,2]]
+    gate_limit = {"CRot": 10}
+    control_map = [[0,1], [1,2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
     print(pool)
-    p = 20
+    p = 15
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=5000,
+        warmup_arc_batchsize=200,
         search_arc_batchsize=200,
         alpha_max=2,
         alpha_decay_rate=0.95,
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=False
+        search_reset=True
     )
 
     

@@ -37,18 +37,19 @@ if __name__ == "__main__":
     filename = marker + '.json'
     task = model.name + "_" + state_class.name
     print(task)
-    init_qubit_with_actions = {0,1,2,3,4}
-    two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["RZ","RY","PlaceHolder"]
+    init_qubit_with_actions = None
+    two_qubit_gate = ["CRot"]
+    single_qubit_gate = ["Rot","PlaceHolder"]
+    #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 10}
+    gate_limit =None# {"CRot": 10}
     pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 30
+    p = 25
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 5
 
 
     # penalty function:
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=50,
-        num_warmup_iterations=10,
+        num_warmup_iterations=5,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.98,
@@ -81,12 +82,12 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=1000,
-        search_arc_batchsize=100,
-        alpha_max=1,
+        warmup_arc_batchsize=2000,
+        search_arc_batchsize=200,
+        alpha_max=2,
         alpha_decay_rate=0.95,
-        prune_constant_max=0.8,
-        prune_constant_min=0.5,
+        prune_constant_max=0.9,
+        prune_constant_min=0.8,
         max_visits_prune_threshold=50,
         min_num_children=c//2+1,
         sampling_execute_rounds=c,
@@ -96,7 +97,7 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=2,
         state_class=state_class,
-        search_reset=False # set to False for cases with no parameterized gates
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(

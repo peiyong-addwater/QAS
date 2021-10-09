@@ -27,7 +27,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    np.random.seed(106)
+    #np.random.seed(2077)
 
     model = PhaseFlipQMLNoiseless
     state_class = QMLStateBasicGates
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     p = 5
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -90,13 +90,14 @@ if __name__ == "__main__":
         prune_constant_min=0.80,
         max_visits_prune_threshold=100,
         min_num_children=3,
-        sampling_execute_rounds=50,
-        exploit_execute_rounds=10,
+        sampling_execute_rounds=5,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
         verbose=2,
-        state_class=state_class
+        state_class=state_class,
+        search_reset=True
     )
 
     final_params, loss_list = circuitModelTuning(
