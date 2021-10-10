@@ -35,7 +35,7 @@ PAULI_EIGENSTATES_T_STATE = [(ket0 + ket1) / np.sqrt(2), (ket0 - ket1) / np.sqrt
 
 PAULI_X = np.array([[0,1],[1,0]])
 PAULI_Z = np.array(([[1,0],[0,-1]]))
-PAULI_Y = -1j*np.matmul(PAULI_X, PAULI_Z)
+PAULI_Y = np.array([[0,-1j],[1j,0]])
 IDENTITY = np.array([[1,0],[0,1]])
 
 STATE_DIC = {'|0>': ket0, '|1>': ket1, '|+>': (ket0 + ket1) / np.sqrt(2), '|->': (ket0 - ket1) / np.sqrt(2),
@@ -102,6 +102,21 @@ for x in TOFFOLI_INPUT:
         qml.Toffoli(wires=[0,1,2])
         return qml.density_matrix(wires=[0, 1, 2])
     TOFFOLI_DATA.append((x, toffoli_circ(x)))
+
+FOUR_TWO_TWO_DETECTION_CODE_DATA = []
+for x in FOUR_TWO_TWO_DETECTION_CODE_INPUT:
+    dev_422 = qml.device('default.qubit', wires=4)
+    @qml.qnode(dev_422)
+    def four_two_two_circ(x):
+        qml.QubitStateVector(x, wires=[0, 1])
+        qml.Hadamard(wires=[3])
+        qml.CNOT(wires=[0,2])
+        qml.CNOT(wires=[1,2])
+        qml.CNOT(wires=[3,2])
+        qml.CNOT(wires=[3,2])
+        qml.CNOT(wires=[3,0])
+        return qml.density_matrix(wires=[0,1,2,3])
+    FOUR_TWO_TWO_DETECTION_CODE_DATA.append((x, four_two_two_circ(x)))
 
 
 def extractParamIndicesQML(k:List[int], op_pool:Union[QMLPool, dict])->List:
@@ -476,8 +491,7 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 4
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.x_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[0]
-        self.y_list = FOUR_TWO_TWO_DETECTION_CODE_DATA[1]
+        self.data = FOUR_TWO_TWO_DETECTION_CODE_DATA
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
     @qml.template
@@ -513,9 +527,9 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
     def costFunc(self, extracted_params):
         fid = 0
         circ_func = self.constructFullCirc()
-        num_data = len(self.x_list)
+        num_data = len(self.data)
         for i in range(num_data):
-            fid = fid + circ_func(extracted_params, x=self.x_list[i], y=self.y_list[i])
+            fid = fid + circ_func(extracted_params, x=self.data[i][0], y=self.data[i][1])
         return 1-fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):

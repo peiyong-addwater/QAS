@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit =None# {"CRot": 10}
+    gate_limit ={"CRot": 10}
     pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
     p = 25
@@ -73,8 +73,8 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=50,
-        num_warmup_iterations=5,
+        num_iterations=100,
+        num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.98,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=2000,
+        warmup_arc_batchsize=5000,
         search_arc_batchsize=200,
         alpha_max=2,
         alpha_decay_rate=0.95,
@@ -95,15 +95,15 @@ if __name__ == "__main__":
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
-        verbose=2,
+        verbose=1,
         state_class=state_class,
-        search_reset=False
+        search_reset=True
     )
 
     final_params, loss_list = circuitModelTuning(
         initial_params=final_params,
         model=model,
-        num_epochs=100,
+        num_epochs=500,
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
