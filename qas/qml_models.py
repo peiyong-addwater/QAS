@@ -596,7 +596,7 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
 
         return gate_list
 
-class PrepareLogicalState513QECC(ModelFromK):
+class PrepareLogicalKetPlusState513QECC(ModelFromK):
     coeff_dict = {
         'ket0':{'alpha':1, 'beta':0},
         'ket1':{'alpha':0, 'beta':1},
@@ -608,6 +608,126 @@ class PrepareLogicalState513QECC(ModelFromK):
     }
     target_state_name = 'ket_plus'
     name = "PrepareLogicalState513QECC_Logical_"+target_state_name
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 5
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev = qml.device('default.qubit', wires = self.num_qubits)
+        self.state_alpha = self.coeff_dict[self.target_state_name]['alpha']
+        self.state_beta = self.coeff_dict[self.target_state_name]['beta']
+        self.logical_X = np.kron(np.kron(np.kron(PAULI_X,np.kron(PAULI_X,PAULI_X)),PAULI_X),PAULI_X)
+        self.logical_Y = np.kron(np.kron(np.kron(PAULI_Y,np.kron(PAULI_Y,PAULI_Y)),PAULI_Y),PAULI_Y)
+        self.logical_Z = np.kron(np.kron(np.kron(PAULI_Z,np.kron(PAULI_Z,PAULI_Z)),PAULI_Z),PAULI_Z)
+        self.O = (self.state_alpha*np.conj(self.state_beta)+np.conj(self.state_alpha)*self.state_beta)*self.logical_X-1j*(np.conj(self.state_alpha)*self.state_beta-self.state_alpha*np.conj(self.state_beta))*self.logical_Y-(self.state_beta*np.conj(self.state_beta)-self.state_alpha*np.conj(self.state_alpha))*self.logical_Z
+        self.g1 = np.kron(np.kron(np.kron(np.kron(PAULI_X, PAULI_Z), PAULI_Z), PAULI_X), IDENTITY)
+        self.g2 = np.kron(np.kron(np.kron(np.kron(IDENTITY, PAULI_X),PAULI_Z),PAULI_Z),PAULI_X)
+        self.g3 = np.kron(np.kron(np.kron(np.kron(PAULI_X, IDENTITY), PAULI_X), PAULI_Z), PAULI_Z)
+        self.g4 = np.kron(np.kron(np.kron(np.kron(PAULI_Z, PAULI_X), IDENTITY), PAULI_X), PAULI_Z)
+
+
+        self.observable = qml.Hermitian(-1/5*(self.g1+self.g2+self.g3+self.g4+self.O), wires=[0,1,2,3,4])
+
+    @qml.template
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
+
+    def constructFullCirc(self):
+        @qml.qnode(self.dev)
+        def fullCirc(extracted_params):
+            self.backboneCirc(extracted_params)
+            return qml.expval(self.observable)
+        return fullCirc
+
+    def costFunc(self, extracted_params):
+        circ_func = self.constructFullCirc()
+        energy = circ_func(extracted_params)
+        return energy
+
+    def getLoss(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        cost = self.costFunc(extracted_params)
+        return cost
+
+    def getReward(self, super_circ_params):
+        return -self.getLoss(super_circ_params)
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
+
+class PrepareLogicalKetMinusState513QECC(ModelFromK):
+    coeff_dict = {
+        'ket0':{'alpha':1, 'beta':0},
+        'ket1':{'alpha':0, 'beta':1},
+        'ket_plus':{'alpha':STATE_DIC['|+>'][0], 'beta':STATE_DIC['|+>'][1]},
+        'ket_minus':{'alpha':STATE_DIC['|->'][0], 'beta':STATE_DIC['|->'][1]},
+        'ket_plus_i':{'alpha':STATE_DIC['|+i>'][0], 'beta':STATE_DIC['|+i>'][1]},
+        'ket_minus_i':{'alpha':STATE_DIC['|-i>'][0], 'beta':STATE_DIC['|-i>'][1]},
+        'ket_T_state':{'alpha':STATE_DIC['magic'][0], 'beta':STATE_DIC['magic'][1]}
+    }
+    target_state_name = 'ket_minus'
+    name = "PrepareLogicalKetMinusState513QECC"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
