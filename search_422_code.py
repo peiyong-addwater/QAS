@@ -70,7 +70,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=50,
-        num_warmup_iterations=3,
+        num_warmup_iterations=0,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.95,
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=2,
         state_class=state_class,
-        search_reset=True # set to False for cases with no parameterized gates
+        search_reset=True
     )
 
     final_params, loss_list = circuitModelTuning(

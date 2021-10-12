@@ -113,7 +113,7 @@ for x in FOUR_TWO_TWO_DETECTION_CODE_INPUT:
         qml.CNOT(wires=[0,2])
         qml.CNOT(wires=[1,2])
         qml.CNOT(wires=[3,2])
-        qml.CNOT(wires=[3,2])
+        qml.CNOT(wires=[3,1])
         qml.CNOT(wires=[3,0])
         return qml.density_matrix(wires=[0,1,2,3])
     FOUR_TWO_TWO_DETECTION_CODE_DATA.append((x, four_two_two_circ(x)))
