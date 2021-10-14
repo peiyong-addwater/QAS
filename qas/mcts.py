@@ -549,7 +549,8 @@ def circuitModelTuning(
         opt_callable=qml.AdamOptimizer,
         lr = 0.01,
         grad_noise_factor = 1/100,
-        verbose = 1
+        verbose = 1,
+        early_stop_threshold = 1e-15
 ):
     p, c, l = initial_params.shape[0], initial_params.shape[1], initial_params.shape[2]
     circ = model(p, c, l, k, op_pool)
@@ -567,4 +568,7 @@ def circuitModelTuning(
         gradients = gradients + noise * grad_noise_factor
         circ_params = optimizer.apply_grad(grad=gradients, args=circ_params)
         circ_params = np.array(circ_params)
+        if loss<=early_stop_threshold:
+            print("Early Stopping at Epoch: {}".format(epoch))
+            break
     return circ_params, loss_list
