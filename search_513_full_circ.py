@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import PrepareLogicalKetPlusState513QECC
+from qas.qml_models import FiveOneThreeQECCNoiseless
 import json
 import numpy as np
 import pennylane as qml
@@ -28,7 +28,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = PrepareLogicalKetPlusState513QECC
+    model = FiveOneThreeQECCNoiseless
     state_class = QMLStateBasicGates
 
 
@@ -42,10 +42,10 @@ if __name__ == "__main__":
     #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit ={"CRot": 10}
+    gate_limit ={"CRot": 3}
     pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 25
+    p = 20
     l = 3
     c = len(pool)
     ph_count_limit = 5
@@ -78,19 +78,19 @@ if __name__ == "__main__":
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=0.65,
         early_stop_lookback_count=1,
-        super_circ_train_lr=0.1,
+        super_circ_train_lr=0.5,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=5000,
         search_arc_batchsize=200,
         alpha_max=2,
-        alpha_decay_rate=0.99,
+        alpha_decay_rate=0.95,
         prune_constant_max=0.99,
         prune_constant_min=0.85,
         max_visits_prune_threshold=50,
-        min_num_children=c//2+1,
+        min_num_children=c // 2 + 1,
         sampling_execute_rounds=c,
-        exploit_execute_rounds=c*10,
+        exploit_execute_rounds=c * 10,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
-        lr=0.01,
+        lr=0.1,
         grad_noise_factor=0,
         verbose=1
     )

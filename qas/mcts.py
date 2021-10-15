@@ -569,6 +569,6 @@ def circuitModelTuning(
         circ_params = optimizer.apply_grad(grad=gradients, args=circ_params)
         circ_params = np.array(circ_params)
         if loss<=early_stop_threshold:
-            print("Early Stopping at Epoch: {}".format(epoch))
+            print("Early Stopping at Epoch: {}".format(epoch+1))
             break
     return circ_params, loss_list
