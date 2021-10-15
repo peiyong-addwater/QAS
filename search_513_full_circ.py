@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import FiveOneThreeQECCNoiseless
+from qas.qml_models import FiveOneThreeQECCNoiselessSwapTest
 import json
 import numpy as np
 import pennylane as qml
@@ -28,7 +28,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = FiveOneThreeQECCNoiseless
+    model = FiveOneThreeQECCNoiselessSwapTest
     state_class = QMLStateBasicGates
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 20
     l = 3
     c = len(pool)
-    ph_count_limit = 5
+    ph_count_limit = p
 
 
     # penalty function:
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         num_warmup_iterations=100,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=0.65,
+        early_stop_threshold=0.9,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.5,
         penalty_function=penalty_func,

@@ -142,7 +142,7 @@ for x in PAULI_EIGENSTATES_T_STATE:
         qml.CNOT(wires=[4,0])
         qml.Hadamard(wires=4)
         qml.CNOT(wires=[4,1])
-        return qml.density_matrix(wires=[0,1,2,3,4])
+        return qml.state()
     FIVE_ONE_THREE_QECC_DATA.append((x, five_one_three_circ(x)))
 
 
@@ -864,8 +864,8 @@ class PrepareLogicalKetMinusState513QECC(ModelFromK):
 
         return gate_list
 
-class FiveOneThreeQECCNoiseless(ModelFromK):
-    name = 'FiveOneThreeQECCNoiseless'
+class FiveOneThreeQECCNoiselessSwapTest(ModelFromK):
+    name = 'FiveOneThreeQECCNoiselessSwapTest'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
@@ -873,7 +873,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
         self.num_qubits = 5
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.data = FIVE_ONE_THREE_QECC_DATA
-        self.dev = qml.device('default.qubit', wires=5)
+        self.dev = qml.device('default.qubit', wires=self.num_qubits*2+1)
 
     @qml.template
     def backboneCirc(self, extracted_params):
@@ -899,10 +899,22 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
 
     def constructFullCirc(self):
         @qml.qnode(self.dev)
-        def fullCirc(extracted_params, x=None, y = None):
-            qml.QubitStateVector(x, wires=[0])
+        def fullCirc(extracted_params, x=None, y=None):
+            single_circ_state = np.kron(np.kron(np.kron(np.kron(x, ket0),ket0),ket0),ket0)
+            input_state = np.kron(single_circ_state, y)
+            qml.QubitStateVector(input_state, wires=[0,1,2,3,4,5,6,7,8,9])
             self.backboneCirc(extracted_params)
-            return qml.expval(qml.Hermitian(y, wires=[0,1,2,3,4]))
+
+            qml.Hadamard(wires=10)
+            qml.CSWAP(wires=[10, 9, 4])
+            qml.CSWAP(wires=[10, 8, 3])
+            qml.CSWAP(wires=[10, 7, 2])
+            qml.CSWAP(wires=[10, 6, 1])
+            qml.CSWAP(wires=[10, 5, 0])
+            qml.Hadamard(wires=10)
+            return qml.expval(qml.Hermitian(np.outer(ket0, ket0), wires=10))
+
+
         return fullCirc
 
     def costFunc(self, extracted_params):
@@ -910,7 +922,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
         circ_func = self.constructFullCirc()
         num_data = len(self.data)
         for i in range(num_data):
-            fid = fid + circ_func(extracted_params, x=self.data[i][0], y=self.data[i][1])
+            fid = fid +  (circ_func(extracted_params, x=self.data[i][0], y=self.data[i][1])-1/2)*2
         return 1 - fid/num_data
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
