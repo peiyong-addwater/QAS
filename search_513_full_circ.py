@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import FiveOneThreeQECCNoiselessSwapTest
+from qas.qml_models import FiveOneThreeQECCNoiseless
 import json
 import numpy as np
 import pennylane as qml
@@ -28,7 +28,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = FiveOneThreeQECCNoiselessSwapTest
+    model = FiveOneThreeQECCNoiseless
     state_class = QMLStateBasicGates
 
 
