@@ -108,7 +108,8 @@ if __name__ == "__main__":
         opt_callable=qml.AdamOptimizer,
         lr=0.01,
         grad_noise_factor=0,
-        verbose=1
+        verbose=1,
+        early_stop_threshold=-1
     )
 
     res_dict = {
