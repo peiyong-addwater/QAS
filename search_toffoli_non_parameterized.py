@@ -1,14 +1,13 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import FiveOneThreeQECCNoiseless
+from qas.qml_models import ToffoliQMLNoiseless, ToffoliQMLSwapTestNoiseless
 import json
 import numpy as np
 import pennylane as qml
 import time
 from qas.mcts import QMLStateBasicGates
 import random
-import warnings
-#warnings.filterwarnings("ignore")
+
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -28,25 +27,26 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = FiveOneThreeQECCNoiseless
-    state_class = QMLStateBasicGates
+    np.random.seed(106)
 
+    model = ToffoliQMLNoiseless
+    state_class = QMLStateBasicGates
 
     marker = nowtime()
     filename = marker + '.json'
     task = model.name + "_" + state_class.name
     print(task)
-    init_qubit_with_actions = {0}
+    init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
-    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
+    single_qubit_gate = ["T", 'Tdg','Hadamard']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 8}
-    pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
-                   two_qubit_gate_map=connection_graph)
+    gate_limit = {"CNOT": 6}
+    control_map = [[0, 1], [1, 2], [0, 2]]
+    pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
+                   two_qubit_gate_map=control_map)
     print(pool)
-    p = 25
+    p = 15
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -73,41 +73,41 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=1000,
-        num_warmup_iterations=50,
+        num_iterations=50,
+        num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=0.99,
+        early_stop_threshold=0.90,
         early_stop_lookback_count=1,
-        super_circ_train_lr=0.5,
+        super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=10000,
-        search_arc_batchsize=600,
-        alpha_max=3,
+        warmup_arc_batchsize=2000,
+        search_arc_batchsize=200,
+        alpha_max=2,
         alpha_decay_rate=0.95,
         prune_constant_max=0.99,
-        prune_constant_min=0.80,
-        max_visits_prune_threshold=20,
-        min_num_children=c // 4 + 1,
-        sampling_execute_rounds=10,
-        exploit_execute_rounds=1000,
+        prune_constant_min=0.7,
+        max_visits_prune_threshold=100,
+        min_num_children=len(pool) // 2 + 1,
+        sampling_execute_rounds=c,
+        exploit_execute_rounds=c * 10,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=True
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(
         initial_params=final_params,
         model=model,
-        num_epochs=4000,
+        num_epochs=100,
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
-        lr=0.1,
+        lr=0.01,
         grad_noise_factor=0,
         verbose=1
     )
