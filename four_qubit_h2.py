@@ -31,7 +31,7 @@ if __name__ == "__main__":
     import shutup
     shutup.please()
 
-    model = FourQubitH2
+    model = FourQubitH2 #ground-state energy = -1.13618883 Ha
     state_class = QMLStateBasicGates
 
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.5,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=10000,
+        warmup_arc_batchsize=100,
         search_arc_batchsize=600,
         alpha_max=3,
         alpha_decay_rate=0.95,
