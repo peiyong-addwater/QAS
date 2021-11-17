@@ -39,13 +39,13 @@ if __name__ == "__main__":
     filename = marker + '.json'
     task = model.name + "_" + state_class.name
     print(task)
-    init_qubit_with_actions = {0,1,2,3}
+    init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["Rot","PlaceHolder"]
     connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 2}
+    gate_limit = {"CNOT": 10}
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=connection_graph)
     print(pool)
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         num_warmup_iterations=10,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=-1.2,
+        early_stop_threshold=1.13,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.5,
         penalty_function=penalty_func,
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         max_visits_prune_threshold=20,
         min_num_children=c // 4 + 1,
         sampling_execute_rounds=10,
-        exploit_execute_rounds=1000,
+        exploit_execute_rounds=50,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
