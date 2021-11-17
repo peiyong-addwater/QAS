@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import TwoQubitH2
+from qas.qml_models import FourQubitH2
 import json
 import numpy as np
 import pennylane as qml
@@ -28,7 +28,10 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = TwoQubitH2
+    import shutup
+    shutup.please()
+
+    model = FourQubitH2
     state_class = QMLStateBasicGates
 
 
@@ -36,20 +39,20 @@ if __name__ == "__main__":
     filename = marker + '.json'
     task = model.name + "_" + state_class.name
     print(task)
-    init_qubit_with_actions = {0,1}
+    init_qubit_with_actions = {0,1,2,3}
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["Rot","PlaceHolder"]
-    connection_graph = [[0,1],[1,0]]
+    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 2}
-    pool = QMLPool(2, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
+    pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 3
+    p = 20
     l = 3
     c = len(pool)
-    ph_count_limit = 0
+    ph_count_limit = p//2
 
 
     # penalty function:
