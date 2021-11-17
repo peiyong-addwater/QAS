@@ -49,7 +49,7 @@ if __name__ == "__main__":
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 20
+    p = 10
     l = 3
     c = len(pool)
     ph_count_limit = p//2
@@ -93,12 +93,12 @@ if __name__ == "__main__":
         prune_constant_min=0.80,
         max_visits_prune_threshold=20,
         min_num_children=c // 4 + 1,
-        sampling_execute_rounds=10,
+        sampling_execute_rounds=5,
         exploit_execute_rounds=50,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
-        verbose=2,
+        verbose=1,
         state_class=state_class,
         search_reset=True
     )
