@@ -1032,7 +1032,103 @@ class TwoQubitH2(ModelFromK):
     [3.85,	-6.14575E-01,	-2.00063E-03,	3.18581E-01,	-2.00062E-03,	2.27500E-06],
     [3.95,	-6.12839E-01,	-1.60393E-03,	3.20320E-01,	-1.60392E-03,	1.42500E-06]
 ])
+        self.ham = self.hamiltonianH2(*self.distance_and_coeffs[12][1:]) # 0.75 Angs
 
     def hamiltonianH2(self, coeff_I, coeff_Z1, coeff_X1X2, coeffZ_2, coeff_Z1Z2):
         return coeff_I * qml.Identity(0)@qml.Identity(1) + coeff_Z1 * qml.Identity(0) @ qml.PauliZ(1) + coeffZ_2 * qml.PauliZ(0) @ qml.Identity(1) + coeff_X1X2 * qml.PauliX(0) @ qml.PauliX(1) + coeff_Z1Z2 * qml.PauliZ(0) @ qml.PauliZ(1)
 
+    @qml.template
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
+
+    def constructFullCirc(self):
+        @qml.qnode(self.dev)
+        def fullCirc(extracted_params):
+            self.backboneCirc(extracted_params)
+            return qml.expval(self.ham)
+        return fullCirc
+
+    def costFunc(self, extracted_params):
+        circ_func = self.constructFullCirc()
+        return circ_func(extracted_params)
+
+    def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return self.costFunc(extracted_params)
+
+    def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return -self.costFunc(extracted_params)
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
