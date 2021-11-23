@@ -26,6 +26,9 @@ import qiskit
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import state_fidelity, DensityMatrix, Statevector
 from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
+import shutup
+shutup.please()
+
 
 ket0 = np.array([1, 0])
 ket1 = np.array([0, 1])
@@ -976,6 +979,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
 
         return gate_list
 
+
 class TwoQubitH2(ModelFromK):
     name = 'TwoQubitH2'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -1133,7 +1137,14 @@ class TwoQubitH2(ModelFromK):
 
         return gate_list
 
+
+_H2_SYMBOLS = ["H", "H"]
+_H2_COORDINATES = np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614])
+_H2_HAM_FOUR_QUBIT, _ = qml.qchem.molecular_hamiltonian(_H2_SYMBOLS, _H2_COORDINATES) #ground-state energy = -1.13618883 Ha
+
+
 class FourQubitH2(ModelFromK):
+
     name = "FourQubitH2"
 
     def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
@@ -1141,11 +1152,11 @@ class FourQubitH2(ModelFromK):
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 4
+        self.num_electrons = 2
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device('default.qubit', wires=self.num_qubits)
-        self.symbols = ["H", "H"]
-        self.coordinates = np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614])
-        self.H ,_ = qml.qchem.molecular_hamiltonian(self.symbols, self.coordinates) #ground-state energy = -1.13618883 Ha
+        self.H= _H2_HAM_FOUR_QUBIT  # ground-state energy = -1.13618883 Ha
+        self.hf = qml.qchem.hf_state(self.num_electrons, self.num_qubits)
 
     @qml.template
     def backboneCirc(self, extracted_params):
@@ -1172,6 +1183,7 @@ class FourQubitH2(ModelFromK):
     def constructFullCirc(self):
         @qml.qnode(self.dev)
         def fullCirc(extracted_params):
+            qml.BasisState(self.hf, wires=[0,1,2,3])
             self.backboneCirc(extracted_params)
             return qml.expval(self.H)
         return fullCirc

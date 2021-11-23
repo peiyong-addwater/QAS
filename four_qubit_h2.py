@@ -45,14 +45,14 @@ if __name__ == "__main__":
     connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 10}
-    pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
-                   two_qubit_gate_map=connection_graph)
+
+    pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 10
+    p = 28
     l = 3
     c = len(pool)
-    ph_count_limit = p//2
+    ph_count_limit = 0
+    gate_limit = {"CNOT": 14}
 
 
     # penalty function:
@@ -76,25 +76,25 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=400,
-        num_warmup_iterations=10,
+        num_iterations=200,
+        num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
-        super_circ_train_gradient_noise_factor=0,
+        super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=1.13,
-        early_stop_lookback_count=1,
-        super_circ_train_lr=0.5,
+        early_stop_lookback_count=5,
+        super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=100,
-        search_arc_batchsize=600,
-        alpha_max=3,
-        alpha_decay_rate=0.95,
+        warmup_arc_batchsize=5000,
+        search_arc_batchsize=100,
+        alpha_max=2,
+        alpha_decay_rate=0.99,
         prune_constant_max=0.99,
         prune_constant_min=0.80,
         max_visits_prune_threshold=20,
-        min_num_children=c // 4 + 1,
-        sampling_execute_rounds=5,
-        exploit_execute_rounds=50,
+        min_num_children=c // 2 + 1,
+        sampling_execute_rounds=10,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     )
 
     final_params, loss_list = circuitModelTuning(
-        initial_params=final_params,
+        initial_params=init_params,
         model=model,
         num_epochs=400,
         k=final_best_arc,
