@@ -48,11 +48,11 @@ if __name__ == "__main__":
 
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 28
+    p = 20
     l = 3
     c = len(pool)
     ph_count_limit = 0
-    gate_limit = {"CNOT": 14}
+    gate_limit = {"CNOT": p}
 
 
     # penalty function:
