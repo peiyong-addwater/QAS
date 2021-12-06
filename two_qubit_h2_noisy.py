@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import TwoQubitH2
+from qas.qml_models import TwoQubitH2Noisy
 import json
 import numpy as np
 import pennylane as qml
@@ -28,7 +28,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = TwoQubitH2
+    model = TwoQubitH2Noisy
     state_class = QMLStateBasicGates
 
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=1.15,
+        early_stop_threshold=1.13,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.5,
         penalty_function=penalty_func,

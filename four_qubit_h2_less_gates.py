@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 20
+    p = 25
     l = 3
     c = len(pool)
     ph_count_limit = 0
