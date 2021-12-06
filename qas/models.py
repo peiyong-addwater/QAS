@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class ModelFromK(ABC):
     name:str
     @abstractmethod
-    def __init__(self, p:int, c:int, l:int, structure_list, op_pool):
+    def __init__(self, p:int, c:int, l:int, structure_list, op_pool, *args, **kargs):
         raise NotImplementedError
     @abstractmethod
     def getLoss(self, super_circ_params):
