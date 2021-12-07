@@ -85,7 +85,7 @@ if __name__ == "__main__":
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=5000,
+        warmup_arc_batchsize=100,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.99,
