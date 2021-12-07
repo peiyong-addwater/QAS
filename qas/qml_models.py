@@ -1440,7 +1440,7 @@ class FourQubitH2Noisy(ModelFromK):
         self.noise_model.add_all_qubit_quantum_error(self.dp1, ['u1', 'u2', 'u3'])
         self.noise_model.add_all_qubit_quantum_error(self.dp2, ['cx'])
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev = qml.device('qiskit.aer', wires=self.num_qubits, noise_model=self.noise_model)
+        self.dev = qml.device('qiskit.aer', wires=self.num_qubits, noise_model=self.noise_model, backend = 'aer_simulator_statevector',max_parallel_experiments=0,max_parallel_shots=0)
         self.H= _H2_HAM_FOUR_QUBIT  # ground-state energy = -1.13618883 Ha
         self.hf = qml.qchem.hf_state(self.num_electrons, self.num_qubits)
 
