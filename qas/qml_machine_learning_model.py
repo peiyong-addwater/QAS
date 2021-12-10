@@ -181,6 +181,8 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         for x in self.train_data:
             preds.append(circ_func(extracted_params, x=x))
 
+        loss = self.square_loss(self.tr)
+
 
 
 
