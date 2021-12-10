@@ -155,7 +155,7 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         return fullCirc
 
     # https://pennylane.ai/qml/demos/tutorial_variational_classifier.html
-    def square_loss(labels, predictions):
+    def square_loss(self, labels, predictions):
         loss = 0
         for l, p in zip(labels, predictions):
             loss = loss + (l - p) ** 2
@@ -165,7 +165,7 @@ class BinaryClassificationFashionMNIST(ModelFromK):
 
     # https://pennylane.ai/qml/demos/tutorial_variational_classifier.html
     # This will be the reward
-    def accuracy(labels, predictions):
+    def accuracy(self, labels, predictions):
 
         loss = 0
         for l, p in zip(labels, predictions):
@@ -181,8 +181,55 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         for x in self.train_data:
             preds.append(circ_func(extracted_params, x=x))
 
-        loss = self.square_loss(self.tr)
+        loss = self.square_loss(self.train_label, preds)
+        return loss
 
+    def accFunc(self, extracted_params):
+        circ_func = self.constructFullCirc()
+        preds = []
+        for x in self.train_data:
+            preds.append(circ_func(extracted_params, x=x))
+
+        loss = self.accuracy(self.train_label, preds)
+        return loss
+
+    def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return self.costFunc(extracted_params)
+
+    def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return self.accFunc(extracted_params)
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+
+        return gradients
 
 
 
