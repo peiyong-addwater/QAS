@@ -1436,13 +1436,9 @@ class FourQubitH2Noisy(ModelFromK):
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.p1 = 0.001
         self.p2 = 0.01
-        self.dp1 = noise.depolarizing_error(self.p1, 1)
-        self.dp2 = noise.depolarizing_error(self.p2, 2)
-        self.noise_model = noise.NoiseModel()
-        self.noise_model.add_all_qubit_quantum_error(self.dp1, ['u1', 'u2', 'u3'])
-        self.noise_model.add_all_qubit_quantum_error(self.dp2, ['cx'])
+
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev = qml.device('qiskit.aer', wires=self.num_qubits, noise_model=self.noise_model, backend = 'aer_simulator_statevector',max_parallel_experiments=0,max_parallel_shots=0)
+        self.dev = qml.device('default.mixed', wires=self.num_qubits)
         self.H= _H2_HAM_FOUR_QUBIT  # ground-state energy = -1.13618883 Ha
         self.hf = qml.qchem.hf_state(self.num_electrons, self.num_qubits)
 
@@ -1473,6 +1469,8 @@ class FourQubitH2Noisy(ModelFromK):
         def fullCirc(extracted_params):
             qml.BasisState(self.hf, wires=[0,1,2,3])
             self.backboneCirc(extracted_params)
+            for i in range(self.num_qubits):
+                qml.DepolarizingChannel(self.p1, wires=i)
             return qml.expval(self.H)
         return fullCirc
 
