@@ -1425,6 +1425,8 @@ class FourQubitH2Noisy(ModelFromK):
 
     name = "FourQubitH2Noisy"
 
+    #TODO: Change noise implementation to pennylane's noise channel
+
     def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
