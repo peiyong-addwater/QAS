@@ -80,7 +80,7 @@ if __name__ == "__main__":
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=1.13,
+        early_stop_threshold=0.95,
         early_stop_lookback_count=5,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         lr=0.1,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=-1.2
+        early_stop_threshold=0.0
     )
 
     res_dict = {

@@ -43,16 +43,20 @@ cwd = os.getcwd()
 # original labels are 0 and 3
 DATA_PATH = './qas/additional_data/challenge.npz'
 data_F_MNIST = np.load(DATA_PATH)
-sample_train = data_F_MNIST['sample_train']
-labels_train = data_F_MNIST['labels_train']
+sample_train = np.array(data_F_MNIST['sample_train'], dtype=float)
+labels_train = np.array(data_F_MNIST['labels_train'], dtype=float)
 
 # Split train data
 sample_train_F_MNIST, sample_val_F_MNIST, labels_train_F_MNIST, labels_val_F_MNIST = train_test_split(
     sample_train, labels_train, test_size=0.2, random_state=42)
 
 # Load test data and change label 3 to 1 and 0 to -1
-sample_test_F_MNIST = data_F_MNIST['sample_test']
-labels_test_F_MNIST = data_F_MNIST['labels_test']
+sample_test_F_MNIST = np.array(data_F_MNIST['sample_test'], dtype=float)
+labels_test_F_MNIST = np.array(data_F_MNIST['labels_test'],dtype=float)
+
+#print(labels_test_F_MNIST)
+#print(labels_train_F_MNIST)
+
 for i in range(len(labels_train_F_MNIST)):
     if labels_train_F_MNIST[i] == 3:
         labels_train_F_MNIST[i] = 1
@@ -73,6 +77,9 @@ for i in range(len(labels_test_F_MNIST)):
 
     if labels_test_F_MNIST[i] == 0:
         labels_test_F_MNIST[i] = -1
+
+#print(labels_test_F_MNIST)
+#print(labels_train_F_MNIST)
 
 # Data transformation from https://github.com/quantum-melb/MCDS-workshop/blob/main/day-four/classification_challenge.ipynb
 # Standardize
@@ -130,6 +137,8 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         self.val_data = pnp.array(sample_val_F_MNIST, requires_grad=False)
         self.val_label = pnp.array(labels_val_F_MNIST, requires_grad=False)
 
+        #print(labels_train_F_MNIST)
+
     @qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
@@ -163,10 +172,17 @@ class BinaryClassificationFashionMNIST(ModelFromK):
     # https://pennylane.ai/qml/demos/tutorial_variational_classifier.html
     def square_loss(self, labels, predictions):
         loss = 0
+        #print(labels)
         for l, p in zip(labels, predictions):
+            #print(l,p, 'sep')
+
             loss = loss + (l - p) ** 2
 
+
+
         loss = loss / len(labels)
+        #print(loss, 'jjj')
+        #exit(-1)
         return loss
 
     # https://pennylane.ai/qml/demos/tutorial_variational_classifier.html
