@@ -182,7 +182,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         self.data = SIMPLE_PHASE_FLIP_DATA
         self.dev = qml.device('default.qubit', wires=3)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -296,7 +296,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
         #self.dev = qml.device('qiskit.aer', wires=self.num_qubits, max_parallel_threads=0, max_parallel_experiments=0)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -408,7 +408,7 @@ class ToffoliQMLSwapTestNoiseless(ModelFromK):
         self.dev = qml.device('default.qubit', wires = self.num_qubits*2+1)
         #self.dev = qml.device('qiskit.aer', wires=self.num_qubits, max_parallel_threads=0, max_parallel_experiments=0)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -526,7 +526,7 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
         self.data = FOUR_TWO_TWO_DETECTION_CODE_DATA
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -661,7 +661,7 @@ class PrepareLogicalKetPlusState513QECC(ModelFromK):
 
         self.observable = qml.Hermitian(-1/5*(self.g1+self.g2+self.g3+self.g4+self.O), wires=[0,1,2,3,4])
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -781,7 +781,7 @@ class PrepareLogicalKetMinusState513QECC(ModelFromK):
 
         self.observable = qml.Hermitian(-1/5*(self.g1+self.g2+self.g3+self.g4+self.O), wires=[0,1,2,3,4])
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -879,7 +879,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
         self.data = FIVE_ONE_THREE_QECC_DATA
         self.dev = qml.device('default.qubit', wires=5)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -1440,7 +1440,7 @@ class FourQubitH2Noisy(ModelFromK):
         self.H= _H2_HAM_FOUR_QUBIT  # ground-state energy = -1.13618883 Ha
         self.hf = qml.qchem.hf_state(self.num_electrons, self.num_qubits)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):

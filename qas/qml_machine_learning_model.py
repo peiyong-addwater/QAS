@@ -33,11 +33,15 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from sklearn.decomposition import PCA
 import shutup
 shutup.please()
+import os
+
+cwd = os.getcwd()
+#print(cwd)
 
 # The data "challenge.npz" is from https://github.com/quantum-melb/MCDS-workshop/blob/main/day-four/data/challenge.npz
 # Load the Fashion-MNIST data in the folder "additional_data"
 # original labels are 0 and 3
-DATA_PATH = './additional_data/challenge.npz'
+DATA_PATH = './qas/additional_data/challenge.npz'
 data_F_MNIST = np.load(DATA_PATH)
 sample_train = data_F_MNIST['sample_train']
 labels_train = data_F_MNIST['labels_train']
@@ -151,7 +155,7 @@ class BinaryClassificationFashionMNIST(ModelFromK):
     def constructFullCirc(self):
         @qml.qnode(self.dev)
         def fullCirc(extracted_params, x=None):
-            qml.AmplitudeEmbedding(features=x, wires=[0,1,2,3])
+            qml.templates.AmplitudeEmbedding(features=x, wires=[0,1,2,3],normalize=True)
             self.backboneCirc(extracted_params)
             return qml.expval(qml.PauliZ(0))
         return fullCirc
@@ -189,10 +193,10 @@ class BinaryClassificationFashionMNIST(ModelFromK):
     def accFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
         preds = []
-        for x in self.train_data:
+        for x in self.val_data:
             preds.append(circ_func(extracted_params, x=x))
 
-        loss = self.accuracy(self.train_label, preds)
+        loss = self.accuracy(self.val_label, preds)
         return loss
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
@@ -232,6 +236,31 @@ class BinaryClassificationFashionMNIST(ModelFromK):
             gradients[self.param_indices[i]] = extracted_gradients[i]
 
         return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
 
 
 

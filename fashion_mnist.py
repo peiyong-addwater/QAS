@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import FourQubitH2Noisy
+from qas.qml_machine_learning_model import BinaryClassificationFashionMNIST
 import json
 import numpy as np
 import pennylane as qml
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     import shutup
     shutup.please()
 
-    model = FourQubitH2Noisy #ground-state energy = -1.13618883 Ha
+    model = BinaryClassificationFashionMNIST
     state_class = QMLStateBasicGates
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 35
+    p = 10
     l = 3
     c = len(pool)
     ph_count_limit = p
