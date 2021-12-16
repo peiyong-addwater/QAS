@@ -204,6 +204,14 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         loss = self.square_loss(self.train_label, preds)
         return loss
 
+    def costFuncVal(self, extracted_params):
+        circ_func = self.constructFullCirc()
+        preds = []
+        for x in self.val_data:
+            preds.append(circ_func(extracted_params, x=x))
+        loss = self.square_loss(self.train_label, preds)
+        return loss
+
     def accFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
         preds = []
@@ -231,7 +239,7 @@ class BinaryClassificationFashionMNIST(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return self.accFunc(extracted_params)
+        return -self.costFuncVal(extracted_params)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
