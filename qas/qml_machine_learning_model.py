@@ -120,8 +120,6 @@ def extractParamIndicesQML(k:List[int], op_pool:Union[QMLPool, dict])->List:
 
 class BinaryClassificationFashionMNIST(ModelFromK):
 
-    #TODO: Finish the machine learning example
-
     name = "BinaryClassificationFashionMNIST"
 
     def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
