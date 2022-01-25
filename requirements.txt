@@ -1,0 +1,5 @@
+qiskit_ibmq_provider==0.14.0
+optax==0.0.9
+jax==0.2.17
+numpy==1.21.0
+qiskit==0.28.0
