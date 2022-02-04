@@ -60,6 +60,11 @@ for a in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
+for a in PAULI_EIGENSTATES_T_STATE:
+    for b in PAULI_EIGENSTATES_T_STATE:
+        for c in PAULI_EIGENSTATES_T_STATE:
+            temp = np.kron(a, b)
+            s = np.kron(temp, c)
             EXTENDED_TOFFILI_INPUT.append(s)
 TWO_QUBIT_ENTANGLED_STATES = []
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+np.kron(ket1, ket1)))
@@ -106,6 +111,16 @@ for x in TOFFOLI_INPUT:
         qml.Toffoli(wires=[0,1,2])
         return qml.density_matrix(wires=[0, 1, 2])
     TOFFOLI_DATA.append((x, toffoli_circ(x)))
+
+EXTENDED_TOFFOLI_DATA = []
+for x in EXTENDED_TOFFILI_INPUT:
+    dev_t = qml.device('default.qubit', wires=3)
+    @qml.qnode(dev_t)
+    def toffoli_circ(x):
+        qml.QubitStateVector(x, wires=[0, 1, 2])
+        qml.Toffoli(wires=[0, 1, 2])
+        return qml.density_matrix(wires=[0, 1, 2])
+    EXTENDED_TOFFOLI_DATA.append((x, toffoli_circ(x)))
 
 FOUR_TWO_TWO_DETECTION_CODE_DATA = []
 for x in FOUR_TWO_TWO_DETECTION_CODE_INPUT:
@@ -396,15 +411,128 @@ class ToffoliQMLNoiseless(ModelFromK):
 
         return gate_list
 
-class ToffoliQMLSwapTestNoiseless(ModelFromK):
-    name = "ToffoliQMLSwapTestNoiseless"
+
+class ToffoliQMLNoiselessAdditionalData(ModelFromK):
+    name = "ToffoliQMLNoiselessAdditionalData"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 3
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.x_list = TOFFOLI_INPUT
+        self.data = EXTENDED_TOFFOLI_DATA
+        self.dev = qml.device('default.qubit', wires = self.num_qubits)
+        #self.dev = qml.device('qiskit.aer', wires=self.num_qubits, max_parallel_threads=0, max_parallel_experiments=0)
+
+    #@qml.template
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            num_params = gate_obj.num_params
+            wires = gate_dict[gate_name]
+            if num_params > 0:
+                gate_params = []
+                for j in range(num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            else:
+                gate_params = None
+                qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+            qml_gate_obj.getOp()
+
+    def constructFullCirc(self):
+        @qml.qnode(self.dev)
+        def fullCirc(extracted_params, x=None, y = None):
+            qml.QubitStateVector(x, wires=[0,1,2])
+            self.backboneCirc(extracted_params)
+            return qml.expval(qml.Hermitian(y, wires=[0,1,2]))
+        return fullCirc
+
+    def costFunc(self, extracted_params):
+        fid = 0
+        circ_func = self.constructFullCirc()
+        num_data = len(self.data)
+        for c in self.data:
+            fid = fid + circ_func(extracted_params, x=c[0], y=c[1])
+        return 1 - fid/num_data
+
+    def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return self.costFunc(extracted_params)
+
+    def getReward(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        return 1-self.costFunc(extracted_params)
+
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            gate_pos = gate_dict[gate_name]
+            gate_obj = SUPPORTED_OPS_DICT[gate_name]
+            gate_num_params = gate_obj.num_params
+            if gate_num_params > 0:
+                gate_params = []
+                for j in range(gate_num_params):
+                    gate_params.append(extracted_params[param_pos])
+                    param_pos = param_pos + 1
+                gate_list.append((gate_name, gate_pos, gate_params))
+            else:
+                gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
+
+class ToffoliQMLSwapTestNoiselessExtendedData(ModelFromK):
+    name = "ToffoliQMLSwapTestNoiselessExtendedData"
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 3
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.x_list = EXTENDED_TOFFILI_INPUT
         self.dev = qml.device('default.qubit', wires = self.num_qubits*2+1)
         #self.dev = qml.device('qiskit.aer', wires=self.num_qubits, max_parallel_threads=0, max_parallel_experiments=0)
 
