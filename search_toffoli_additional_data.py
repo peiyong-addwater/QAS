@@ -27,8 +27,6 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    np.random.seed(106)
-
     model = ToffoliQMLSwapTestNoiselessExtendedData
     state_class = QMLStateBasicGates
 
@@ -38,7 +36,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot", 'PlaceHolder']
+    single_qubit_gate = ["U3", 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -91,7 +89,7 @@ if __name__ == "__main__":
         max_visits_prune_threshold=100,
         min_num_children=len(pool) // 2 + 1,
         sampling_execute_rounds=c,
-        exploit_execute_rounds=c * 10,
+        exploit_execute_rounds=c // 2+1,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
