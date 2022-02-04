@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["U3", 'PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg','PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -44,10 +44,10 @@ if __name__ == "__main__":
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=control_map)
     print(pool)
-    p = 15
+    p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         prune_constant_min=0.7,
         max_visits_prune_threshold=100,
         min_num_children=len(pool) // 2 + 1,
-        sampling_execute_rounds=c,
+        sampling_execute_rounds=4,
         exploit_execute_rounds=c // 2+1,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
