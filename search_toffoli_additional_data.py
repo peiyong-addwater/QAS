@@ -36,7 +36,8 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ['U3','PlaceHolder']
+    #single_qubit_gate = ['U3','PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 5
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -72,7 +73,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=500,
-        num_warmup_iterations=50,
+        num_warmup_iterations=0,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.01,
         early_stop_threshold=0.90,
@@ -84,8 +85,8 @@ if __name__ == "__main__":
         search_arc_batchsize=50,
         alpha_max=2,
         alpha_decay_rate=0.95,
-        prune_constant_max=0.9,
-        prune_constant_min=0.4,
+        prune_constant_max=0.95,
+        prune_constant_min=0.8,
         max_visits_prune_threshold=20,
         min_num_children=c//2+1,
         sampling_execute_rounds=c,
