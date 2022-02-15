@@ -135,6 +135,36 @@ class QMLStateBasicGates(StateOfMCTS):
                     if len(stacked_ops[op_qubit[0]])>=1:
                         if stacked_ops[op_qubit[0]][-1] == action:
                             return False
+                elif op_name == 'T':
+                    if len(stacked_ops[op_qubit[0]]) >= 1:
+                        last_action = stacked_ops[op_qubit[0]][-1]
+                        last_op = self.op_name_dict[last_action]
+                        last_op_name = list(last_op.keys())[0]
+                        if last_op_name == 'Tdg':
+                            return False
+                elif op_name == 'Tdg':
+                    if len(stacked_ops[op_qubit[0]]) >= 1:
+                        last_action = stacked_ops[op_qubit[0]][-1]
+                        last_op = self.op_name_dict[last_action]
+                        last_op_name = list(last_op.keys())[0]
+                        if last_op_name == 'T':
+                            return False
+                elif op_name == 'S':
+                    if len(stacked_ops[op_qubit[0]]) >= 1:
+                        last_action = stacked_ops[op_qubit[0]][-1]
+                        last_op = self.op_name_dict[last_action]
+                        last_op_name = list(last_op.keys())[0]
+                        if last_op_name == 'Sdg':
+                            return False
+                elif op_name == 'Sdg':
+                    if len(stacked_ops[op_qubit[0]]) >= 1:
+                        last_action = stacked_ops[op_qubit[0]][-1]
+                        last_op = self.op_name_dict[last_action]
+                        last_op_name = list(last_op.keys())[0]
+                        if last_op_name == 'S':
+                            return False
+
+
             if len(op_qubit) == 2:
                 if len(stacked_ops[op_qubit[0]])>=1 and len(stacked_ops[op_qubit[1]])>=1:
                     if stacked_ops[op_qubit[0]][-1] == action and stacked_ops[op_qubit[1]][-1] == action:

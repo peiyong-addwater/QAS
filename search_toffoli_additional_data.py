@@ -36,8 +36,8 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ['U3','PlaceHolder']
-    #single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
+    #single_qubit_gate = ['U3','PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 1
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=True
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(
