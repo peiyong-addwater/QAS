@@ -27,7 +27,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = ToffoliQMLNoiseless
+    model = ToffoliQMLNoiselessAdditionalData
     state_class = QMLStateBasicGates
 
     marker = nowtime()
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
     #single_qubit_gate = ['U3','PlaceHolder']
-    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg','Sdg', 'PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'Sdg', 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 0
+    ph_count_limit = p
 
 
     # penalty function:
@@ -60,7 +60,7 @@ if __name__ == "__main__":
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
         if ph_count >= ph_count_limit:
-            return r - (ph_count - ph_count_limit) / 1
+            return r - (ph_count - ph_count_limit) / 10
         return r
 
 
@@ -81,9 +81,9 @@ if __name__ == "__main__":
         super_circ_train_lr=0.5,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=500,
-        search_arc_batchsize=100,
-        alpha_max=2,
+        warmup_arc_batchsize=10,
+        search_arc_batchsize=20,
+        alpha_max=1,
         alpha_decay_rate=0.9,
         prune_constant_max=0.8,
         prune_constant_min=0.5,
