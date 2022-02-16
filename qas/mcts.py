@@ -68,7 +68,6 @@ class StateOfMCTS(ABC):
     def getCurrK(self):
         raise NotImplementedError
 
-
 class QMLStateBasicGates(StateOfMCTS):
     name = 'QMLStateBasicGates'
 
@@ -80,6 +79,7 @@ class QMLStateBasicGates(StateOfMCTS):
         self.pool_obj = op_pool
         self.op_name_dict = op_pool.pool
         self.pool_keys = list(op_pool.pool.keys())
+        self.single_qubit_gate_names = op_pool.single_qubit_gates
         self.state = None
         self.qubit_with_actions = qubit_with_actions if qubit_with_actions is not None else set()
         self.gate_limit_dict = gate_limit_dict if gate_limit_dict is not None else {}
@@ -142,12 +142,16 @@ class QMLStateBasicGates(StateOfMCTS):
                         last_op_name = list(last_op.keys())[0]
                         if last_op_name == 'Tdg':
                             return False
+                        if action == last_action and 'S' in self.single_qubit_gate_names:
+                            return False
                 elif op_name == 'Tdg':
                     if len(stacked_ops[op_qubit[0]]) >= 1:
                         last_action = stacked_ops[op_qubit[0]][-1]
                         last_op = self.op_name_dict[last_action]
                         last_op_name = list(last_op.keys())[0]
                         if last_op_name == 'T':
+                            return False
+                        if action == last_action and 'Sdg' in self.single_qubit_gate_names:
                             return False
                 elif op_name == 'S':
                     if len(stacked_ops[op_qubit[0]]) >= 1:
@@ -156,12 +160,16 @@ class QMLStateBasicGates(StateOfMCTS):
                         last_op_name = list(last_op.keys())[0]
                         if last_op_name == 'Sdg':
                             return False
+                        if action == last_action and 'PauliZ' in self.single_qubit_gate_names:
+                            return False
                 elif op_name == 'Sdg':
                     if len(stacked_ops[op_qubit[0]]) >= 1:
                         last_action = stacked_ops[op_qubit[0]][-1]
                         last_op = self.op_name_dict[last_action]
                         last_op_name = list(last_op.keys())[0]
                         if last_op_name == 'S':
+                            return False
+                        if action == last_action and 'PauliZ' in self.single_qubit_gate_names:
                             return False
 
 

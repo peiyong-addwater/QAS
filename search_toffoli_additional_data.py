@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import ToffoliQMLNoiselessAdditionalData, ToffoliQMLSwapTestNoiselessExtendedData
+from qas.qml_models import ToffoliQMLNoiselessAdditionalData, ToffoliQMLSwapTestNoiselessExtendedData, ToffoliQMLNoiseless
 import json
 import numpy as np
 import pennylane as qml
@@ -27,7 +27,7 @@ def nowtime():
 
 if __name__ == "__main__":
 
-    model = ToffoliQMLSwapTestNoiselessExtendedData
+    model = ToffoliQMLNoiseless
     state_class = QMLStateBasicGates
 
     marker = nowtime()
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
     #single_qubit_gate = ['U3','PlaceHolder']
-    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg','Sdg', 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -82,19 +82,19 @@ if __name__ == "__main__":
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=500,
-        search_arc_batchsize=50,
-        alpha_max=3,
+        search_arc_batchsize=100,
+        alpha_max=2,
         alpha_decay_rate=0.9,
-        prune_constant_max=0.95,
+        prune_constant_max=0.8,
         prune_constant_min=0.5,
         max_visits_prune_threshold=20,
-        min_num_children=c//2+1,
-        sampling_execute_rounds=c,
-        exploit_execute_rounds=c*2,
+        min_num_children=4,
+        sampling_execute_rounds=c*2,
+        exploit_execute_rounds=c*4,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
-        verbose=1,
+        verbose=2,
         state_class=state_class,
         search_reset=False
     )

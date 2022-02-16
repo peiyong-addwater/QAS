@@ -411,7 +411,6 @@ class ToffoliQMLNoiseless(ModelFromK):
 
         return gate_list
 
-
 class ToffoliQMLNoiselessAdditionalData(ModelFromK):
     name = "ToffoliQMLNoiselessAdditionalData"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
