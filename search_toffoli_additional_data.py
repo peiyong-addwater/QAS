@@ -35,17 +35,17 @@ if __name__ == "__main__":
     task = model.name + "_" + state_class.name
     print(task)
     init_qubit_with_actions = {0, 1, 2}
-    two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ['U3','PlaceHolder']
+    two_qubit_gate = ["CRot"]
+    single_qubit_gate = ['Rot','PlaceHolder']
     #single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'Sdg', 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CNOT": 6}
+    gate_limit = {"CRot": 3}
     control_map = [[0, 1], [1, 2], [0, 2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=control_map)
     print(pool)
-    p = 16
+    p = 13
     l = 3
     c = len(pool)
     ph_count_limit = p
