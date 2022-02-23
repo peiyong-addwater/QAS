@@ -1107,7 +1107,6 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
 
         return gate_list
 
-
 class TwoQubitH2(ModelFromK):
     name = 'TwoQubitH2'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
