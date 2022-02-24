@@ -72,7 +72,7 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500,
+        num_iterations=100,
         num_warmup_iterations=5,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.01,

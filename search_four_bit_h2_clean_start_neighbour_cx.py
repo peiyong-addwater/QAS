@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
+    single_qubit_gate = ["Rot","PlaceHolder","PauliX"]
     connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     l = 3
     c = len(pool)
     ph_count_limit = p
-    gate_limit = {"CNOT": p}
+    gate_limit = {"CNOT": p, "PauliX":2}
 
 
     # penalty function:
@@ -76,10 +76,10 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
+        num_iterations=100,
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
-        super_circ_train_gradient_noise_factor=0.0,
+        super_circ_train_gradient_noise_factor=0.01,
         early_stop_threshold=1.13,
         early_stop_lookback_count=5,
         super_circ_train_lr=1,
