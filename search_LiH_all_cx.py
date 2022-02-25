@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import LiHNineQubits
+from qas.qml_models import LiH
 import json
 import numpy as np
 import pennylane as qml
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     import shutup
     shutup.please()
 
-    model = LiHNineQubits #ground-state energy = -1.13618883 Ha
+    model = LiH # ground-state energy = -7.8825378193 Ha
     state_class = QMLStateBasicGates
 
 
@@ -74,12 +74,12 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500, # was 200
+        num_iterations=200, # was 200
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=1.13,
-        early_stop_lookback_count=5,
+        early_stop_threshold=7.8,
+        early_stop_lookback_count=1,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,

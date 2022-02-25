@@ -1780,9 +1780,9 @@ class FourQubitH2CleanStart(ModelFromK):
 
         return gate_list
 
-class LiHNineQubits(ModelFromK):
+class LiH(ModelFromK):
 
-    name = "LiHNineQubits"
+    name = "LiH"
 
     def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
         self.k = structure_list
