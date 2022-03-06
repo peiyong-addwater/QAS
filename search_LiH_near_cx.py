@@ -25,6 +25,16 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 
+def generate_near_cx_connection_list(num_qubits:int):
+    forward_list = []
+    backward_list = []
+    connection_list = []
+    for i in range(num_qubits-1):
+        fwd_connection = [i, i+1]
+        bwd_connection = [i+1, i]
+        connection_list.append(fwd_connection)
+        connection_list.append(bwd_connection)
+    return connection_list
 
 if __name__ == "__main__":
 
@@ -45,8 +55,8 @@ if __name__ == "__main__":
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["Rot","PlaceHolder"]
     # set a hard limit on the number of certain gate instead of using a penalty function
-
-    pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
+    cx_connections = generate_near_cx_connection_list(12)
+    pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
     p = 150
     l = 3
