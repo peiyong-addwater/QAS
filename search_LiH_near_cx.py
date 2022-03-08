@@ -96,7 +96,7 @@ if __name__ == "__main__":
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=500,
-        search_arc_batchsize=50,
+        search_arc_batchsize=25,
         alpha_max=2,
         alpha_decay_rate=0.99,
         prune_constant_max=0.8,
