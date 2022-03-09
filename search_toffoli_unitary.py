@@ -5,7 +5,7 @@ import json
 import numpy as np
 import pennylane as qml
 import time
-from qas.mcts import QMLStateBasicGates
+from qas.mcts import QMLStateBasicGates,QMLStateBasicGatesNoRestrictions
 import random
 
 
@@ -28,7 +28,7 @@ def nowtime():
 if __name__ == "__main__":
 
     model = ToffoliQMLNoiselessUnitary
-    state_class = QMLStateBasicGates
+    state_class = QMLStateBasicGatesNoRestrictions
 
     marker = nowtime()
     filename = marker + '.json'
@@ -37,15 +37,14 @@ if __name__ == "__main__":
     init_qubit_with_actions = {0, 1, 2}
     #two_qubit_gate = ["CRot"]
     two_qubit_gate = ["CNOT"]
-    #single_qubit_gate = ['Rot','PlaceHolder']
-    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'Sdg']
+    #single_qubit_gate = ['U3']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
-    #gate_limit = {"CRot":3}
     control_map = [[0, 1], [1, 2], [0, 2]]
-    pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
-                   two_qubit_gate_map=control_map)
+    #pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=control_map)
+    pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
     p = 16
     l = 3
