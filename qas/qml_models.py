@@ -692,6 +692,7 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
 
 
 
+
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
         assert super_circ_params.shape[1] == self.c
