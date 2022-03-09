@@ -4,7 +4,7 @@ def circuit(theta):
     qml.RX(theta, wires=1)
     qml.PauliZ(wires=0)
 
-get_matrix = qml.transforms.get_unitary_matrix(circuit)
+get_matrix = qml.transforms.get_unitary_matrix(circuit,wire_order=[0, 1,2])
 print(get_matrix(0.5))
 real_part = np.real(get_matrix(0.5))
 print(real_part)
@@ -15,7 +15,7 @@ def cost_func(x):
     mat = get_matrix(x)
     r = np.real(mat)
     im = np.imag(mat)
-    target = np.eye(4)
+    target = np.eye(8)
     r_diff = np.linalg.norm(target-r)
     im_diff = np.linalg.norm(im)
     return r_diff+im_diff

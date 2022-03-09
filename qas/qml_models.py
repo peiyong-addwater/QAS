@@ -676,7 +676,6 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
             qml_gate_obj.getOp()
 
     def constructFullCirc(self):
-        @qml.qnode(self.dev)
         def fullCirc(extracted_params):
             #qml.QubitStateVector(x, wires=[0,1,2])
             self.backboneCirc(extracted_params)
@@ -685,13 +684,13 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
 
     def costFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
-        matrix_func = qml.transforms.get_unitary_matrix(circ_func)
+        matrix_func = qml.transforms.get_unitary_matrix(circ_func,wire_order=[0, 1,2])
         process_matrix = matrix_func(extracted_params)
         real_part = np.real(process_matrix)
         imag_part = np.imag(process_matrix)
-
-
-
+        r_diff = np.linalg.norm(TOFFOLI_012_MATRIX-real_part)
+        imag_diff = np.linalg.norm(imag_part)
+        return r_diff + imag_diff
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -711,7 +710,7 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
         extracted_params = np.array(extracted_params)
-        return 1-self.costFunc(extracted_params)
+        return -self.costFunc(extracted_params)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
