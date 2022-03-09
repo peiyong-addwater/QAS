@@ -24,3 +24,5 @@ print(cost_func(0.5))
 
 cost_grad = qml.grad(cost_func)
 print(cost_grad(0.5))
+
+print(qml.transforms.get_unitary_matrix(qml.Toffoli)(wires=[0,1,2]))
