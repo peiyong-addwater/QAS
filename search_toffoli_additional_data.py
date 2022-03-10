@@ -35,20 +35,20 @@ if __name__ == "__main__":
     task = model.name + "_" + state_class.name
     print(task)
     init_qubit_with_actions = {0, 1, 2}
-    two_qubit_gate = ["CRot"]
-    single_qubit_gate = ['Rot','PlaceHolder']
-    #single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'Sdg', 'PlaceHolder']
+    two_qubit_gate = ["CNOT"]
+    #single_qubit_gate = ['U3','PlaceHolder']
+    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit = {"CRot": 3}
+    gate_limit = {"CNOT": 6}
     control_map = [[0, 1], [1, 2], [0, 2]]
     pool = QMLPool(3, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,
                    two_qubit_gate_map=control_map)
     print(pool)
-    p = 13
+    p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit =0
 
 
     # penalty function:
@@ -73,7 +73,8 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=100,
-        num_warmup_iterations=5,
+        num_warmup_iterations=0,
+        warm_up_reset=True,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.01,
         early_stop_threshold=0.90,
@@ -81,7 +82,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=5,
+        warmup_arc_batchsize=50,
         search_arc_batchsize=20,
         alpha_max=2,
         alpha_decay_rate=0.99,
@@ -90,13 +91,13 @@ if __name__ == "__main__":
         max_visits_prune_threshold=20,
         min_num_children=4,
         sampling_execute_rounds=c*2,
-        exploit_execute_rounds=c*4,
+        exploit_execute_rounds=c,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
-        verbose=1,
+        verbose=2,
         state_class=state_class,
-        search_reset=True
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(

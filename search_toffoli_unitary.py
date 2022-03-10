@@ -36,8 +36,9 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
-    stopping_threshold = 5
+    #single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg']
+    single_qubit_gate = ['Rot']
+    stopping_threshold = 0
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit = {"CNOT": 6}
@@ -67,7 +68,7 @@ if __name__ == "__main__":
         penalty_function=None,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=50000,
-        warm_up_reset= False,
+        warm_up_reset= True,
         search_arc_batchsize=2000,
         alpha_max=1,
         alpha_decay_rate=0.95,
@@ -83,7 +84,7 @@ if __name__ == "__main__":
         #uct_sample_policy='local_optimal',
         verbose=2,
         state_class=state_class,
-        search_reset=False
+        search_reset=True
     )
     """
     final_params, loss_list = circuitModelTuning(
