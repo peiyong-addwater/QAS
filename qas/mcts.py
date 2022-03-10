@@ -318,7 +318,8 @@ class MCTSController():
                  exploit_execute_rounds=200,
                  sample_policy='local_optimal',
                  exploit_policy='local_optimal',
-                 gate_limit_dict:Optional[dict] = None
+                 gate_limit_dict:Optional[dict] = None,
+                 prune=True
                  ):
         self.model = model
         self.pool = op_pool
@@ -336,6 +337,7 @@ class MCTSController():
         self.sampling_execute_rounds = sampling_execute_rounds
         self.exploit_execute_rounds=exploit_execute_rounds
         self.prune_counter = 0
+        self.prune=prune
         self.initial_state = state_class(op_pool=self.pool, maxDepth=self.max_depth, qubit_with_actions=self.initial_legal_control_qubit_choice, gate_limit_dict=gate_limit_dict)
 
     def _reset(self):
@@ -429,7 +431,7 @@ class MCTSController():
             for key in list(node.children.keys()):
                 child = node.children[key]
                 child_avg_reward = child.totalReward/child.numVisits
-                if child_avg_reward<threshold and child.numVisits>self.max_visits_prune_threshold:
+                if child_avg_reward<threshold and child.numVisits>self.max_visits_prune_threshold and self.prune:
                     pruned_key.append(key)
             pruned_key_avg_reward = [(key, node.children[key].totalReward/node.children[key].numVisits) for key in pruned_key]
             pruned_key_avg_reward_sorted = sorted(pruned_key_avg_reward, key=lambda item: item[1])
@@ -493,6 +495,7 @@ def search(
         state_class = QMLStateBasicGates,
         num_iterations = 500,
         num_warmup_iterations = 20,
+        warm_up_reset = True,
         super_circ_train_optimizer = qml.AdamOptimizer,
         early_stop_threshold = 0.95,
         early_stop_lookback_count = 5,
@@ -514,7 +517,8 @@ def search(
         cmab_exploit_policy='local_optimal',
         uct_sample_policy = 'local_optimal',
         verbose = 1,
-        search_reset = True
+        search_reset = True,
+        prune=True
 ):
     p = target_circuit_depth
     l = init_params.shape[2]
@@ -538,7 +542,8 @@ def search(
         sample_policy=cmab_sample_policy,
         exploit_policy=cmab_exploit_policy,
         gate_limit_dict=gate_limit_dict,
-        state_class=state_class
+        state_class=state_class,
+        prune=prune
     )
     current_best_arc = None
     current_best_node = None
@@ -572,8 +577,9 @@ def search(
                 r = penalty_function(r, node) if penalty_function is not None else r
                 controller.backPropagate(node, r)
             print("Batch Training, Size = {}, Update the Parameter Pool for One Iteration".format(warmup_arc_batchsize))
-            print("Prune Count Reset...")
-            controller._reset()  # reset
+            if warm_up_reset:
+                print("Prune Count Reset...")
+                controller._reset()  # reset
         else:
             print("=" * 10 + "Model:{}, Searching at Epoch {}/{}, Pool Size: {}, "
                              "Arc Batch Size: {}, Search Sampling Rounds: {}, Exploiting Rounds: {}"

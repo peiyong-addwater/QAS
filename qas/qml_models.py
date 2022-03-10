@@ -684,13 +684,17 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
 
     def costFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
-        matrix_func = qml.transforms.get_unitary_matrix(circ_func,wire_order=[0, 1,2])
+        matrix_func = qml.transforms.get_unitary_matrix(circ_func,wire_order=[0, 1, 2])
         process_matrix = matrix_func(extracted_params)
         real_part = np.real(process_matrix)
         imag_part = np.imag(process_matrix)
         r_diff = np.linalg.norm(TOFFOLI_012_MATRIX-real_part)
         imag_diff = np.linalg.norm(imag_part)
-        return r_diff + imag_diff
+
+
+        diff = r_diff+imag_diff
+
+        return diff
 
     def getLoss(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
