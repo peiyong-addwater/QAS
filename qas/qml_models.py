@@ -60,9 +60,9 @@ for a in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
-for a in [ket0, ket1]:
-    for b in [ket0, ket1]:
-        for c in [ket0, ket1]:
+for a in PAULI_EIGENSTATES_T_STATE:
+    for b in PAULI_EIGENSTATES_T_STATE:
+        for c in PAULI_EIGENSTATES_T_STATE:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             EXTENDED_TOFFILI_INPUT.append(s)
@@ -79,15 +79,15 @@ for c in TWO_QUBIT_ENTANGLED_STATES:
     for d in PAULI_EIGENSTATES_T_STATE:
         s = np.kron(c, d)
         s1 = np.kron(d, c)
-        EXTENDED_TOFFILI_INPUT.append(s)
-        EXTENDED_TOFFILI_INPUT.append(s1)
+        #EXTENDED_TOFFILI_INPUT.append(s)
+        #EXTENDED_TOFFILI_INPUT.append(s1)
 
 THREE_QUBIT_GHZ_STATES = []
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+1j*np.kron(ket1, np.kron(ket1, ket1))))
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1j*np.kron(ket1, np.kron(ket1, ket1))))
-EXTENDED_TOFFILI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
+#EXTENDED_TOFFILI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 #FOUR_TWO_TWO_DETECTION_CODE_INPUT.extend(TWO_QUBIT_ENTANGLED_STATES)
 
 SIMPLE_PHASE_FLIP_DATA = []
