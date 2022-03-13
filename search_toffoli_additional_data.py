@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit =1
+    ph_count_limit =p
 
 
     # penalty function:
