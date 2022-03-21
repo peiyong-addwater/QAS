@@ -54,15 +54,15 @@ for c in PAULI_EIGENSTATES_T_STATE:
 
 TOFFOLI_INPUT = []
 EXTENDED_TOFFILI_INPUT = []
-
+_de = 1/np.sqrt(8) #0.354
 # (qubit 0,1,2:) STZ
-EXTENDED_TOFFILI_INPUT.append(np.array([ 0.354+0j, 0+0.354j, 0.25+0.25j, -0.25+0.25j, -0.354+0j, 0-0.354j, -0.25-0.25j, 0.25-0.25j ]))
+EXTENDED_TOFFILI_INPUT.append(np.array([ _de+0j, 0+_de*1j, 0.25+0.25j, -0.25+0.25j, -_de+0j, 0-_de*1j, -0.25-0.25j, 0.25-0.25j ]))
 # T^dg, S^dg, Sqrt(X)
-EXTENDED_TOFFILI_INPUT.append(np.array([ 0.354+0j, 0.25-0.25j, 0-0.354j, -0.25-0.25j, 0.354+0j, 0.25-0.25j, 0-0.354j, -0.25-0.25j ]))
+EXTENDED_TOFFILI_INPUT.append(np.array([ _de+0j, 0.25-0.25j, 0-_de*1j, -0.25-0.25j, _de+0j, 0.25-0.25j, 0-_de*1j, -0.25-0.25j ]))
 # Y, Z, Sqrt(X)
-EXTENDED_TOFFILI_INPUT.append(np.array([ 0-0.354j, 0+0.354j, 0+0.354j, 0-0.354j, 0-0.354j, 0+0.354j, 0+0.354j, 0-0.354j ]))
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j, 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j ]))
 # P, Z, Y
-EXTENDED_TOFFILI_INPUT.append(np.array([ 0-0.354j, 0.354+0j, 0+0.354j, -0.354+0j, 0+0.354j, -0.354+0j, 0-0.354j, 0.354+0j ]))
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, _de+0j, 0+_de*1j, -_de+0j, 0+_de*1j, -_de+0j, 0-_de*1j, _de+0j ]))
 
 for a in [ket0, ket1]:
     for b in [ket0, ket1]:
