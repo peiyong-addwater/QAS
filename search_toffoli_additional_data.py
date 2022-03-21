@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = {0, 1, 2}
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ['U3','PlaceHolder']
+    single_qubit_gate = ['Rot','PlaceHolder']
     #single_qubit_gate = ['Hadamard', 'S', 'T', 'Tdg', 'PlaceHolder']
 
     # set a hard limit on the number of certain gate instead of using a penalty function
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 1
+    ph_count_limit = p
 
 
     # penalty function:
