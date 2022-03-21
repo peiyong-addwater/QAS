@@ -54,15 +54,25 @@ for c in PAULI_EIGENSTATES_T_STATE:
 
 TOFFOLI_INPUT = []
 EXTENDED_TOFFILI_INPUT = []
+
+# (qubit 0,1,2:) STZ
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0.354+0j, 0+0.354j, 0.25+0.25j, -0.25+0.25j, -0.354+0j, 0-0.354j, -0.25-0.25j, 0.25-0.25j ]))
+# T^dg, S^dg, Sqrt(X)
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0.354+0j, 0.25-0.25j, 0-0.354j, -0.25-0.25j, 0.354+0j, 0.25-0.25j, 0-0.354j, -0.25-0.25j ]))
+# Y, Z, Sqrt(X)
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0-0.354j, 0+0.354j, 0+0.354j, 0-0.354j, 0-0.354j, 0+0.354j, 0+0.354j, 0-0.354j ]))
+# P, Z, Y
+EXTENDED_TOFFILI_INPUT.append(np.array([ 0-0.354j, 0.354+0j, 0+0.354j, -0.354+0j, 0+0.354j, -0.354+0j, 0-0.354j, 0.354+0j ]))
+
 for a in [ket0, ket1]:
     for b in [ket0, ket1]:
         for c in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
-for a in PAULI_EIGENSTATES_T_STATE:
-    for b in PAULI_EIGENSTATES_T_STATE:
-        for c in PAULI_EIGENSTATES_T_STATE:
+for a in [ket0, ket1]:
+    for b in [ket0, ket1]:
+        for c in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             EXTENDED_TOFFILI_INPUT.append(s)
