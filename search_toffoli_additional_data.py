@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 1
+    ph_count_limit = 0
 
 
     # penalty function:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=400,
-        num_warmup_iterations=3,
+        num_warmup_iterations=10,
         warm_up_reset=True,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.01,
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=10,
         search_arc_batchsize=20,
-        alpha_max=1,
+        alpha_max=0.5,
         alpha_decay_rate=0.99,
         prune_constant_max=0.8,
         prune_constant_min=0.5,

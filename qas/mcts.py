@@ -525,7 +525,6 @@ def search(
     c = len(op_pool)
     assert p == init_params.shape[0]
     assert c == init_params.shape[1]
-    assert alpha_decay_rate <= alpha_max
     assert prune_constant_min <= prune_constant_max
     controller = MCTSController(
         model=model,
