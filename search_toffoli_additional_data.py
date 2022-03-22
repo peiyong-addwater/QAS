@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = 1
+    ph_count_limit = p
 
 
     # penalty function:
@@ -90,14 +90,14 @@ if __name__ == "__main__":
         prune_constant_min=0.5,
         max_visits_prune_threshold=5,
         min_num_children=2,
-        sampling_execute_rounds=c//2+1,
-        exploit_execute_rounds=3,
+        sampling_execute_rounds=c*2,
+        exploit_execute_rounds=c,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
         verbose=2,
         state_class=state_class,
-        search_reset=False
+        search_reset=True
     )
 
     final_params, loss_list = circuitModelTuning(

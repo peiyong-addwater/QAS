@@ -54,6 +54,7 @@ for c in PAULI_EIGENSTATES_T_STATE:
 
 TOFFOLI_INPUT = []
 EXTENDED_TOFFILI_INPUT = []
+FULL_TOFFOLI_INPUT = []
 _de = 1/np.sqrt(8) #0.354
 # (qubit 0,1,2:) STZ
 EXTENDED_TOFFILI_INPUT.append(np.array([ _de+0j, 0+_de*1j, 0.25+0.25j, -0.25+0.25j, -_de+0j, 0-_de*1j, -0.25-0.25j, 0.25-0.25j ]))
@@ -64,18 +65,26 @@ EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j,
 # P, Z, Y
 EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, _de+0j, 0+_de*1j, -_de+0j, 0+_de*1j, -_de+0j, 0-_de*1j, _de+0j ]))
 
+FULL_TOFFOLI_INPUT.extend(EXTENDED_TOFFILI_INPUT)
 for a in [ket0, ket1]:
     for b in [ket0, ket1]:
         for c in [ket0, ket1]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             TOFFOLI_INPUT.append(s)
-for a in [ket0, ket1]:
-    for b in [ket0, ket1]:
-        for c in [ket0, ket1]:
+for a in [ket0, ket1,(ket0 + np.exp(np.pi * 1j / 4) * ket1) / np.sqrt(2)]:
+    for b in [ket0, ket1,(ket0 + np.exp(np.pi * 1j / 4) * ket1) / np.sqrt(2)]:
+        for c in [ket0, ket1,(ket0 + np.exp(np.pi * 1j / 4) * ket1) / np.sqrt(2)]:
             temp = np.kron(a, b)
             s = np.kron(temp, c)
             EXTENDED_TOFFILI_INPUT.append(s)
+
+for a in PAULI_EIGENSTATES_T_STATE:
+    for b in PAULI_EIGENSTATES_T_STATE:
+        for c in PAULI_EIGENSTATES_T_STATE:
+            temp = np.kron(a, b)
+            s = np.kron(temp, c)
+            FULL_TOFFOLI_INPUT.append(s)
 TWO_QUBIT_ENTANGLED_STATES = []
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)+np.kron(ket1, ket1)))
 TWO_QUBIT_ENTANGLED_STATES.append(1/np.sqrt(2)*(np.kron(ket0, ket0)-np.kron(ket1, ket1)))
@@ -89,8 +98,8 @@ for c in TWO_QUBIT_ENTANGLED_STATES:
     for d in PAULI_EIGENSTATES_T_STATE:
         s = np.kron(c, d)
         s1 = np.kron(d, c)
-        #EXTENDED_TOFFILI_INPUT.append(s)
-        #EXTENDED_TOFFILI_INPUT.append(s1)
+        FULL_TOFFOLI_INPUT.append(s)
+        FULL_TOFFOLI_INPUT.append(s1)
 
 THREE_QUBIT_GHZ_STATES = []
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+np.kron(ket1, np.kron(ket1, ket1))))
@@ -99,6 +108,7 @@ THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))+1
 THREE_QUBIT_GHZ_STATES.append(1/np.sqrt(2)*(np.kron(ket0, np.kron(ket0, ket0))-1j*np.kron(ket1, np.kron(ket1, ket1))))
 EXTENDED_TOFFILI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 FOUR_TWO_TWO_DETECTION_CODE_INPUT.extend(TWO_QUBIT_ENTANGLED_STATES)
+FULL_TOFFOLI_INPUT.extend(THREE_QUBIT_GHZ_STATES)
 
 SIMPLE_PHASE_FLIP_DATA = []
 for x in PAULI_EIGENSTATES_T_STATE:
@@ -131,6 +141,16 @@ for x in EXTENDED_TOFFILI_INPUT:
         qml.Toffoli(wires=[0, 1, 2])
         return qml.density_matrix(wires=[0, 1, 2])
     EXTENDED_TOFFOLI_DATA.append((x, toffoli_circ(x)))
+
+FULL_TOFFOLI_DATA = []
+for x in FULL_TOFFOLI_INPUT:
+    dev_t = qml.device('default.qubit', wires=3)
+    @qml.qnode(dev_t)
+    def toffoli_circ(x):
+        qml.QubitStateVector(x, wires=[0, 1, 2])
+        qml.Toffoli(wires=[0, 1, 2])
+        return qml.density_matrix(wires=[0, 1, 2])
+    FULL_TOFFOLI_DATA.append((x, toffoli_circ(x)))
 
 FOUR_TWO_TWO_DETECTION_CODE_DATA = []
 for x in FOUR_TWO_TWO_DETECTION_CODE_INPUT:
@@ -533,15 +553,15 @@ class ToffoliQMLNoiselessAdditionalData(ModelFromK):
 
         return gate_list
 
-class ToffoliQMLNoiselessSuperpostionInput(ModelFromK):
-    name = "ToffoliQMLNoiselessSuperpostionInput"
+class ToffoliQMLNoiselessFullInput(ModelFromK):
+    name = "ToffoliQMLNoiselessFullInput"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 3
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.data = EXTENDED_TOFFOLI_DATA
+        self.data = FULL_TOFFOLI_DATA
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
         #self.dev = qml.device('qiskit.aer', wires=self.num_qubits, max_parallel_threads=0, max_parallel_experiments=0)
 
