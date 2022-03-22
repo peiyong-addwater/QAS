@@ -48,7 +48,7 @@ if __name__ == "__main__":
     p = 16
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 1
 
 
     # penalty function:
@@ -60,7 +60,7 @@ if __name__ == "__main__":
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
         if ph_count >= ph_count_limit:
-            return r - (ph_count - ph_count_limit) / 20
+            return r - (ph_count - ph_count_limit) / 10
         return r
 
 
