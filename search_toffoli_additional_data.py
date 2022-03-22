@@ -60,7 +60,7 @@ if __name__ == "__main__":
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
         if ph_count >= ph_count_limit:
-            return r - (ph_count - ph_count_limit) / 10
+            return r - (ph_count - ph_count_limit) / 20
         return r
 
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=2,
         state_class=state_class,
-        search_reset=True
+        search_reset=False
     )
 
     final_params, loss_list = circuitModelTuning(
