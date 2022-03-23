@@ -76,7 +76,10 @@ EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j,
 EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, _de+0j, 0+_de*1j, -_de+0j, 0+_de*1j, -_de+0j, 0-_de*1j, _de+0j ]))
 
 # \ket{000}+\ket{001}+\ket{010}+\ket{011}+\ket{100}+\ket{101}+\ket{110}-\ket{111}
-EXTENDED_TOFFILI_INPUT.append(1/np.sqrt(8)*(THREE_QUBIT_BASIS['000']+THREE_QUBIT_BASIS['001']+THREE_QUBIT_BASIS['010']+THREE_QUBIT_BASIS['011']+THREE_QUBIT_BASIS['100']+THREE_QUBIT_BASIS['101']+THREE_QUBIT_BASIS['110']-THREE_QUBIT_BASIS['111']))
+EXTENDED_TOFFILI_INPUT.append(1/np.sqrt(8)*(THREE_QUBIT_BASIS['000']+THREE_QUBIT_BASIS['001']+
+                                            THREE_QUBIT_BASIS['010']+THREE_QUBIT_BASIS['011']+
+                                            THREE_QUBIT_BASIS['100']+THREE_QUBIT_BASIS['101']+
+                                            THREE_QUBIT_BASIS['110']-THREE_QUBIT_BASIS['111']))
 
 FULL_TOFFOLI_INPUT.extend(EXTENDED_TOFFILI_INPUT)
 for a in [ket0, ket1]:
