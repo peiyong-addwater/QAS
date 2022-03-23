@@ -36,6 +36,16 @@ ket1 = np.array([0, 1])
 PAULI_EIGENSTATES_T_STATE = [(ket0 + ket1) / np.sqrt(2), (ket0 - ket1) / np.sqrt(2), ket0, ket1,
                              (ket0 + ket1 * 1j) / np.sqrt(2), (ket0 - ket1 * 1j) / np.sqrt(2),
                              (ket0 + np.exp(np.pi * 1j / 4) * ket1) / np.sqrt(2)]
+THREE_QUBIT_BASIS = {
+    '000':np.kron(ket0, np.kron(ket0, ket0)),
+    '001':np.kron(ket0, np.kron(ket0, ket1)),
+    '010':np.kron(ket0, np.kron(ket1, ket0)),
+    '011':np.kron(ket0, np.kron(ket1, ket1)),
+    '100':np.kron(ket1, np.kron(ket0, ket0)),
+    '101':np.kron(ket1, np.kron(ket0, ket1)),
+    '110':np.kron(ket1, np.kron(ket1, ket0)),
+    '111':np.kron(ket1, np.kron(ket1, ket1))
+}
 
 PAULI_X = np.array([[0,1],[1,0]])
 PAULI_Z = np.array(([[1,0],[0,-1]]))
@@ -64,6 +74,9 @@ EXTENDED_TOFFILI_INPUT.append(np.array([ _de+0j, 0.25-0.25j, 0-_de*1j, -0.25-0.2
 EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j, 0-_de*1j, 0+_de*1j, 0+_de*1j, 0-_de*1j ]))
 # P, Z, Y
 EXTENDED_TOFFILI_INPUT.append(np.array([ 0-_de*1j, _de+0j, 0+_de*1j, -_de+0j, 0+_de*1j, -_de+0j, 0-_de*1j, _de+0j ]))
+
+# \ket{000}+\ket{001}+\ket{010}+\ket{011}+\ket{100}+\ket{101}+\ket{110}-\ket{111}
+EXTENDED_TOFFILI_INPUT.append(1/np.sqrt(8)*(THREE_QUBIT_BASIS['000']+THREE_QUBIT_BASIS['001']+THREE_QUBIT_BASIS['010']+THREE_QUBIT_BASIS['011']+THREE_QUBIT_BASIS['100']+THREE_QUBIT_BASIS['101']+THREE_QUBIT_BASIS['110']-THREE_QUBIT_BASIS['111']))
 
 FULL_TOFFOLI_INPUT.extend(EXTENDED_TOFFILI_INPUT)
 for a in [ket0, ket1]:
