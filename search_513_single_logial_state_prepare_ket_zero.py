@@ -64,7 +64,7 @@ if __name__ == "__main__":
         return r
 
 
-    init_params = np.random.randn(p, c, l)
+    init_params = np.random.randn(p, c, l)/100
 
     final_params, final_best_arc, final_best_node, final_best_reward, final_controller, reward_list = search(
         model=model,
