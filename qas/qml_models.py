@@ -1029,18 +1029,8 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
 
         return gate_list
 
-class PrepareLogicalKetPlusState513QECC(ModelFromK):
-    coeff_dict = {
-        'ket0':{'alpha':1, 'beta':0},
-        'ket1':{'alpha':0, 'beta':1},
-        'ket_plus':{'alpha':STATE_DIC['|+>'][0], 'beta':STATE_DIC['|+>'][1]},
-        'ket_minus':{'alpha':STATE_DIC['|->'][0], 'beta':STATE_DIC['|->'][1]},
-        'ket_plus_i':{'alpha':STATE_DIC['|+i>'][0], 'beta':STATE_DIC['|+i>'][1]},
-        'ket_minus_i':{'alpha':STATE_DIC['|-i>'][0], 'beta':STATE_DIC['|-i>'][1]},
-        'ket_T_state':{'alpha':STATE_DIC['magic'][0], 'beta':STATE_DIC['magic'][1]}
-    }
-    target_state_name = 'ket_plus'
-    name = "PrepareLogicalState513QECC_Logical_"+target_state_name
+class PrepareLogicalKetZeroState513QECC(ModelFromK):
+    name = "PrepareLogicalState513QECC_LogicalKetZero"
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         self.k = structure_list
         self.pool = op_pool
@@ -1048,19 +1038,10 @@ class PrepareLogicalKetPlusState513QECC(ModelFromK):
         self.num_qubits = 5
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device('default.qubit', wires = self.num_qubits)
-        self.state_alpha = self.coeff_dict[self.target_state_name]['alpha']
-        self.state_beta = self.coeff_dict[self.target_state_name]['beta']
-        self.logical_X = np.kron(np.kron(np.kron(PAULI_X,np.kron(PAULI_X,PAULI_X)),PAULI_X),PAULI_X)
-        self.logical_Y = np.kron(np.kron(np.kron(PAULI_Y,np.kron(PAULI_Y,PAULI_Y)),PAULI_Y),PAULI_Y)
-        self.logical_Z = np.kron(np.kron(np.kron(PAULI_Z,np.kron(PAULI_Z,PAULI_Z)),PAULI_Z),PAULI_Z)
-        self.O = (self.state_alpha*np.conj(self.state_beta)+np.conj(self.state_alpha)*self.state_beta)*self.logical_X-1j*(np.conj(self.state_alpha)*self.state_beta-self.state_alpha*np.conj(self.state_beta))*self.logical_Y-(self.state_beta*np.conj(self.state_beta)-self.state_alpha*np.conj(self.state_alpha))*self.logical_Z
-        self.g1 = np.kron(np.kron(np.kron(np.kron(PAULI_X, PAULI_Z), PAULI_Z), PAULI_X), IDENTITY)
-        self.g2 = np.kron(np.kron(np.kron(np.kron(IDENTITY, PAULI_X),PAULI_Z),PAULI_Z),PAULI_X)
-        self.g3 = np.kron(np.kron(np.kron(np.kron(PAULI_X, IDENTITY), PAULI_X), PAULI_Z), PAULI_Z)
-        self.g4 = np.kron(np.kron(np.kron(np.kron(PAULI_Z, PAULI_X), IDENTITY), PAULI_X), PAULI_Z)
-
-
-        self.observable = qml.Hermitian(-1/5*(self.g1+self.g2+self.g3+self.g4+self.O), wires=[0,1,2,3,4])
+        self.logical_0_vector = np.array([1/4, 0, 0, 1/4, 0, -(1/4), 1/4, 0, 0, -(1/4), -(1/4), 0, 1/4, 0, 0, -(1/4), 0, 1/4, -(1/4), 0, -(1/4), 0, 0, -(1/4), 1/4, 0, 0, -(1/4), 0, -(1/4), -(1/4), 0])# https://github.com/bernwo/five-qubit-code/blob/95ff95a3933baaa95ea3649cc28a2f1da4175af3/main.py#L20
+        self.logical_1_vector = np.array([0, -(1/4), -(1/4), 0, -(1/4), 0, 0, 1/4, -(1/4), 0, 0, -(1/4), 0, -(1/4), 1/4, 0, -(1/4), 0, 0, 1/4, 0, -(1/4), -(1/4), 0, 0, 1/4, -(1/4), 0, 1/4, 0, 0, 1/4])# https://github.com/bernwo/five-qubit-code/blob/95ff95a3933baaa95ea3649cc28a2f1da4175af3/main.py#L32
+        self.logical_0_observable = qml.Hermitian(np.outer(self.logical_0_vector, self.logical_0_vector),wires=[0,1,2,3,4])
+        #self.observable = qml.Hermitian(-1/5*(self.g1+self.g2+self.g3+self.g4+self.O), wires=[0,1,2,3,4])
 
     #@qml.template
     def backboneCirc(self, extracted_params):
@@ -1088,7 +1069,7 @@ class PrepareLogicalKetPlusState513QECC(ModelFromK):
         @qml.qnode(self.dev)
         def fullCirc(extracted_params):
             self.backboneCirc(extracted_params)
-            return qml.expval(self.observable)
+            return qml.expval(self.logical_0_observable)
         return fullCirc
 
     def costFunc(self, extracted_params):
@@ -1105,7 +1086,7 @@ class PrepareLogicalKetPlusState513QECC(ModelFromK):
         return cost
 
     def getReward(self, super_circ_params):
-        return -self.getLoss(super_circ_params)
+        return 1-self.getLoss(super_circ_params)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
