@@ -1074,8 +1074,8 @@ class PrepareLogicalKetZeroState513QECC(ModelFromK):
 
     def costFunc(self, extracted_params):
         circ_func = self.constructFullCirc()
-        energy = circ_func(extracted_params)
-        return energy
+        overlap = circ_func(extracted_params)
+        return 1-overlap
 
     def getLoss(self, super_circ_params):
         extracted_params = []
