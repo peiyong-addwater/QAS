@@ -89,7 +89,7 @@ if __name__ == "__main__":
         prune_constant_max=0.90,
         prune_constant_min=0.80,
         max_visits_prune_threshold=25,
-        min_num_children=1,
+        min_num_children=c//2,
         sampling_execute_rounds=50,
         exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
