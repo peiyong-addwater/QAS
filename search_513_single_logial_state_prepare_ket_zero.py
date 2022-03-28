@@ -82,7 +82,7 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=10000,
+        warmup_arc_batchsize=100,
         search_arc_batchsize=300,
         alpha_max=3,
         alpha_decay_rate=0.95,
@@ -97,7 +97,8 @@ if __name__ == "__main__":
         uct_sample_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=True
+        search_reset=True,
+        avg_gradients=False
     )
 
     final_params, loss_list = circuitModelTuning(

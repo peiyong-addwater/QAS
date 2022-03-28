@@ -518,7 +518,8 @@ def search(
         uct_sample_policy = 'local_optimal',
         verbose = 1,
         search_reset = True,
-        prune=True
+        prune=True,
+        avg_gradients = True
 ):
     p = target_circuit_depth
     l = init_params.shape[2]
@@ -615,7 +616,7 @@ def search(
             batch_gradients.append(getGradientFromModel(constructed_model, params))
         batch_gradients = np.stack(batch_gradients, axis=0)
         batch_gradients = np.nan_to_num(batch_gradients)
-        batch_gradients = np.mean(batch_gradients, axis=0)
+        batch_gradients = np.mean(batch_gradients, axis=0) if avg_gradients else np.sum(batch_gradients, axis=0)
         # add some noise to the circuit gradient
         noise = np.random.randn(p, c, l)
         batch_gradients = batch_gradients + noise*super_circ_train_gradient_noise_factor
