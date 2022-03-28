@@ -45,7 +45,7 @@ if __name__ == "__main__":
     gate_limit ={"CNOT": 8}
     pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 25
+    p = 15
     l = 3
     c = len(pool)
     ph_count_limit = 10
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     final_params, loss_list = circuitModelTuning(
         initial_params=final_params,
         model=model,
-        num_epochs=4000,
+        num_epochs=500,
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
