@@ -30,6 +30,7 @@ if __name__ == "__main__":
 
     model = PrepareLogicalKetZeroState513QECC
     state_class = QMLStateBasicGates
+    num_qubits = 5
 
 
     marker = nowtime()
@@ -43,7 +44,7 @@ if __name__ == "__main__":
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     gate_limit ={"CNOT": 10}
-    pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
+    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
     p = 25
     l = 3
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         return r
 
 
-    init_params = np.random.randn(p, c, l)/100
+    init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
 
     final_params, final_best_arc, final_best_node, final_best_reward, final_controller, reward_list = search(
         model=model,
