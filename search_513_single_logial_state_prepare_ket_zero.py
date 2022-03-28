@@ -61,7 +61,7 @@ if __name__ == "__main__":
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
         if ph_count >= ph_count_limit:
-            return r - (ph_count - ph_count_limit) / 1
+            return r - (ph_count - ph_count_limit) / 10
         return r
 
 
