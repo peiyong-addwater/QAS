@@ -42,7 +42,7 @@ if __name__ == "__main__":
     connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    gate_limit ={"CNOT": 8}
+    gate_limit ={"CNOT": 10}
     pool = QMLPool(5, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
     p = 25
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
+        num_iterations=500,
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
