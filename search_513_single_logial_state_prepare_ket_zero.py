@@ -49,6 +49,7 @@ if __name__ == "__main__":
     l = 3
     c = len(pool)
     ph_count_limit = p
+    cnot_count_soft_limit = p//2
     gate_limit = {"CNOT": p}
 
 
@@ -56,12 +57,15 @@ if __name__ == "__main__":
     def penalty_func(r: float, node: TreeNode):
         k = node.state.getCurrK()
         ph_count = 0
+        cnot_count = 0
         for op_index in k:
             op_name = list(pool[op_index].keys())[0]
             if op_name == 'PlaceHolder':
                 ph_count = ph_count + 1
-        if ph_count >= ph_count_limit:
-            return r - (ph_count - ph_count_limit) / 10
+            if op_name == 'CNOT':
+                cnot_count = cnot_count + 1
+        if cnot_count >= cnot_count_soft_limit:
+            return r - (cnot_count-cnot_count_soft_limit) / 10
         return r
 
 
