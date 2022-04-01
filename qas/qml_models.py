@@ -2146,3 +2146,106 @@ class LiH(ModelFromK):
                     gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
+
+class WStateFiveQubit(ModelFromK):
+    name = 'WStateFiveQubit'
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 5
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev = qml.device('default.qubit', wires=self.num_qubits)
+        self.target_state = 1/np.sqrt(5)*(np.kron(ket1, np.kron(ket0, np.kron(ket0, np.kron(ket0, ket0))))+
+                                          np.kron(ket0, np.kron(ket1, np.kron(ket0, np.kron(ket0, ket0)))) +
+                                          np.kron(ket0, np.kron(ket0, np.kron(ket1, np.kron(ket0, ket0)))) +
+                                          np.kron(ket0, np.kron(ket0, np.kron(ket0, np.kron(ket1, ket0)))) +
+                                          np.kron(ket0, np.kron(ket0, np.kron(ket0, np.kron(ket0, ket1))))
+                                          )
+        self.observable = np.outer(self.target_state, self.target_state)
+
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
+
+    def constructFullCirc(self):
+        @qml.qnode(self.dev)
+        def fullCirc(extracted_params):
+            self.backboneCirc(extracted_params)
+            return qml.expval(self.observable)
+        return fullCirc
+
+    def costFunc(self, extracted_params):
+        circ_func = self.constructFullCirc()
+        overlap = circ_func(extracted_params)
+        return 1-overlap
+
+    def getLoss(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        cost = self.costFunc(extracted_params)
+        return cost
+
+    def getReward(self, super_circ_params):
+        return 1-self.getLoss(super_circ_params)
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
