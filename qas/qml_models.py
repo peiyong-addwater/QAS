@@ -2255,6 +2255,7 @@ class WStateFiveQubit(ModelFromK):
 
         return gate_list
 
+"""
 class VQLSDemo(ModelFromK):
     name = 'VQLSDemo'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -2264,3 +2265,4 @@ class VQLSDemo(ModelFromK):
         self.num_qubits = 4
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device('default.qubit', wires=self.num_qubits)
+"""
