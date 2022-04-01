@@ -1362,6 +1362,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
 
         return gate_list
 
+"""
 class TwoQubitH2(ModelFromK):
     name = 'TwoQubitH2'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -1682,7 +1683,7 @@ class TwoQubitH2Noisy(ModelFromK):
                     gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
-
+"""
 
 _H2_SYMBOLS = ["H", "H"]
 _H2_COORDINATES = np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614])
@@ -1708,7 +1709,7 @@ class FourQubitH2(ModelFromK):
         self.H= _H2_HAM_FOUR_QUBIT  # ground-state energy = -1.13618883 Ha
         self.hf = qml.qchem.hf_state(self.num_electrons, self.num_qubits)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -1805,6 +1806,8 @@ class FourQubitH2(ModelFromK):
 
         return gate_list
 
+
+"""
 class FourQubitH2Noisy(ModelFromK):
 
     name = "FourQubitH2Noisy"
@@ -2034,6 +2037,8 @@ class FourQubitH2CleanStart(ModelFromK):
                     gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
+"""
+
 
 class LiH(ModelFromK):
 
@@ -2050,7 +2055,7 @@ class LiH(ModelFromK):
         self.H= qml.utils.sparse_hamiltonian(_LiH_HAM)  # ground-state energy = -7.8825378193 Ha
         self.hf = qml.qchem.hf_state(self.num_active_electrons, self.num_qubits)
 
-    @qml.template
+    #@qml.template
     def backboneCirc(self, extracted_params):
         param_pos = 0
         for i in range(self.p):
@@ -2249,3 +2254,13 @@ class WStateFiveQubit(ModelFromK):
                     gate_list.append((gate_name, gate_pos, None))
 
         return gate_list
+
+class VQLSDemo(ModelFromK):
+    name = 'VQLSDemo'
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 4
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev = qml.device('default.qubit', wires=self.num_qubits)
