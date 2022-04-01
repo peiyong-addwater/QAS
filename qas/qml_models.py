@@ -2162,7 +2162,7 @@ class WStateFiveQubit(ModelFromK):
                                           np.kron(ket0, np.kron(ket0, np.kron(ket0, np.kron(ket1, ket0)))) +
                                           np.kron(ket0, np.kron(ket0, np.kron(ket0, np.kron(ket0, ket1))))
                                           )
-        self.observable = qml.Hamiltonian(np.outer(self.target_state, self.target_state), wires = [0,1,2,3,4])
+        self.observable = qml.Hermitian(np.outer(self.target_state, self.target_state), wires = [0,1,2,3,4])
 
     def backboneCirc(self, extracted_params):
         param_pos = 0
