@@ -310,7 +310,7 @@ class PhaseFlipQMLNoiseless(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -423,7 +423,7 @@ class ToffoliQMLNoiseless(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -526,7 +526,6 @@ class ToffoliQMLNoiselessAdditionalData(ModelFromK):
         extracted_params = np.array(extracted_params)
         return 1-self.costFunc(extracted_params)
 
-
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
         assert super_circ_params.shape[1] == self.c
@@ -535,7 +534,7 @@ class ToffoliQMLNoiselessAdditionalData(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -647,7 +646,7 @@ class ToffoliQMLNoiselessFullInput(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -766,7 +765,7 @@ class ToffoliQMLSwapTestNoiselessExtendedData(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -882,7 +881,7 @@ class ToffoliQMLNoiselessUnitary(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -993,7 +992,7 @@ class FourTwoTwoQMLNoiseless(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         #cost_grad = jax.grad(self.costFunc, argnums=0)
@@ -1219,7 +1218,7 @@ class PrepareLogicalKetMinusState513QECC(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -1330,7 +1329,7 @@ class FiveOneThreeQECCNoiseless(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -1774,7 +1773,7 @@ class FourQubitH2(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -2120,7 +2119,7 @@ class LiH(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -2224,7 +2223,7 @@ class WStateFiveQubit(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
@@ -2258,7 +2257,7 @@ class WStateFiveQubit(ModelFromK):
 
         return gate_list
 
-"""
+
 class VQLSDemo(ModelFromK):
     name = 'VQLSDemo'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
@@ -2268,4 +2267,3 @@ class VQLSDemo(ModelFromK):
         self.num_qubits = 4
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device('default.qubit', wires=self.num_qubits)
-"""
