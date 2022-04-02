@@ -1096,11 +1096,14 @@ class PrepareLogicalKetZeroState513QECC(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
+        #print(len(extracted_params))
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
+        #extracted_params = np.array(extracted_params, requires_grad=True) # needed for the new pennylane version
         extracted_gradients = cost_grad(extracted_params)
+        #print(extracted_params)
         for i in range(len(self.param_indices)):
             gradients[self.param_indices[i]] = extracted_gradients[i]
         return gradients
