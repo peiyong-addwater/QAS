@@ -39,13 +39,13 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
+    single_qubit_gate = ["U3","PlaceHolder"]
     #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 20
+    p = 40
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -86,22 +86,22 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=100,
-        search_arc_batchsize=500,
+        warmup_arc_batchsize=50,
+        search_arc_batchsize=100,
         alpha_max=3,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
         prune_constant_min=0.60,
-        max_visits_prune_threshold=20,
+        max_visits_prune_threshold=10,
         min_num_children=6,
-        sampling_execute_rounds=50,
+        sampling_execute_rounds=100,
         exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         verbose=1,
         state_class=state_class,
         search_reset=True,
-        avg_gradients=False
+        avg_gradients=True
     )
 
     final_params, loss_list = circuitModelTuning(
