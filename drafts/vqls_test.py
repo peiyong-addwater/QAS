@@ -18,13 +18,13 @@ J = 0.1
 zeta = 5
 eta = 1
 
-n_layers = 1
+n_layers = 4
 n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
 steps = 30  # Number of optimization steps
-learning_rate = 0.8  # Learning rate
+learning_rate = 2  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator
 
