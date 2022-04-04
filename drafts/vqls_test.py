@@ -6,6 +6,8 @@ from pennylane import numpy as np
 # Plotting
 import matplotlib.pyplot as plt
 
+import time
+
 """
 J = 0.1
 zeta = 5
@@ -160,9 +162,12 @@ w = q_delta * np.random.randn(n_qubits*n_layers*3, requires_grad=True).reshape((
 opt = qml.GradientDescentOptimizer(learning_rate)
 
 cost_history = []
+#training_start = time.time()
 for it in range(steps):
+    epoch_start = time.time()
     w, cost = opt.step_and_cost(cost_loc, w)
-    print("Step {:3d}       Cost_L = {:9.7f}".format(it, cost))
+    epoch_end = time.time()
+    print("Step {:3d}       Cost_L = {:9.7f}    Time {:9.7f}".format(it, cost, epoch_end-epoch_start))
     cost_history.append(cost)
 
 Id = np.identity(2)
