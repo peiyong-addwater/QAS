@@ -18,7 +18,7 @@ J = 0.1
 zeta = 5
 eta = 1
 
-n_layers = 4
+n_layers = 2
 n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
@@ -82,9 +82,9 @@ def variational_block(weights):
     # A very minimal variational circuit.
     qml.StronglyEntanglingLayers(weights=weights, wires=range(n_qubits))
 
-dev_mu = qml.device("default.qubit", wires=tot_qubits)
+dev_mu = qml.device("default.qubit.autograd", wires=tot_qubits)
 
-@qml.qnode(dev_mu)
+@qml.qnode(dev_mu, interface="autograd", diff_method="backprop")
 def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
     # First Hadamard gate applied to the ancillary qubit.
