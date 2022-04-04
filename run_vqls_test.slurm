@@ -9,4 +9,4 @@
 Export OMP_NUM_THREADS=24
 
 module load singularity
-
+srun --export=all -N 1 -n 1 -c 1 singularity exec --home CURRENT_DIRECTORY_FULL quantum-research-220404.sif python drafts/vqls_test.py
