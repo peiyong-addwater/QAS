@@ -1,4 +1,4 @@
-# From https://pennylane.ai/qml/demos/tutorial_vqls.html
+# Modified from https://pennylane.ai/qml/demos/tutorial_vqls.html
 # Pennylane
 import pennylane as qml
 from pennylane import numpy as np
@@ -6,17 +6,30 @@ from pennylane import numpy as np
 # Plotting
 import matplotlib.pyplot as plt
 
-n_qubits = 3  # Number of system qubits.
+"""
+J = 0.1
+zeta = 5
+ita = 1
+A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
+             = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
+"""
+
+J = 0.1
+zeta = 5
+eta = 1
+
+n_layers = 1
+n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
-steps = 30  # Number of optimization steps
-eta = 0.8  # Learning rate
+steps = 1  # Number of optimization steps
+learning_rate = 0.8  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator
 
 # Coefficients of the linear combination A = c_0 A_0 + c_1 A_1 ...
-c = np.array([1.0, 0.2, 0.2])
+c = np.array([1/zeta, 1/zeta, 1/zeta, 1/zeta, J/zeta, J/zeta, J/zeta, eta/zeta])
 
 def U_b():
     """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
@@ -26,15 +39,39 @@ def U_b():
 def CA(idx):
     """Controlled versions of the unitary components A_l of the problem matrix A."""
     if idx == 0:
-        # Identity operation
-        None
+        # X_0
+        qml.CNOT(wires=[ancilla_idx, 0])
 
     elif idx == 1:
-        qml.CNOT(wires=[ancilla_idx, 0])
-        qml.CZ(wires=[ancilla_idx, 1])
+        # X_1
+        qml.CNOT(wires=[ancilla_idx, 1])
 
     elif idx == 2:
-        qml.CNOT(wires=[ancilla_idx, 0])
+        # X_2
+        qml.CNOT(wires=[ancilla_idx, 2])
+
+    elif idx == 3:
+        # X_3
+        qml.CNOT(wires=[ancilla_idx, 3])
+
+    elif idx == 4:
+        # Z_0 Z_1
+        qml.CZ(wires=[ancilla_idx, 0])
+        qml.CZ(wires=[ancilla_idx, 1])
+
+    elif idx == 5:
+        # Z_1 Z_2
+        qml.CZ(wires=[ancilla_idx, 1])
+        qml.CZ(wires=[ancilla_idx, 2])
+
+    elif idx == 6:
+        # Z_2 Z_3
+        qml.CZ(wires=[ancilla_idx, 2])
+        qml.CZ(wires=[ancilla_idx, 3])
+
+    elif idx == 7:
+        # Identity
+        None
 
 def variational_block(weights):
     """Variational circuit mapping the ground state |0> to the ansatz state |x>."""
@@ -43,8 +80,7 @@ def variational_block(weights):
         qml.Hadamard(wires=idx)
 
     # A very minimal variational circuit.
-    for idx, element in enumerate(weights):
-        qml.RY(element, wires=idx)
+    qml.StronglyEntanglingLayers(weights=weights, wires=range(n_qubits))
 
 dev_mu = qml.device("default.qubit", wires=tot_qubits)
 
@@ -119,9 +155,9 @@ def cost_loc(weights):
     return 0.5 - 0.5 * mu_sum / (n_qubits * psi_norm(weights))
 
 np.random.seed(rng_seed)
-w = q_delta * np.random.randn(n_qubits, requires_grad=True)
+w = q_delta * np.random.randn(n_qubits*n_layers*3, requires_grad=True).reshape((n_layers, n_qubits, 3))
 
-opt = qml.GradientDescentOptimizer(eta)
+opt = qml.GradientDescentOptimizer(learning_rate)
 
 cost_history = []
 for it in range(steps):
@@ -133,12 +169,19 @@ Id = np.identity(2)
 Z = np.array([[1, 0], [0, -1]])
 X = np.array([[0, 1], [1, 0]])
 
-A_0 = np.identity(8)
-A_1 = np.kron(np.kron(X, Z), Id)
-A_2 = np.kron(np.kron(X, Id), Id)
+A_0 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
+A_1 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
+A_2 = np.kron(Id, np.kron(Id, np.kron(X, Id)))
+A_3 = np.kron(Id, np.kron(Id, np.kron(Id, X)))
 
-A_num = c[0] * A_0 + c[1] * A_1 + c[2] * A_2
-b = np.ones(8) / np.sqrt(8)
+A_4 = np.kron(Z, np.kron(Z, np.kron(Id, Id)))
+A_5 = np.kron(Id, np.kron(Z, np.kron(Z, Id)))
+A_6 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
+
+A_7 = np.identity(2**n_qubits)
+
+A_num = c[0] * A_0 + c[1] * A_1 + c[2] * A_2 + c[3] * A_3 + c[4] * A_4 + c[5] * A_5 + c[6] * A_6 + c[7] * A_7
+b = np.ones(2**n_qubits) / np.sqrt(2**n_qubits)
 
 print("A = \n", A_num)
 print("b = \n", b)
@@ -187,4 +230,4 @@ ax2.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
 
-plt.show()
+plt.savefig('vqls_test.png')
