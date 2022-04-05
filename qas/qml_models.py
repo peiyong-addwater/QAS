@@ -2539,7 +2539,7 @@ class VQLSDemo(ModelFromK):
 
 class QAOAVQCDemo(ModelFromK):
     # Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
-    name = 'VQLSDemo_4Q'
+    name = 'QAOAVQCDemo_4Q'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
         """
         The cost Hamiltonian:
