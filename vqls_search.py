@@ -46,28 +46,10 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 35
+    p = 30
     l = 3
     c = len(pool)
-    ph_count_limit = p
-    cnot_count_soft_limit = p
-    gate_limit = {"CNOT": p//2}
-
-
-    # penalty function:
-    def penalty_func(r: float, node: TreeNode):
-        k = node.state.getCurrK()
-        ph_count = 0
-        cnot_count = 0
-        for op_index in k:
-            op_name = list(pool[op_index].keys())[0]
-            if op_name == 'PlaceHolder':
-                ph_count = ph_count + 1
-            if op_name == 'CNOT':
-                cnot_count = cnot_count + 1
-        if cnot_count >= cnot_count_soft_limit:
-            return r - (cnot_count-cnot_count_soft_limit) / 10
-        return r
+    gate_limit = {"CNOT": p//2+5}
 
 
     init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
@@ -85,7 +67,7 @@ if __name__ == "__main__":
         early_stop_threshold=0.95,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
-        penalty_function=penalty_func,
+        penalty_function=None,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=50,
         search_arc_batchsize=100,
