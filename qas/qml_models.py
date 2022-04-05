@@ -2678,3 +2678,8 @@ class QAOAVQCDemo(ModelFromK):
         for i in range(0, self.n_samples):
             bit_strings.append(self.bitstring_to_int(circuit(extracted_params, edge=None)))
 
+        counts = np.bincount(np.array(bit_strings))
+        most_freq_bit_string = np.argmax(counts)
+
+        return most_freq_bit_string
+
