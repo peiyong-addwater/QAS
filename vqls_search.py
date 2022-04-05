@@ -149,7 +149,7 @@ if __name__ == "__main__":
     ax2.set_xlabel("Hilbert space basis")
     ax2.set_title("Quantum probabilities")
 
-    plt.savefig('vqls_test.png')
+    plt.savefig(marker + '_vqls_search_demo.png')
 
     with open(filename, 'w') as f:
         json.dump(res_dict, f, indent=4, cls=NpEncoder)
