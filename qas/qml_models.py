@@ -2412,7 +2412,7 @@ class VQLSDemo(ModelFromK):
             for l in range(0, len(self.coeff)):
                 for lp in range(0, len(self.coeff)):
                     for j in range(0, self.n_qubits):
-                        mu_sum = mu_sum + c[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, j)
+                        mu_sum = mu_sum + self.coeff[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, j)
 
             mu_sum = abs(mu_sum)
 
