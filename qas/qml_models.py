@@ -2553,7 +2553,8 @@ class QAOAVQCDemo(ModelFromK):
         self.p, self.c, self.l = p, c, l
         self.n_qubits = 4
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev = qml.device("default.qubit.autograd", wires=self.n_qubits, shots=1)
+        self.dev = qml.device("default.qubit", wires=self.n_qubits, shots=1)
+        self.dev_train = qml.device("default.qubit.autograd", wires=self.n_qubits)
         self.n_samples = 100
         self.pauli_z = [[1, 0], [0, -1]]
         self.pauli_z_2 = np.kron(self.pauli_z, self.pauli_z, requires_grad=False)
@@ -2585,7 +2586,7 @@ class QAOAVQCDemo(ModelFromK):
         return int(bit_string, base=2)
 
     def objective(self, extracted_params):
-        @qml.qnode(self.dev)
+        @qml.qnode(self.dev_train, interface="autograd", diff_method="backprop")
         def circuit(weights, edge=None):
             for wire in range(self.n_qubits):
                 qml.Hadamard(wires=wire)

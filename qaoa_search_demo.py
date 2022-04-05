@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 8
+    p = 10
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -78,16 +78,16 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=50,
+        num_iterations=20,
         num_warmup_iterations=2,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=4,
+        early_stop_threshold=999,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=None,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=50,
+        warmup_arc_batchsize=100,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.9,
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         lr=0.01,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=-4
+        early_stop_threshold=-999
     )
 
     searched_model = model(p, c, l, final_best_arc, pool)
