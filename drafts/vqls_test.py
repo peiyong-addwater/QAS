@@ -19,7 +19,7 @@ J = 0.1
 zeta = 5
 eta = 1
 
-n_layers = 6
+n_layers = 5
 n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
