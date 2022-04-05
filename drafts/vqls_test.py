@@ -19,7 +19,7 @@ J = 0.1
 zeta = 5
 eta = 1
 
-n_layers = 4
+n_layers = 6
 n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
@@ -29,6 +29,7 @@ learning_rate = 2  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator
 
+print("Number of Strongly Entangled Layers: ", n_layers)
 # Coefficients of the linear combination A = c_0 A_0 + c_1 A_1 ...
 c = np.array([1/zeta, 1/zeta, 1/zeta, 1/zeta, J/zeta, J/zeta, J/zeta, eta/zeta])
 
