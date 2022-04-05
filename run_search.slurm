@@ -9,4 +9,4 @@
 
 
 module load singularity
-srun --export=all -N 1 -n 1 -c 1 singularity exec --home /scratch/pawsey0419/peiyongw/Research/QAS-MCTS quantum-research-220404.sif python drafts/vqls_search.py
+srun --export=all -N 1 -n 1 -c 1 singularity exec --home /scratch/pawsey0419/peiyongw/Research/QAS-MCTS quantum-research-220404.sif python vqls_search.py
