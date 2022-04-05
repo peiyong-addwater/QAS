@@ -2683,3 +2683,6 @@ class QAOAVQCDemo(ModelFromK):
 
         return most_freq_bit_string
 
+    def getClassicalSolution(self):
+        return '1010'
+
