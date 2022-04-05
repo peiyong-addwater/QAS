@@ -96,7 +96,7 @@ if __name__ == "__main__":
         max_visits_prune_threshold=10,
         min_num_children=6,
         sampling_execute_rounds=100,
-        exploit_execute_rounds=100,
+        exploit_execute_rounds=50,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         verbose=2,
