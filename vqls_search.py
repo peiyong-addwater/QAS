@@ -8,6 +8,7 @@ import time
 from qas.mcts import QMLStateBasicGates
 import random
 import warnings
+import matplotlib.pyplot as plt
 #warnings.filterwarnings("ignore")
 
 class NpEncoder(json.JSONEncoder):
@@ -117,7 +118,12 @@ if __name__ == "__main__":
         early_stop_threshold=-1
     )
 
+    searched_model = model(p, c, l, final_best_arc, pool)
+    quantum_result = searched_model.getQuantumSolution(final_params)
+    classical_result = searched_model.getClassicalSolution()
 
+    print("x_n^2 =\n", classical_result)
+    print("|<x|n>|^2=\n", quantum_result)
 
     res_dict = {
         'task': task,
@@ -126,8 +132,24 @@ if __name__ == "__main__":
         'k': final_best_arc,
         'op_list': model(p, c, l, final_best_arc, pool).toList(final_params),
         'search_reward_list': reward_list,
-        'fine_tune_loss': loss_list
+        'fine_tune_loss': loss_list,
+        'quantum_result':quantum_result,
+        'classical_result':classical_result
     }
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 4))
+
+    ax1.bar(np.arange(0, 2 ** num_qubits), classical_result, color="blue")
+    ax1.set_xlim(-0.5, 2 ** num_qubits - 0.5)
+    ax1.set_xlabel("Vector space basis")
+    ax1.set_title("Classical probabilities")
+
+    ax2.bar(np.arange(0, 2 ** num_qubits), quantum_result, color="green")
+    ax2.set_xlim(-0.5, 2 ** num_qubits - 0.5)
+    ax2.set_xlabel("Hilbert space basis")
+    ax2.set_title("Quantum probabilities")
+
+    plt.savefig('vqls_test.png')
 
     with open(filename, 'w') as f:
         json.dump(res_dict, f, indent=4, cls=NpEncoder)
