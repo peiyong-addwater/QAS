@@ -2268,7 +2268,7 @@ class VQLSDemo(ModelFromK):
         self.sample_shots = 10000
         self.n_qubits = 4
         self.tot_qubits = self.n_qubits + 1
-        self.ancilla_idx = self.tot_qubits
+        self.ancilla_idx = self.n_qubits
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev_mu = qml.device("default.qubit.autograd", wires=self.tot_qubits)
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
