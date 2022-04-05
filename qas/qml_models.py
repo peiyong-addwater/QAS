@@ -2681,7 +2681,7 @@ class QAOAVQCDemo(ModelFromK):
         counts = np.bincount(np.array(bit_strings))
         most_freq_bit_string = np.argmax(counts)
 
-        return most_freq_bit_string
+        return str(most_freq_bit_string), bit_strings
 
     def getClassicalSolution(self):
         return '1010'
