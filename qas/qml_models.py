@@ -2535,3 +2535,31 @@ class VQLSDemo(ModelFromK):
         c_probs = (x / np.linalg.norm(x)) ** 2
 
         return c_probs
+
+
+class QAOAVQCDemo(ModelFromK):
+    # Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
+    name = 'VQLSDemo_4Q'
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.sample_shots = 10000
+        self.n_qubits = 4
+        self.tot_qubits = self.n_qubits + 1
+        self.ancilla_idx = self.n_qubits
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev_mu = qml.device("default.qubit.autograd", wires=self.tot_qubits)
+        self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
+        """
+        J = 0.1
+        zeta = 5
+        ita = 1
+        A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
+                     = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
+        |b> = H|0>
+        """
+        self.J = 0.1
+        self.zeta = 5
+        self.eta = 1
+        self.coeff = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])

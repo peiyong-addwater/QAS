@@ -1,3 +1,4 @@
+# Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
 # Pennylane
 import pennylane as qml
 from pennylane import numpy as np
