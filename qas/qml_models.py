@@ -2541,25 +2541,140 @@ class QAOAVQCDemo(ModelFromK):
     # Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
     name = 'VQLSDemo_4Q'
     def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        """
+        The cost Hamiltonian:
+        C_alpha = 1/2 * (1 - Z_j Z_k)
+        (j, k) is an edge of the graph
+        Graph see https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
+        target solution is z = 1010
+        """
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
-        self.sample_shots = 10000
         self.n_qubits = 4
-        self.tot_qubits = self.n_qubits + 1
-        self.ancilla_idx = self.n_qubits
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev_mu = qml.device("default.qubit.autograd", wires=self.tot_qubits)
-        self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
-        """
-        J = 0.1
-        zeta = 5
-        ita = 1
-        A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
-                     = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
-        |b> = H|0>
-        """
-        self.J = 0.1
-        self.zeta = 5
-        self.eta = 1
-        self.coeff = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])
+        self.dev = qml.device("default.qubit.autograd", wires=self.n_qubits, shots=1)
+        self.n_samples = 100
+        self.pauli_z = [[1, 0], [0, -1]]
+        self.pauli_z_2 = np.kron(self.pauli_z, self.pauli_z, requires_grad=False)
+        self.graph = [(0,1), (0,3), (1,2), (2,3)]
+
+    def backboneCirc(self, extracted_params):
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
+
+    def bitstring_to_int(self, bit_string_sample):
+        bit_string = "".join(str(bs) for bs in bit_string_sample)
+        return int(bit_string, base=2)
+
+    def objective(self, extracted_params):
+        @qml.qnode(self.dev)
+        def circuit(weights, edge=None):
+            for wire in range(self.n_qubits):
+                qml.Hadamard(wires=wire)
+
+            self.backboneCirc(weights)
+
+            if edge is None:
+                return qml.sample()
+
+            return qml.expval(qml.Hermitian(self.pauli_z_2, wires=edge))
+
+        neg_obj = 0
+        for edge in self.graph:
+            neg_obj -= 0.5*(1-circuit(extracted_params, edge=edge))
+        return neg_obj
+
+    def getLoss(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        loss = self.objective(extracted_params)
+        return loss
+
+    def getReward(self, super_circ_params):
+        loss = self.getLoss(super_circ_params)
+        return -loss
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.objective)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
+
+    def getQuantumSolution(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+
+        @qml.qnode(self.dev)
+        def circuit(weights, edge=None):
+            for wire in range(self.n_qubits):
+                qml.Hadamard(wires=wire)
+
+            self.backboneCirc(weights)
+
+            if edge is None:
+                return qml.sample()
+
+            return qml.expval(qml.Hermitian(self.pauli_z_2, wires=edge))
+
+        bit_strings = []
+        for i in range(0, self.n_samples):
+            bit_strings.append(self.bitstring_to_int(circuit(extracted_params, edge=None)))
+
