@@ -2283,7 +2283,7 @@ class VQLSDemo(ModelFromK):
         self.J = 0.1
         self.zeta = 5
         self.eta = 1
-        self.c = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])
+        self.coeff = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])
 
     def U_b(self):
         """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
@@ -2401,7 +2401,7 @@ class VQLSDemo(ModelFromK):
 
             for l in range(0, len(c)):
                 for lp in range(0, len(c)):
-                    norm = norm + c[l] * np.conj(c[lp]) * mu(weights, l, lp, -1)
+                    norm = norm + c[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, -1)
 
             return abs(norm)
 
@@ -2409,10 +2409,10 @@ class VQLSDemo(ModelFromK):
             """Local version of the cost function. Tends to zero when A|x> is proportional to |b>."""
             mu_sum = 0.0
 
-            for l in range(0, len(c)):
-                for lp in range(0, len(c)):
+            for l in range(0, len(self.coeff)):
+                for lp in range(0, len(self.coeff)):
                     for j in range(0, self.n_qubits):
-                        mu_sum = mu_sum + c[l] * np.conj(c[lp]) * mu(weights, l, lp, j)
+                        mu_sum = mu_sum + c[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, j)
 
             mu_sum = abs(mu_sum)
 
@@ -2523,7 +2523,7 @@ class VQLSDemo(ModelFromK):
 
         A_7 = np.identity(2 ** self.n_qubits)
 
-        A_num = self.c[0] * A_0 + self.c[1] * A_1 + self.c[2] * A_2 + self.c[3] * A_3 + self.c[4] * A_4 + self.c[5] * A_5 + self.c[6] * A_6 + self.c[7] * A_7
+        A_num = self.coeff[0] * A_0 + self.coeff[1] * A_1 + self.coeff[2] * A_2 + self.coeff[3] * A_3 + self.coeff[4] * A_4 + self.coeff[5] * A_5 + self.coeff[6] * A_6 + self.coeff[7] * A_7
         b = np.ones(2 ** self.n_qubits) / np.sqrt(2 ** self.n_qubits)
 
         print("A = \n", A_num)
