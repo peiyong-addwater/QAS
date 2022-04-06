@@ -2401,9 +2401,9 @@ class VQLSDemo(ModelFromK):
             """Returns the normalization constant <psi|psi>, where |psi> = A |x>."""
             norm = 0.0
 
-            for l in range(0, len(c)):
-                for lp in range(0, len(c)):
-                    norm = norm + c[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, -1)
+            for l in range(0, len(self.coeff)):
+                for lp in range(0, len(self.coeff)):
+                    norm = norm + self.coeff[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, -1)
 
             return abs(norm)
 
