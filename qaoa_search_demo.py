@@ -53,23 +53,6 @@ if __name__ == "__main__":
     cnot_count_soft_limit = p
     gate_limit = {"CNOT": p//2}
 
-
-    # penalty function:
-    def penalty_func(r: float, node: TreeNode):
-        k = node.state.getCurrK()
-        ph_count = 0
-        cnot_count = 0
-        for op_index in k:
-            op_name = list(pool[op_index].keys())[0]
-            if op_name == 'PlaceHolder':
-                ph_count = ph_count + 1
-            if op_name == 'CNOT':
-                cnot_count = cnot_count + 1
-        if cnot_count >= cnot_count_soft_limit:
-            return r - (cnot_count-cnot_count_soft_limit) / 10
-        return r
-
-
     init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
 
     final_params, final_best_arc, final_best_node, final_best_reward, final_controller, reward_list = search(
