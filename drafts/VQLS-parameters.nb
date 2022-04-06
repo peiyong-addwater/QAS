@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     17301,        425]
-NotebookOptionsPosition[     15502,        386]
-NotebookOutlinePosition[     15914,        402]
-CellTagsIndexPosition[     15871,        399]
+NotebookDataLength[     18094,        448]
+NotebookOptionsPosition[     16073,        405]
+NotebookOutlinePosition[     16485,        421]
+CellTagsIndexPosition[     16442,        418]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -382,6 +382,25 @@ Cell[BoxData[
 Cell[BoxData["0.9865907163177327`"], "Output",
  CellChangeTimes->{{3.8582300335447683`*^9, 3.85823004918235*^9}},
  CellLabel->"Out[15]=",ExpressionUUID->"ac4e72ec-a71b-4dd9-a140-0342f29b0300"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ConjugateTranspose", "[", "Z", "]"}]], "Input",
+ CellChangeTimes->{{3.858231734187666*^9, 3.858231739098437*^9}},
+ CellLabel->"In[16]:=",ExpressionUUID->"a5b8d2b0-a3d4-4dde-a6ad-696d6b5e5cf2"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"1", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"-", "1"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.8582317400931044`*^9},
+ CellLabel->"Out[16]=",ExpressionUUID->"5d531645-4ba4-422c-84c5-d44726f02e32"]
 }, Open  ]]
 },
 WindowSize->{1525.2, 796.1999999999999},
@@ -425,7 +444,11 @@ Cell[14258, 356, 741, 13, 32, "Output",ExpressionUUID->"25b2d510-783a-4891-8790-
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[15036, 374, 255, 5, 28, "Input",ExpressionUUID->"4e6be201-cdb1-4bb7-9e50-75117b03243e"],
-Cell[15294, 381, 192, 2, 55, "Output",ExpressionUUID->"ac4e72ec-a71b-4dd9-a140-0342f29b0300"]
+Cell[15294, 381, 192, 2, 32, "Output",ExpressionUUID->"ac4e72ec-a71b-4dd9-a140-0342f29b0300"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15523, 388, 216, 3, 28, "Input",ExpressionUUID->"a5b8d2b0-a3d4-4dde-a6ad-696d6b5e5cf2"],
+Cell[15742, 393, 315, 9, 83, "Output",ExpressionUUID->"5d531645-4ba4-422c-84c5-d44726f02e32"]
 }, Open  ]]
 }
 ]
