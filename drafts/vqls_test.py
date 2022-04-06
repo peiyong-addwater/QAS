@@ -8,23 +8,20 @@ import matplotlib.pyplot as plt
 import time
 
 """
-J = 0.1
-zeta = 5
-ita = 1
 A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
              = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
 """
 
 J = 0.1
-zeta = 5
-eta = 1
+zeta = 10
+eta = 10
 
-n_layers = 5
+n_layers =2
 n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
-steps = 500  # Number of optimization steps
+steps = 20  # Number of optimization steps
 learning_rate = 2  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator

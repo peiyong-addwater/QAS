@@ -2274,15 +2274,15 @@ class VQLSDemo(ModelFromK):
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
         """
         J = 0.1
-        zeta = 5
-        ita = 1
+        zeta = 10
+        eta = 10
         A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
                      = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
         |b> = H|0>
         """
         self.J = 0.1
-        self.zeta = 5
-        self.eta = 1
+        self.zeta = 10
+        self.eta = 10
         self.coeff = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])
 
     def U_b(self):
@@ -2328,6 +2328,8 @@ class VQLSDemo(ModelFromK):
             None
 
     def backboneCirc(self, extracted_params):
+        for idx in range(self.n_qubits):
+            qml.Hadamard(wires=idx)
         param_pos = 0
         for i in range(self.p):
             gate_dict = self.pool[self.k[i]]
