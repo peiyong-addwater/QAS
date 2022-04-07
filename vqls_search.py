@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 10
+    p = 15
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p}
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=5,
-        search_arc_batchsize=20,
+        search_arc_batchsize=40,
         alpha_max=3,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
