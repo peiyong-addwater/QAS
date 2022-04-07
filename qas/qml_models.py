@@ -2274,16 +2274,15 @@ class VQLSDemo(ModelFromK):
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
         """
         J = 0.1
-        zeta = 10
-        eta = 10
-        A(zeta, ita) = 1/zeta*(X_0 + X_1 + X_2 + X_3 + J*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta * I) 
-                     = 1/zeta*(X_0 + X_1 + X_2 + X_3) + J/zeta*(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3) + eta/zeta * I
+        zeta = 1
+        eta = 0.2
+        A = zeta * I + J X_1 + J X_2  + eta Z_3 Z_4
         |b> = H|0>
         """
         self.J = 0.1
         self.zeta = 10
         self.eta = 10
-        self.coeff = np.array([1/self.zeta, 1/self.zeta, 1/self.zeta, 1/self.zeta, self.J/self.zeta, self.J/self.zeta, self.J/self.zeta, self.eta/self.zeta])
+        self.coeff = np.array([self.zeta, self.J, self.J, self.eta])
 
     def U_b(self):
         """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
@@ -2293,39 +2292,21 @@ class VQLSDemo(ModelFromK):
     def CA(self, idx):
         """Controlled versions of the unitary components A_l of the problem matrix A."""
         if idx == 0:
+            # identity
+            None
+
+        elif idx == 1:
             # X_0
             qml.CNOT(wires=[self.ancilla_idx, 0])
 
-        elif idx == 1:
+        elif idx == 2:
             # X_1
             qml.CNOT(wires=[self.ancilla_idx, 1])
 
-        elif idx == 2:
-            # X_2
-            qml.CNOT(wires=[self.ancilla_idx, 2])
-
         elif idx == 3:
-            # X_3
-            qml.CNOT(wires=[self.ancilla_idx, 3])
-
-        elif idx == 4:
-            # Z_0 Z_1
-            qml.CZ(wires=[self.ancilla_idx, 0])
-            qml.CZ(wires=[self.ancilla_idx, 1])
-
-        elif idx == 5:
-            # Z_1 Z_2
-            qml.CZ(wires=[self.ancilla_idx, 1])
-            qml.CZ(wires=[self.ancilla_idx, 2])
-
-        elif idx == 6:
             # Z_2 Z_3
             qml.CZ(wires=[self.ancilla_idx, 2])
             qml.CZ(wires=[self.ancilla_idx, 3])
-
-        elif idx == 7:
-            # Identity
-            None
 
     def backboneCirc(self, extracted_params):
         for idx in range(self.n_qubits):
@@ -2514,18 +2495,14 @@ class VQLSDemo(ModelFromK):
         Z = np.array([[1, 0], [0, -1]])
         X = np.array([[0, 1], [1, 0]])
 
-        A_0 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
-        A_1 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
-        A_2 = np.kron(Id, np.kron(Id, np.kron(X, Id)))
-        A_3 = np.kron(Id, np.kron(Id, np.kron(Id, X)))
+        A_0 = np.identity(self.n_qubits ** 2)
+        A_1 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
+        A_2 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
 
-        A_4 = np.kron(Z, np.kron(Z, np.kron(Id, Id)))
-        A_5 = np.kron(Id, np.kron(Z, np.kron(Z, Id)))
-        A_6 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
+        A_3 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
 
-        A_7 = np.identity(2 ** self.n_qubits)
 
-        A_num = self.coeff[0] * A_0 + self.coeff[1] * A_1 + self.coeff[2] * A_2 + self.coeff[3] * A_3 + self.coeff[4] * A_4 + self.coeff[5] * A_5 + self.coeff[6] * A_6 + self.coeff[7] * A_7
+        A_num = self.coeff[0] * A_0 + self.coeff[1] * A_1 + self.coeff[2] * A_2 + self.coeff[3] * A_3
         b = np.ones(2 ** self.n_qubits) / np.sqrt(2 ** self.n_qubits)
 
         print("A = \n", A_num)
