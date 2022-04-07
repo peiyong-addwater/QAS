@@ -9,8 +9,8 @@ print(cwd)
 """
 422 results
 """
-res_1_file_422 = '20211012-020301.json'
-res_2_file_422 = '20211012-131536.json'
+res_1_file_422 = 'res-20211012-020301.json'
+res_2_file_422 = 'res-20211012-131536.json'
 with open(os.path.join(cwd, res_1_file_422)) as f:
     res_422_dict_1 = json.load(f)
 
@@ -34,8 +34,8 @@ plt.savefig('fig_422_rewards_1_2.pdf')
 """
 H2 results
 """
-h2_with_only_neighbouring_cnots = '20211123-113657.json'
-h2_with_all_cnots = '20211123-025029.json'
+h2_with_only_neighbouring_cnots = 'res-20211123-113657.json'
+h2_with_all_cnots = 'res-20211123-025029.json'
 with open(os.path.join(cwd, h2_with_only_neighbouring_cnots)) as f:
     neighbouring_cnots = json.load(f)
 
