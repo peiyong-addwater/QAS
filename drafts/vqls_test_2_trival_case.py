@@ -197,14 +197,14 @@ print("x_n^2 =\n", c_probs)
 
 print("|<x|n>|^2=\n", q_probs)
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 4))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4))
 
-ax1.bar(np.arange(0, 2 ** n_qubits), c_probs, color="blue")
+ax1.bar(np.arange(0, 2 ** n_qubits), c_probs)
 ax1.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax1.set_xlabel("Vector space basis")
 ax1.set_title("Classical probabilities")
 
-ax2.bar(np.arange(0, 2 ** n_qubits), q_probs, color="green")
+ax2.bar(np.arange(0, 2 ** n_qubits), q_probs)
 ax2.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
