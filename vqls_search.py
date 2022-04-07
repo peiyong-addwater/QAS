@@ -78,14 +78,14 @@ if __name__ == "__main__":
         num_warmup_iterations=5,
         super_circ_train_optimizer=qml.GradientDescentOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=0.98,
+        early_stop_threshold=0.999,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=500,
+        warmup_arc_batchsize=50,
         search_arc_batchsize=40,
-        alpha_max=3,
+        alpha_max=1,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
         prune_constant_min=0.60,
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         lr=0.01,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=-1
+        early_stop_threshold=0.
     )
 
     searched_model = model(p, c, l, final_best_arc, pool)

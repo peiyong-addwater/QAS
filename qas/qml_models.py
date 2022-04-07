@@ -2419,7 +2419,7 @@ class VQLSDemo(ModelFromK):
     def getReward(self, super_circ_params):
         loss = self.getLoss(super_circ_params)
         # scale the reward
-        return np.exp(-5*np.abs(loss))
+        return np.exp(-10*np.abs(loss))
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
