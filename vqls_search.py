@@ -9,6 +9,7 @@ from qas.mcts import QMLStateBasicGates
 import random
 import warnings
 import matplotlib.pyplot as plt
+plt.style.use(['science','nature'])
 #warnings.filterwarnings("ignore")
 
 class NpEncoder(json.JSONEncoder):
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     p = 10
     l = 3
     c = len(pool)
-    gate_limit = {"CNOT": p//2+5}
+    gate_limit = {"CNOT": p//2}
 
 
     init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
@@ -119,14 +120,14 @@ if __name__ == "__main__":
         'classical_result':classical_result
     }
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 4))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
 
-    ax1.bar(np.arange(0, 2 ** num_qubits), classical_result, color="blue")
+    ax1.bar(np.arange(0, 2 ** num_qubits), classical_result, color="coral")
     ax1.set_xlim(-0.5, 2 ** num_qubits - 0.5)
     ax1.set_xlabel("Vector space basis")
     ax1.set_title("Classical probabilities")
 
-    ax2.bar(np.arange(0, 2 ** num_qubits), quantum_result, color="green")
+    ax2.bar(np.arange(0, 2 ** num_qubits), quantum_result, color="lightblue")
     ax2.set_xlim(-0.5, 2 ** num_qubits - 0.5)
     ax2.set_xlabel("Hilbert space basis")
     ax2.set_title("Quantum probabilities")

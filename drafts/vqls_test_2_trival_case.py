@@ -4,7 +4,7 @@ import pennylane as qml
 from pennylane import numpy as np
 # Plotting
 import matplotlib.pyplot as plt
-plt.style.use(['science','nature','no-latex'])
+plt.style.use(['science','nature'])
 import time
 
 """
@@ -20,7 +20,7 @@ n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
-steps = 20 # Number of optimization steps
+steps = 15 # Number of optimization steps
 learning_rate = 2  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed =42 # Seed for random number generator
@@ -197,14 +197,14 @@ print("x_n^2 =\n", c_probs)
 
 print("|<x|n>|^2=\n", q_probs)
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
 
-ax1.bar(np.arange(0, 2 ** n_qubits), c_probs)
+ax1.bar(np.arange(0, 2 ** n_qubits), c_probs, color="lightgreen")
 ax1.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax1.set_xlabel("Vector space basis")
 ax1.set_title("Classical probabilities")
 
-ax2.bar(np.arange(0, 2 ** n_qubits), q_probs)
+ax2.bar(np.arange(0, 2 ** n_qubits), q_probs, color="lightblue")
 ax2.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
