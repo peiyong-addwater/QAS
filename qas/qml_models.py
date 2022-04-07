@@ -2280,8 +2280,8 @@ class VQLSDemo(ModelFromK):
         |b> = H|0>
         """
         self.J = 0.1
-        self.zeta = 10
-        self.eta = 10
+        self.zeta = 1
+        self.eta = 0.2
         self.coeff = np.array([self.zeta, self.J, self.J, self.eta])
 
     def U_b(self):

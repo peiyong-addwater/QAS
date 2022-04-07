@@ -81,3 +81,7 @@ plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{F
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
+
+"""
+QAOA results
+"""
