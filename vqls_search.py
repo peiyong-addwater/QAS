@@ -42,13 +42,13 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
-    #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
+    single_qubit_gate = ["U3","PlaceHolder"]
+    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[0,3],[3,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
+    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 15
+    p = 10
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p}
