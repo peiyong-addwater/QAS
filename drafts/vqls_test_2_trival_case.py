@@ -4,7 +4,7 @@ import pennylane as qml
 from pennylane import numpy as np
 # Plotting
 import matplotlib.pyplot as plt
-
+plt.style.use(['science','nature','no-latex'])
 import time
 
 """
