@@ -21,7 +21,7 @@ n_qubits = 4  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
-steps = 100 # Number of optimization steps
+steps = 20 # Number of optimization steps
 learning_rate = 2  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed =42 # Seed for random number generator
@@ -226,4 +226,4 @@ ax2.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
 
-plt.savefig('vqls_test.png')
+plt.savefig('vqls_test_2_trival_case.png')
