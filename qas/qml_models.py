@@ -27,6 +27,7 @@ from qiskit import QuantumCircuit
 from qiskit.quantum_info import state_fidelity, DensityMatrix, Statevector
 from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
 import qiskit.providers.aer.noise as noise
+from collections import OrderedDict, Counter
 import shutup
 shutup.please()
 
@@ -2564,6 +2565,9 @@ class QAOAVQCDemo(ModelFromK):
         bit_string = "".join(str(bs) for bs in bit_string_sample)
         return int(bit_string, base=2)
 
+    def sample_result_to_str(self, bit_string_sample):
+        return "".join(str(bs) for bs in bit_string_sample)
+
     def objective(self, extracted_params):
         @qml.qnode(self.dev_train)
         def circuit(weights, edge=None):
@@ -2655,14 +2659,18 @@ class QAOAVQCDemo(ModelFromK):
             return qml.expval(qml.Hermitian(self.pauli_z_2, wires=edge))
 
         bit_strings = []
+        original_samples = []
         for i in range(0, self.n_samples):
-            bit_strings.append(self.bitstring_to_int(circuit(extracted_params, edge=None)))
+            bits = circuit(extracted_params, edge=None)
+            bit_strings.append(self.bitstring_to_int(bits))
+            original_samples.append(self.sample_result_to_str(bits))
 
         counts = np.bincount(np.array(bit_strings))
         most_freq_bit_string = np.argmax(counts)
-
-        return "{:07b}".format(most_freq_bit_string), counts
+        original_samples = Counter(original_samples)
+        original_samples = dict(OrderedDict(original_samples.most_common()))
+        return "{:07b}".format(most_freq_bit_string), original_samples
 
     def getClassicalSolution(self):
-        return '1 0 0 1 1 0 0'
+        return '1001100'
 

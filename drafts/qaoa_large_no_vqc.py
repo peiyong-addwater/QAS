@@ -4,6 +4,7 @@ from pennylane import numpy as np
 import networkx as nx
 from qiskit_optimization.applications import Maxcut, Tsp
 import joblib
+from collections import Counter, OrderedDict
 np.random.seed(42)
 
 n_wires = 7
@@ -29,7 +30,8 @@ def U_C(gamma):
 def bitstring_to_int(bit_string_sample):
     bit_string = "".join(str(bs) for bs in bit_string_sample)
     return int(bit_string, base=2)
-
+def sample_result_to_str(bit_string_sample):
+    return "".join(str(bs) for bs in bit_string_sample)
 dev = qml.device("default.qubit", wires=n_wires, shots=1)
 pauli_z = [[1, 0], [0, -1]]
 pauli_z_2 = np.kron(pauli_z, pauli_z, requires_grad=False)
@@ -80,13 +82,19 @@ def qaoa_maxcut(n_layers=1):
 
     # sample measured bitstrings 100 times
     bit_strings = []
+    original_samples = []
     n_samples = 10000
     for i in range(0, n_samples):
-        bit_strings.append(bitstring_to_int(circuit(params[0], params[1], edge=None, n_layers=n_layers)))
+        bits = circuit(params[0], params[1], edge=None, n_layers=n_layers)
+        bit_strings.append(bitstring_to_int(bits))
+        original_samples.append(sample_result_to_str(bits))
 
     # print optimal parameters and most frequently sampled bitstring
     counts = np.bincount(np.array(bit_strings))
     most_freq_bit_string = np.argmax(counts)
+    original_samples = Counter(original_samples)
+    original_samples = dict(OrderedDict(original_samples.most_common()))
+    print(original_samples)
     print("Optimized (gamma, beta) vectors:\n{}".format(params[:, :n_layers]))
     print("Most frequently sampled bit string is: {:07b}".format(most_freq_bit_string))
 

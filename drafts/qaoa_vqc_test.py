@@ -6,6 +6,7 @@ from pennylane import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 import time
+from collections import Counter
 import json
 """
 The cost Hamiltonian:
@@ -19,7 +20,7 @@ graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
 #solution: [1 0 0 1 1 0 0]
 #solution objective: 7.0
 n_shots = 100 # Number of quantum measurements.
-steps = 50  # Number of optimization steps
+steps = 20 # Number of optimization steps
 learning_rate = 0.5  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator
@@ -50,6 +51,8 @@ class NpEncoder(json.JSONEncoder):
 def bitstring_to_int(bit_string_sample):
     bit_string = "".join(str(bs) for bs in bit_string_sample)
     return int(bit_string, base=2)
+def sample_result_to_str(bit_string_sample):
+    return "".join(str(bs) for bs in bit_string_sample)
 
 def variational_block(weights):
     # A very minimal variational circuit.
@@ -102,10 +105,14 @@ def qaoa_vqc(n_layers = 1):
             print("Objective after step {:5d}: {: .7f}".format(i + 1, -objective(params)))
 
     bit_strings = []
+    original_samples = []
     for i in range(0, n_shots):
-        bit_strings.append(bitstring_to_int(circuit(params, edge=None)))
+        bits = circuit(params, edge=None)
+        bit_strings.append(bitstring_to_int(bits))
+        original_samples.append(sample_result_to_str(bits))
 
     counts = np.bincount(np.array(bit_strings))
+    print(dict(Counter(original_samples)))
     most_freq_bit_string = np.argmax(counts)
     print("Most frequently sampled bit string is: {:07b}".format(most_freq_bit_string))
     return -objective(params), bit_strings, obj_list
