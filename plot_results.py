@@ -50,7 +50,7 @@ neigh_cnots_fine_tune_loss = neighbouring_cnots['fine_tune_loss']
 all_cnots_search_rewards = [s[2] for s in all_cnots['search_reward_list']]
 all_cnots_fine_tune_loss = all_cnots['fine_tune_loss']
 
-ig = plt.figure()
+fig = plt.figure()
 plt.plot(list(range(len(nei_cnots_search_rewards))), nei_cnots_search_rewards,marker = 'x')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy, Ha)')
@@ -85,3 +85,22 @@ plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
 """
 QAOA results
 """
+qaoa_res_file_1 = '20220406-103640_QAOAVQCDemo_4Q_QMLStateBasicGates.json'
+qaoa_res_file_2 = '20220406-155957_QAOAVQCDemo_4Q_QMLStateBasicGates.json'
+with open(os.path.join(cwd, qaoa_res_file_1)) as f:
+    qaoa_dict_1 = json.load(f)
+with open(os.path.join(cwd, qaoa_res_file_2)) as f:
+    qaoa_dict_2 = json.load(f)
+
+qaoa_early_stopping = 3.9
+qaoa_1_search_reward_list = [s[2] for s in qaoa_dict_1['search_reward_list']]
+qaoa_1_fine_tune_loss = qaoa_dict_1['fine_tune_loss']
+qaoa_1_measurement_result = qaoa_dict_1['quantum_result'][1]
+
+qaoa_2_search_reward_list = [s[2] for s in qaoa_dict_2['search_reward_list']]
+qaoa_2_fine_tune_loss = qaoa_dict_2['fine_tune_loss']
+qaoa_2_measurement_result = qaoa_dict_2['quantum_result'][1]
+
+
+
+
