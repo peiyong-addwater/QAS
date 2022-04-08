@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pennylane as qml
 plt.style.use(['science','nature'])
 cwd = os.getcwd()
-print(cwd)
+#print(cwd)
 
 """
 422 results
@@ -192,12 +192,6 @@ def qaoa_circuit_2():
     qml.CNOT(wires=[1, 3])
     return qml.sample()
 
-qml.drawer.use_style('black_white')
-fig, ax = qml.draw_mpl(qaoa_circuit_1)()
-plt.savefig('fig_qaoa_circ_1.pdf')
-
-fig, ax = qml.draw_mpl(qaoa_circuit_2)()
-plt.savefig('fig_qaoa_circ_2.pdf')
 
 bitstrings1, bitstrings2 = [], []
 for i in range(n_new_samples):
@@ -294,14 +288,31 @@ print("|<x|n>|^2=\n", q_probs)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
 
-ax1.bar(np.arange(0, 2 ** 4), c_probs, color="lightgreen")
+ax1.bar(np.arange(0, 2 ** 4), c_probs)
 ax1.set_xlim(-0.5, 2 ** 4 - 0.5)
 ax1.set_xlabel("Vector space basis")
 ax1.set_title("Classical probabilities")
 
-ax2.bar(np.arange(0, 2 ** 4), q_probs, color="lightblue")
+ax2.bar(np.arange(0, 2 ** 4), q_probs)
 ax2.set_xlim(-0.5, 2 ** 4 - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
 
 plt.savefig('fig_vqls_search_results_compare.pdf')
+
+
+
+
+
+
+
+
+"""
+Draw circuits (always at last to avoid ugly boundaries on the bar chart)
+"""
+qml.drawer.use_style('black_white')
+fig, ax = qml.draw_mpl(qaoa_circuit_1)()
+plt.savefig('fig_qaoa_circ_1.pdf')
+
+fig, ax = qml.draw_mpl(qaoa_circuit_2)()
+plt.savefig('fig_qaoa_circ_2.pdf')
