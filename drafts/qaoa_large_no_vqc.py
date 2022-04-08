@@ -80,7 +80,7 @@ def qaoa_maxcut(n_layers=1):
 
     # sample measured bitstrings 100 times
     bit_strings = []
-    n_samples = 100000
+    n_samples = 10000
     for i in range(0, n_samples):
         bit_strings.append(bitstring_to_int(circuit(params[0], params[1], edge=None, n_layers=n_layers)))
 
@@ -95,24 +95,26 @@ def qaoa_maxcut(n_layers=1):
 
 # perform qaoa on our graph with p=1,2 and
 # keep the bitstring sample lists
-bitstrings1 = qaoa_maxcut(n_layers=2)[1]
-bitstrings2 = qaoa_maxcut(n_layers=3)[1]
+p1 = 1
+p2 = 2
+bitstrings1 = qaoa_maxcut(n_layers=p1)[1]
+bitstrings2 = qaoa_maxcut(n_layers=p2)[1]
 
 import matplotlib.pyplot as plt
 
-xticks = range(0, 16)
+xticks = range(0, 2**7)
 xtick_labels = list(map(lambda x: format(x, "07b"), xticks))
-bins = np.arange(0, 17) - 0.5
+bins = np.arange(0, 2**7+1) - 0.5
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 plt.subplot(1, 2, 1)
-plt.title("n_layers=2")
+plt.title("n_layers={}".format(p1))
 plt.xlabel("bitstrings")
 plt.ylabel("freq.")
 plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(bitstrings1, bins=bins)
 plt.subplot(1, 2, 2)
-plt.title("n_layers=3")
+plt.title("n_layers={}".format(p2))
 plt.xlabel("bitstrings")
 plt.ylabel("freq.")
 plt.xticks(xticks, xtick_labels, rotation="vertical")

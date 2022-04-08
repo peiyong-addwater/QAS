@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     model = QAOAVQCDemo
     state_class = QMLStateBasicGates
-    num_qubits = 4
+    num_qubits = 7
 
 
     marker = nowtime()
@@ -40,16 +40,16 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["U3","PlaceHolder"]
-    #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]]
+    single_qubit_gate = ["Rot","PlaceHolder"]
+    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3], [4,5], [5,4], [5,6], [6,5], [6,0],[0,6]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
+    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 10
+    p = 15
     l = 3
     c = len(pool)
-    ph_count_limit = p
+    ph_count_limit = 1
     cnot_count_soft_limit = p
     gate_limit = {"CNOT": p//2}
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         num_warmup_iterations=2,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=3.9,
+        early_stop_threshold=6.9,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=None,

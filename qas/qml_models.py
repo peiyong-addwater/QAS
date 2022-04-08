@@ -2530,14 +2530,14 @@ class QAOAVQCDemo(ModelFromK):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
-        self.n_qubits = 4
+        self.n_qubits = 7
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device("lightning.qubit", wires=self.n_qubits, shots=1)
         self.dev_train = qml.device("lightning.qubit", wires=self.n_qubits)
         self.n_samples = 100
         self.pauli_z = [[1, 0], [0, -1]]
         self.pauli_z_2 = np.kron(self.pauli_z, self.pauli_z, requires_grad=False)
-        self.graph = [(0,1), (0,3), (1,2), (2,3)]
+        self.graph = graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
 
     def backboneCirc(self, extracted_params):
         param_pos = 0
@@ -2661,8 +2661,8 @@ class QAOAVQCDemo(ModelFromK):
         counts = np.bincount(np.array(bit_strings))
         most_freq_bit_string = np.argmax(counts)
 
-        return "{:04b}".format(most_freq_bit_string), bit_strings
+        return "{:07b}".format(most_freq_bit_string), counts
 
     def getClassicalSolution(self):
-        return '1010'
+        return '1 0 0 1 1 0 0'
 
