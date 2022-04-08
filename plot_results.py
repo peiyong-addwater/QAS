@@ -18,8 +18,6 @@ with open(os.path.join(cwd, res_1_file_422)) as f:
 with open(os.path.join(cwd, res_2_file_422)) as f:
     res_422_dict_2 = json.load(f)
 
-print(res_422_dict_1.keys())
-print(res_422_dict_2.keys())
 reward_list_1 = [c[2] for c in res_422_dict_1['search_reward_list']]
 reward_list_2 = [c[2] for c in res_422_dict_2['search_reward_list']]
 fig = plt.figure()
@@ -158,13 +156,13 @@ plt.tight_layout()
 plt.savefig('fig_qaoa_search_measurements_after_search.pdf')
 
 
-dev = qml.device('lightning.qubit', wires=(0,1,2,3), shots=1)
+dev_qaoa_4_qubit = qml.device('lightning.qubit', wires=(0, 1, 2, 3), shots=1)
 
 def bitstring_to_int(bit_string_sample):
     bit_string = "".join(str(bs) for bs in bit_string_sample)
     return int(bit_string, base=2)
 
-@qml.qnode(dev)
+@qml.qnode(dev_qaoa_4_qubit)
 def qaoa_circuit_1():
     for wire in range(4):
         qml.Hadamard(wires=wire)
@@ -179,7 +177,7 @@ def qaoa_circuit_1():
     qml.U3(-1.5707963267947023, 0.21428943152379354, 1.5149065173482657e-13, wires=0)
     return qml.sample()
 
-@qml.qnode(dev)
+@qml.qnode(dev_qaoa_4_qubit)
 def qaoa_circuit_2():
     for wire in range(4):
         qml.Hadamard(wires=wire)
@@ -222,8 +220,88 @@ plt.hist(bitstrings2, bins=bins)
 plt.tight_layout()
 plt.savefig('fig_qaoa_search_measurements_more_samples.pdf')
 
+"""
+VQLS Results
+"""
+sample_shots = 10**6
+dev_vqls_4_qubit = qml.device('lightning.qubit', wires=(0, 1, 2, 3), shots=sample_shots)
+J = 0.1
+zeta = 1
+eta = 0.2
+coeff = np.array([zeta, J, J, eta])
+@qml.qnode(dev_vqls_4_qubit)
+def vqls_circ():
+    for i in range(4):
+        qml.Hadamard(wires=i)
+
+    qml.Rot(0.5604857779729846,
+                0.2975881694474745,
+                -0.16130212489384718, wires=1)
+    qml.Rot(-0.07462353342079096,
+                0.33125436215663834,
+                0.07889636851129728, wires=3)
+    qml.Rot(0.05215167213498776,
+                -1.4000847094560546e-07,
+                -0.05215168141170644, wires=0)
+    qml.CNOT(wires=[1,0])
+    qml.Rot(0.039182651193984515,
+                -0.29532920771860316,
+                0.08795141616001576, wires=1)
+    qml.CNOT(wires=[1,0])
+    qml.Rot(0.0882697884073239,
+                1.419131193023994e-07,
+                -0.08826979432942605, wires=0)
+    qml.Rot(-0.18223202170553732,
+                -4.199805334992931e-09,
+                0.1822320257843591, wires=2)
+    qml.CNOT(wires=[2,3])
+    qml.Rot(-0.6359327678530272,
+                0.015263241646471063,
+                0.10453369952015328, wires=1)
+    return qml.sample()
+
+raw_samples = vqls_circ()
+samples = []
+for sam in raw_samples:
+    samples.append(int("".join(str(bs) for bs in sam), base=2))
+
+q_probs = np.bincount(samples) / sample_shots
+
+Id = np.identity(2)
+Z = np.array([[1, 0], [0, -1]])
+X = np.array([[0, 1], [1, 0]])
+
+A_0 = np.identity(4 ** 2)
+A_1 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
+A_2 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
+
+A_3 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
 
 
+A_num = coeff[0] * A_0 + coeff[1] * A_1 + coeff[2] * A_2 + coeff[3] * A_3
+b = np.ones(2 ** 4) / np.sqrt(2 ** 4)
 
+print("A = \n", A_num)
+print("b = \n", b)
 
+A_inv = np.linalg.inv(A_num)
+x = np.dot(A_inv, b)
 
+c_probs = (x / np.linalg.norm(x)) ** 2
+
+print("x_n^2 =\n", c_probs)
+print("|<x|n>|^2=\n", q_probs)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
+
+ax1.bar(np.arange(0, 2 ** 4), c_probs, color="lightgreen")
+ax1.set_xlim(-0.5, 2 ** 4 - 0.5)
+ax1.set_xlabel("Vector space basis")
+ax1.set_title("Classical probabilities")
+
+ax2.bar(np.arange(0, 2 ** 4), q_probs, color="lightblue")
+ax2.set_xlim(-0.5, 2 ** 4 - 0.5)
+ax2.set_xlabel("Hilbert space basis")
+ax2.set_title("Quantum probabilities")
+
+plt.savefig('fig_vqls_search_results_compare.pdf')
