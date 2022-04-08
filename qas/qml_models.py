@@ -2274,14 +2274,14 @@ class VQLSDemo(ModelFromK):
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
         """
         J = 0.1
-        zeta = 1
-        eta = 0.2
+        zeta = 10
+        eta = 10
         A = zeta * I + J X_1 + J X_2  + eta Z_3 Z_4
         |b> = H|0>
         """
         self.J = 0.1
-        self.zeta = 1
-        self.eta = 0.2
+        self.zeta = 10
+        self.eta = 10
         self.coeff = np.array([self.zeta, self.J, self.J, self.eta])
 
     def U_b(self):

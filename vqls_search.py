@@ -51,7 +51,7 @@ if __name__ == "__main__":
     p = 10
     l = 3
     c = len(pool)
-    gate_limit = {"CNOT": 4}
+    gate_limit = {"CNOT": 8}
     ph_count_limit = 2
 
     # penalty function:
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         lr=0.01,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=0.
+        early_stop_threshold=-1
     )
 
     searched_model = model(p, c, l, final_best_arc, pool)
