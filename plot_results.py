@@ -2,6 +2,7 @@ import numpy as np
 import os
 import json
 import matplotlib.pyplot as plt
+import pennylane as qml
 plt.style.use(['science','nature'])
 cwd = os.getcwd()
 print(cwd)
@@ -134,6 +135,17 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_2_fine_tune_loss.pdf')
+
+dev = qml.device('lightning.qubit', wires=(0,1,2,3), shots=10000)
+
+@qml.qnode(dev)
+def qaoa_circuit_1():
+    qml.U3(1.5707963267948533, -0.3618239485577399, -2.480977337366047e-06, wires=0)
+    qml.U3(1.5707963267955087, -0.5492239787830435, 5.473638905667877e-13, wires=3)
+
+
+
+
 
 xticks = range(0, 16)
 xtick_labels = list(map(lambda x: format(x, "04b"), xticks))
