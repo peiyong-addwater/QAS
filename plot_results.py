@@ -86,6 +86,8 @@ plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
 """
 QAOA results
 """
+n_new_samples = 1000
+
 qaoa_res_file_1 = '20220406-103640_QAOAVQCDemo_4Q_QMLStateBasicGates.json'
 qaoa_res_file_2 = '20220406-155957_QAOAVQCDemo_4Q_QMLStateBasicGates.json'
 with open(os.path.join(cwd, qaoa_res_file_1)) as f:
@@ -136,17 +138,6 @@ plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_2_fine_tune_loss.pdf')
 
-dev = qml.device('lightning.qubit', wires=(0,1,2,3), shots=10000)
-
-@qml.qnode(dev)
-def qaoa_circuit_1():
-    qml.U3(1.5707963267948533, -0.3618239485577399, -2.480977337366047e-06, wires=0)
-    qml.U3(1.5707963267955087, -0.5492239787830435, 5.473638905667877e-13, wires=3)
-
-
-
-
-
 xticks = range(0, 16)
 xtick_labels = list(map(lambda x: format(x, "04b"), xticks))
 bins = np.arange(0, 17) - 0.5
@@ -164,6 +155,75 @@ plt.ylabel("Frequency")
 plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(qaoa_2_measurement_result, bins=bins)
 plt.tight_layout()
-plt.savefig('fig_qaoa_search_measurements.pdf')
+plt.savefig('fig_qaoa_search_measurements_after_search.pdf')
+
+
+dev = qml.device('lightning.qubit', wires=(0,1,2,3), shots=1)
+
+def bitstring_to_int(bit_string_sample):
+    bit_string = "".join(str(bs) for bs in bit_string_sample)
+    return int(bit_string, base=2)
+
+@qml.qnode(dev)
+def qaoa_circuit_1():
+    for wire in range(4):
+        qml.Hadamard(wires=wire)
+    qml.U3(1.5707963267948533, -0.3618239485577399, -2.480977337366047e-06, wires=0)
+    qml.U3(1.5707963267955087, -0.5492239787830435, 5.473638905667877e-13, wires=3)
+    qml.CNOT(wires=[3,2])
+    qml.CNOT(wires=[2,3])
+    qml.CNOT(wires=[3,0])
+    qml.CNOT(wires=[0,2])
+    qml.U3(1.570796326794654, 0.5482710337796082, 1.372802127183914e-13, wires=1)
+    qml.CNOT(wires=[0,3])
+    qml.U3(-1.5707963267947023, 0.21428943152379354, 1.5149065173482657e-13, wires=0)
+    return qml.sample()
+
+@qml.qnode(dev)
+def qaoa_circuit_2():
+    for wire in range(4):
+        qml.Hadamard(wires=wire)
+    qml.U3(1.570796326794232, 0.9690786345916832, 3.314772140674725e-13, wires=3)
+    qml.U3(1.570796326793921, -0.04717642396316069, -2.046468624499896e-13, wires=0)
+    qml.CNOT(wires=[0, 3])
+    qml.U3(1.5707963267955454, -0.7192439786470295, -1.2206061490770083e-13, wires=2)
+    qml.U3(-1.0352228967671575, -0.22822101133807382, -0.41436697575645365, wires=1)
+    qml.CNOT(wires=[1, 0])
+    qml.CNOT(wires=[1, 2])
+    qml.CNOT(wires=[3, 2])
+    qml.CNOT(wires=[1, 3])
+    return qml.sample()
+
+qml.drawer.use_style('black_white')
+fig, ax = qml.draw_mpl(qaoa_circuit_1)()
+plt.savefig('fig_qaoa_circ_1.pdf')
+
+fig, ax = qml.draw_mpl(qaoa_circuit_2)()
+plt.savefig('fig_qaoa_circ_2.pdf')
+
+bitstrings1, bitstrings2 = [], []
+for i in range(n_new_samples):
+    bitstrings1.append(bitstring_to_int(qaoa_circuit_1()))
+    bitstrings2.append(bitstring_to_int(qaoa_circuit_2()))
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 5))
+plt.subplot(1, 2, 1)
+plt.title("Quantum Result 0101")
+plt.xlabel("Bitstrings")
+plt.ylabel("Frequency")
+plt.xticks(xticks, xtick_labels, rotation="vertical")
+plt.hist(bitstrings1, bins=bins)
+plt.subplot(1, 2, 2)
+plt.title("Quantum Result 1010")
+plt.xlabel("Bitstrings")
+plt.ylabel("Frequency")
+plt.xticks(xticks, xtick_labels, rotation="vertical")
+plt.hist(bitstrings2, bins=bins)
+plt.tight_layout()
+plt.savefig('fig_qaoa_search_measurements_more_samples.pdf')
+
+
+
+
 
 
