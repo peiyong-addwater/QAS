@@ -12,10 +12,12 @@ The cost Hamiltonian:
 C_alpha = 1/2 * (1 - Z_j Z_k)
 (j, k) is an edge of the graph
 Graph see https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
-target solution is z = 1010
 """
-n_wires = 4  # Number of system qubits.
-graph = [(0,1), (0,3), (1,2), (2,3)]
+n_wires = 7
+graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
+#max-cut objective: -7.0
+#solution: [1 0 0 1 1 0 0]
+#solution objective: 7.0
 n_shots = 100 # Number of quantum measurements.
 steps = 500  # Number of optimization steps
 learning_rate = 0.5  # Learning rate

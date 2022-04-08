@@ -6,9 +6,11 @@ from qiskit_optimization.applications import Maxcut, Tsp
 import joblib
 np.random.seed(42)
 
-n_wires = 6
-graph =  [(0, 1), (0, 2), (1, 2), (2, 3), (1, 4), (2, 4), (0 ,5), (3, 5)]
-
+n_wires = 7
+graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
+#max-cut objective: -7.0
+#solution: [1 0 0 1 1 0 0]
+#solution objective: 7.0
 # unitary operator U_B with parameter beta
 def U_B(beta):
     for wire in range(n_wires):
@@ -86,7 +88,7 @@ def qaoa_maxcut(n_layers=1):
     counts = np.bincount(np.array(bit_strings))
     most_freq_bit_string = np.argmax(counts)
     print("Optimized (gamma, beta) vectors:\n{}".format(params[:, :n_layers]))
-    print("Most frequently sampled bit string is: {:05b}".format(most_freq_bit_string))
+    print("Most frequently sampled bit string is: {:07b}".format(most_freq_bit_string))
 
     return -objective(params), bit_strings
 
@@ -99,7 +101,7 @@ bitstrings2 = qaoa_maxcut(n_layers=3)[1]
 import matplotlib.pyplot as plt
 
 xticks = range(0, 16)
-xtick_labels = list(map(lambda x: format(x, "05b"), xticks))
+xtick_labels = list(map(lambda x: format(x, "07b"), xticks))
 bins = np.arange(0, 17) - 0.5
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))

@@ -19,7 +19,7 @@ from qiskit_optimization.problems import QuadraticProgram
 n = 7  # Number of nodes in graph
 G = nx.Graph()
 G.add_nodes_from(np.arange(0, n, 1))
-elist = [(0, 1), (0, 2), (1, 2), (2, 3), (1, 4), (2, 4), (0 ,5), (3, 5), (3,7), (1,7)]
+elist = [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
 # tuple is (i,j,weight) where (i,j) is the edge
 G.add_edges_from(elist)
 
@@ -89,3 +89,37 @@ print("solution objective:", qp.objective.evaluate(x))
 colors = ["r" if x[i] == 0 else "c" for i in range(n)]
 draw_graph(G, colors, pos, 'qaoa_large_test.png')
 
+algorithm_globals.random_seed = 123
+seed = 10598
+backend = Aer.get_backend("aer_simulator_statevector")
+quantum_instance = QuantumInstance(backend, seed_simulator=seed, seed_transpiler=seed)
+
+# construct VQE
+spsa = SPSA(maxiter=300)
+ry = TwoLocal(qubitOp.num_qubits, "ry", "cz", reps=5, entanglement="linear")
+vqe = VQE(ry, optimizer=spsa, quantum_instance=quantum_instance)
+
+# run VQE
+result = vqe.compute_minimum_eigenvalue(qubitOp)
+
+# print results
+x = max_cut.sample_most_likely(result.eigenstate)
+print("energy:", result.eigenvalue.real)
+print("time:", result.optimizer_time)
+print("max-cut objective:", result.eigenvalue.real + offset)
+print("solution:", x)
+print("solution objective:", qp.objective.evaluate(x))
+
+# plot results
+colors = ["r" if x[i] == 0 else "c" for i in range(n)]
+draw_graph(G, colors, pos)
+
+# create minimum eigen optimizer based on VQE
+vqe_optimizer = MinimumEigenOptimizer(vqe)
+
+# solve quadratic program
+result = vqe_optimizer.solve(qp)
+print(result)
+
+colors = ["r" if result.x[i] == 0 else "c" for i in range(n)]
+draw_graph(G, colors, pos)
