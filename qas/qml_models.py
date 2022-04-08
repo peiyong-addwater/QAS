@@ -2537,7 +2537,7 @@ class QAOAVQCDemo(ModelFromK):
         self.n_samples = 100
         self.pauli_z = [[1, 0], [0, -1]]
         self.pauli_z_2 = np.kron(self.pauli_z, self.pauli_z, requires_grad=False)
-        self.graph = graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
+        self.graph = [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
 
     def backboneCirc(self, extracted_params):
         param_pos = 0
