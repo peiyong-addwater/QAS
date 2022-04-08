@@ -316,3 +316,6 @@ plt.savefig('fig_qaoa_circ_1.pdf')
 
 fig, ax = qml.draw_mpl(qaoa_circuit_2)()
 plt.savefig('fig_qaoa_circ_2.pdf')
+
+fig, ax = qml.draw_mpl(vqls_circ)()
+plt.savefig('fig_vqls_circ.pdf')
