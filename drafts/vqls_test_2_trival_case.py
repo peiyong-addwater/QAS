@@ -63,7 +63,14 @@ def variational_block(weights):
     # A very minimal variational circuit.
     qml.StronglyEntanglingLayers(weights=weights, wires=range(n_qubits))
 
-def vqls_circ():
+def vqls_circ_1():
+    """
+    for
+    J = 0.1
+    zeta = 1
+    eta = 0.2
+    :return:
+    """
     for i in range(4):
         qml.Hadamard(wires=i)
 
