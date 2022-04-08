@@ -101,6 +101,40 @@ qaoa_2_search_reward_list = [s[2] for s in qaoa_dict_2['search_reward_list']]
 qaoa_2_fine_tune_loss = qaoa_dict_2['fine_tune_loss']
 qaoa_2_measurement_result = qaoa_dict_2['quantum_result'][1]
 
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_1_search_reward_list))), qaoa_1_search_reward_list,marker = 'x')
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Objective)')
+plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
+plt.legend()
+plt.savefig('fig_qaoa_1_search_rewards.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_2_search_reward_list))), qaoa_2_search_reward_list,marker = 'x')
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Objective)')
+plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
+plt.legend()
+plt.savefig('fig_qaoa_2_search_rewards.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_1_fine_tune_loss))), qaoa_1_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.axhline(y = -4, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_qaoa_1_fine_tune_loss.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_2_fine_tune_loss))), qaoa_2_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.axhline(y = -4, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_qaoa_2_fine_tune_loss.pdf')
+
 
 
 
