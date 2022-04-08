@@ -80,7 +80,7 @@ def qaoa_maxcut(n_layers=1):
 
     # sample measured bitstrings 100 times
     bit_strings = []
-    n_samples = 1000
+    n_samples = 100000
     for i in range(0, n_samples):
         bit_strings.append(bitstring_to_int(circuit(params[0], params[1], edge=None, n_layers=n_layers)))
 
@@ -104,7 +104,7 @@ xticks = range(0, 16)
 xtick_labels = list(map(lambda x: format(x, "07b"), xticks))
 bins = np.arange(0, 17) - 0.5
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 plt.subplot(1, 2, 1)
 plt.title("n_layers=2")
 plt.xlabel("bitstrings")

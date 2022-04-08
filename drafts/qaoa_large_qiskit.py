@@ -14,7 +14,6 @@ from qiskit.utils import algorithm_globals, QuantumInstance
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.problems import QuadraticProgram
 
-# Generating a graph of 4 nodes
 
 n = 7  # Number of nodes in graph
 G = nx.Graph()
