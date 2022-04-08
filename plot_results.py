@@ -135,6 +135,23 @@ plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_2_fine_tune_loss.pdf')
 
-
+xticks = range(0, 16)
+xtick_labels = list(map(lambda x: format(x, "04b"), xticks))
+bins = np.arange(0, 17) - 0.5
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+plt.subplot(1, 2, 1)
+plt.title("Quantum Result 0101")
+plt.xlabel("Bitstrings")
+plt.ylabel("Frequency")
+plt.xticks(xticks, xtick_labels, rotation="vertical")
+plt.hist(qaoa_1_measurement_result, bins=bins)
+plt.subplot(1, 2, 2)
+plt.title("Quantum Result 1010")
+plt.xlabel("Bitstrings")
+plt.ylabel("Frequency")
+plt.xticks(xticks, xtick_labels, rotation="vertical")
+plt.hist(qaoa_2_measurement_result, bins=bins)
+plt.tight_layout()
+plt.savefig('fig_qaoa_search_measurements.pdf')
 
 
