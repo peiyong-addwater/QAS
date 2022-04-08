@@ -1,7 +1,9 @@
 # Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
 import pennylane as qml
 from pennylane import numpy as np
-
+import networkx as nx
+from qiskit_optimization.applications import Maxcut, Tsp
+import joblib
 np.random.seed(42)
 
 n_wires = 5
@@ -76,7 +78,7 @@ def qaoa_maxcut(n_layers=1):
 
     # sample measured bitstrings 100 times
     bit_strings = []
-    n_samples = 100
+    n_samples = 1000
     for i in range(0, n_samples):
         bit_strings.append(bitstring_to_int(circuit(params[0], params[1], edge=None, n_layers=n_layers)))
 
@@ -91,8 +93,8 @@ def qaoa_maxcut(n_layers=1):
 
 # perform qaoa on our graph with p=1,2 and
 # keep the bitstring sample lists
-bitstrings1 = qaoa_maxcut(n_layers=1)[1]
-bitstrings2 = qaoa_maxcut(n_layers=2)[1]
+bitstrings1 = qaoa_maxcut(n_layers=2)[1]
+bitstrings2 = qaoa_maxcut(n_layers=3)[1]
 
 import matplotlib.pyplot as plt
 
@@ -102,13 +104,13 @@ bins = np.arange(0, 17) - 0.5
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
 plt.subplot(1, 2, 1)
-plt.title("n_layers=1")
+plt.title("n_layers=2")
 plt.xlabel("bitstrings")
 plt.ylabel("freq.")
 plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(bitstrings1, bins=bins)
 plt.subplot(1, 2, 2)
-plt.title("n_layers=2")
+plt.title("n_layers=3")
 plt.xlabel("bitstrings")
 plt.ylabel("freq.")
 plt.xticks(xticks, xtick_labels, rotation="vertical")
