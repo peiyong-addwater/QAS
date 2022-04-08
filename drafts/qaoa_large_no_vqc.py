@@ -6,8 +6,8 @@ from qiskit_optimization.applications import Maxcut, Tsp
 import joblib
 np.random.seed(42)
 
-n_wires = 5
-graph = [(0, 1), (0, 3), (1, 2), (2, 3), (1, 4), (2, 4)]
+n_wires = 6
+graph =  [(0, 1), (0, 2), (1, 2), (2, 3), (1, 4), (2, 4), (0 ,5), (3, 5)]
 
 # unitary operator U_B with parameter beta
 def U_B(beta):
