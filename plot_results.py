@@ -215,6 +215,15 @@ plt.tight_layout()
 plt.savefig('fig_qaoa_search_measurements_more_samples.pdf')
 
 """
+QAOA 7 Qubit
+"""
+qaoa_7q_1_filename = "20220409-091016_QAOAVQCDemo_7Q_QMLStateBasicGates.json"
+qaoa_7q_2_filename = "20220409-091019_QAOAVQCDemo_7Q_QMLStateBasicGates.json"
+
+
+
+
+"""
 VQLS Results
 """
 sample_shots = 10**6
