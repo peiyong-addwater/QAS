@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.axes as axes
 import numpy as np
 import networkx as nx
-
+import operator
 from qiskit import Aer
 from qiskit.tools.visualization import plot_histogram
 from qiskit.circuit.library import TwoLocal
@@ -13,6 +13,7 @@ from qiskit.algorithms.optimizers import SPSA
 from qiskit.utils import algorithm_globals, QuantumInstance
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.problems import QuadraticProgram
+from collections import OrderedDict
 
 
 n = 7  # Number of nodes in graph
@@ -34,7 +35,7 @@ def draw_graph(G, colors, pos, save_name = 'qaoa_large_test.png'):
     plt.savefig(save_name)
 
 
-#draw_graph(G, colors, pos)
+draw_graph(G, colors, pos, 'max_cut_large.png')
 
 # Computing the weight matrix from the random graph
 w = np.zeros([n, n])
@@ -46,6 +47,7 @@ for i in range(n):
 print(w)
 
 best_cost_brute = 0
+cases = {}
 for b in range(2**n):
     x = [int(t) for t in reversed(list(bin(b)[2:].zfill(n)))]
     cost = 0
@@ -56,9 +58,11 @@ for b in range(2**n):
         best_cost_brute = cost
         xbest_brute = x
     print("case = " + str(x) + " cost = " + str(cost))
-
+    cases[str(x)] = cost
+cases = dict(sorted(cases.items(), key=operator.itemgetter(1),reverse=True))
+print("All Solutions:\n", cases)
 colors = ["r" if xbest_brute[i] == 0 else "c" for i in range(n)]
-draw_graph(G, colors, pos, 'max_cut_large.png')
+draw_graph(G, colors, pos, 'max_cut_large_solution.png')
 print("\nBest solution = " + str(xbest_brute) + " cost = " + str(best_cost_brute))
 
 max_cut = Maxcut(w)
