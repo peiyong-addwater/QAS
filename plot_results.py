@@ -219,7 +219,60 @@ QAOA 7 Qubit
 """
 qaoa_7q_1_filename = "20220409-091016_QAOAVQCDemo_7Q_QMLStateBasicGates.json"
 qaoa_7q_2_filename = "20220409-091019_QAOAVQCDemo_7Q_QMLStateBasicGates.json"
+with open(os.path.join(cwd, qaoa_7q_1_filename)) as f:
+    qaoa_dict_7q_1 = json.load(f)
+with open(os.path.join(cwd, qaoa_7q_2_filename)) as f:
+    qaoa_dict_7q_2 = json.load(f)
 
+qaoa_7q_early_stopping = 6.5
+
+qaoa_7q_1_search_reward_list = [s[2] for s in qaoa_dict_7q_1['search_reward_list']]
+qaoa_7q_1_fine_tune_loss = qaoa_dict_7q_1['fine_tune_loss']
+
+qaoa_7q_2_search_reward_list = [s[2] for s in qaoa_dict_7q_2['search_reward_list']]
+qaoa_7q_2_fine_tune_loss = qaoa_dict_7q_2['fine_tune_loss']
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_7q_1_search_reward_list))), qaoa_7q_1_search_reward_list,marker = 'x')
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Objective)')
+plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
+plt.legend()
+plt.savefig('fig_qaoa_7q_1_search_rewards.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_7q_2_search_reward_list))), qaoa_7q_2_search_reward_list,marker = 'x')
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Objective)')
+plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
+plt.legend()
+plt.savefig('fig_qaoa_7q_2_search_rewards.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_7q_1_fine_tune_loss))), qaoa_7q_1_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_qaoa_7q_1_fine_tune_loss.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_7q_2_fine_tune_loss))), qaoa_7q_2_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_qaoa_7q_2_fine_tune_loss.pdf')
+
+
+
+dev_qaoa_7_qubit = qml.device('lightning.qubit', wires=7, shots=1)
+
+def bitstring_to_int(bit_string_sample):
+    bit_string = "".join(str(bs) for bs in bit_string_sample)
+    return int(bit_string, base=2)
 
 
 
