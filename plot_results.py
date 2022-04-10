@@ -29,6 +29,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Reward')
 plt.legend()
 plt.savefig('fig_422_rewards_1_2.pdf')
+plt.close()
 
 """
 H2 results
@@ -56,6 +57,7 @@ plt.ylabel('Reward(-Energy, Ha)')
 #plt.title("Search Reward with Only Neighbouring CNOTs")
 plt.legend()
 plt.savefig('fig_nei_cnots_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(neigh_cnots_fine_tune_loss))), neigh_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
@@ -65,6 +67,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_neigh_cnots_fine_tune_loss.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(all_cnots_search_rewards))), all_cnots_search_rewards,marker = 'x')
@@ -72,6 +75,7 @@ plt.plot(list(range(len(all_cnots_search_rewards))), all_cnots_search_rewards,ma
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy)')
 plt.savefig('fig_all_cnots_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(all_cnots_fine_tune_loss))), all_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
@@ -80,6 +84,7 @@ plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{F
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
+plt.close()
 
 """
 QAOA results
@@ -109,6 +114,7 @@ plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
 plt.legend()
 plt.savefig('fig_qaoa_1_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_2_search_reward_list))), qaoa_2_search_reward_list,marker = 'x')
@@ -117,6 +123,7 @@ plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
 plt.legend()
 plt.savefig('fig_qaoa_2_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_1_fine_tune_loss))), qaoa_1_fine_tune_loss,linestyle = '-',marker = 'x')
@@ -126,6 +133,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_1_fine_tune_loss.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_2_fine_tune_loss))), qaoa_2_fine_tune_loss,linestyle = '-',marker = 'x')
@@ -135,6 +143,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_2_fine_tune_loss.pdf')
+plt.close()
 
 xticks = range(0, 16)
 xtick_labels = list(map(lambda x: format(x, "04b"), xticks))
@@ -154,6 +163,7 @@ plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(qaoa_2_measurement_result, bins=bins)
 plt.tight_layout()
 plt.savefig('fig_qaoa_search_measurements_after_search.pdf')
+plt.close()
 
 
 dev_qaoa_4_qubit = qml.device('lightning.qubit', wires=(0, 1, 2, 3), shots=1)
@@ -213,6 +223,7 @@ plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(bitstrings2, bins=bins)
 plt.tight_layout()
 plt.savefig('fig_qaoa_search_measurements_more_samples.pdf')
+plt.close()
 
 """
 QAOA 7 Qubit
@@ -239,6 +250,7 @@ plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
 plt.legend()
 plt.savefig('fig_qaoa_7q_1_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_7q_2_search_reward_list))), qaoa_7q_2_search_reward_list,marker = 'x')
@@ -247,6 +259,7 @@ plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
 plt.legend()
 plt.savefig('fig_qaoa_7q_2_search_rewards.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_7q_1_fine_tune_loss))), qaoa_7q_1_fine_tune_loss,linestyle = '-',marker = 'x')
@@ -256,6 +269,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_7q_1_fine_tune_loss.pdf')
+plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_7q_2_fine_tune_loss))), qaoa_7q_2_fine_tune_loss,linestyle = '-',marker = 'x')
@@ -265,7 +279,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_qaoa_7q_2_fine_tune_loss.pdf')
-
+plt.close()
 
 
 dev_qaoa_7_qubit = qml.device('lightning.qubit', wires=7, shots=1)
@@ -273,7 +287,77 @@ dev_qaoa_7_qubit = qml.device('lightning.qubit', wires=7, shots=1)
 def bitstring_to_int(bit_string_sample):
     bit_string = "".join(str(bs) for bs in bit_string_sample)
     return int(bit_string, base=2)
+@qml.qnode(dev_qaoa_7_qubit)
+def qaoa_circuit_7q_1():
+    for wire in range(7):
+        qml.Hadamard(wires=wire)
+    qml.Rot(0.40804097338041384,
+                2.145747463438778,
+                0.3783766926400953, wires=2)
+    qml.Rot(0.0019199100464665998,
+                -1.5282123553171945,
+                0.3032004878706815, wires=6)
+    qml.CNOT(wires=[2,3])
+    qml.Rot(1.2054773666875633e-06,
+                1.5707963267944618,
+                -0.15079140136872318, wires=1)
+    qml.Rot(0.2932945360209,
+                2.450137535981538,
+                -0.11260332894569126, wires=2)
+    qml.Rot(6.979993094134241e-13,
+                1.5707963267950102,
+                0.04144316021799416, wires=3)
+    qml.Rot(-1.2971984578042746e-05,
+                -1.5707963267947256,
+                0.0880285652701278, wires=0)
+    qml.Rot(3.0321126734711784e-13,
+                -1.570796326794784,
+                -0.0042588956223424046, wires=4)
+    qml.Rot(-3.4354851305977896e-13,
+                1.570796326791761,
+                -0.7220463364203641, wires=5)
+    qml.CNOT(wires=[3,2])
+    qml.CNOT(wires=[2,3])
 
+    return qml.sample()
+
+
+@qml.qnode(dev_qaoa_7_qubit)
+def qaoa_circuit_7q_2():
+    for wire in range(7):
+        qml.Hadamard(wires=wire)
+    qml.Rot(-0.34052284266112803,
+                -2.503167121128257,
+                -0.21261523751813463, wires=6)
+    qml.Rot(-1.3632510342594888e-13,
+                1.5707963267952114,
+                0.05700517700211684, wires=1)
+    qml.CNOT(wires=[6,0])
+    qml.Rot(3.8159332677590386e-13,
+                -1.5707963267946412,
+                0.20723775049241197, wires=4)
+    qml.Rot(-1.8109147275359574e-13,
+                -1.5707963267953997,
+                -0.25734450068502723, wires=5)
+    qml.Rot(-0.04272531861280469,
+                1.3461443352298144,
+                -0.19493523667279775, wires=3)
+    qml.CNOT(wires=[4,5])
+    qml.CNOT(wires=[5,4])
+    qml.CNOT(wires=[6,5])
+    qml.Rot(2.3821177174833814e-13,
+                -1.570796326794622,
+                0.41166743307737824, wires=0)
+    qml.CNOT(wires=[5,6])
+    qml.Rot(4.300116535668788e-06,
+                1.5707963267954885,
+                -0.032809110026752, wires=2)
+    qml.Rot(-0.2029238621698908,
+                -2.1672518224586232,
+                -0.08096727100106925, wires=5)
+
+
+    return qml.sample()
 
 
 """
@@ -361,6 +445,7 @@ ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
 
 plt.savefig('fig_vqls_search_results_compare.pdf')
+plt.close()
 
 
 
@@ -375,9 +460,20 @@ Draw circuits (always at last to avoid ugly boundaries on the bar chart)
 qml.drawer.use_style('black_white')
 fig, ax = qml.draw_mpl(qaoa_circuit_1)()
 plt.savefig('fig_qaoa_circ_1.pdf')
+plt.close()
 
 fig, ax = qml.draw_mpl(qaoa_circuit_2)()
 plt.savefig('fig_qaoa_circ_2.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(qaoa_circuit_7q_1)()
+plt.savefig('fig_qaoa_circ_7q_1.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(qaoa_circuit_7q_2)()
+plt.savefig('fig_qaoa_circ_7q_2.pdf')
+plt.close()
 
 fig, ax = qml.draw_mpl(vqls_circ)()
 plt.savefig('fig_vqls_circ.pdf')
+plt.close()
