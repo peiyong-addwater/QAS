@@ -8,7 +8,7 @@ plt.style.use(['science','nature'])
 import time
 
 """
-A = zeta * I + J X_1 + J X_2 + gamma Z_2 Z_3  + eta Z_3 Z_4
+A = zeta * I + J X_1 + J X_2 + eta Z_3 Z_4 + gamma Z_4 Z_5
 """
 
 J = 0.1
@@ -28,7 +28,7 @@ rng_seed =42 # Seed for random number generator
 
 print("Number of Strongly Entangled Layers: ", n_layers)
 # Coefficients of the linear combination A = c_0 A_0 + c_1 A_1 ...
-c = np.array([zeta, J, J, gamma, eta])
+c = np.array([zeta, J, J, eta, gamma])
 
 def U_b():
     """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
@@ -50,14 +50,14 @@ def CA(idx):
         qml.CNOT(wires=[ancilla_idx, 1])
 
     elif idx == 3:
-        # Z_1 Z_2
-        qml.CZ(wires=[ancilla_idx, 1])
-        qml.CZ(wires=[ancilla_idx, 2])
-
-    elif idx == 4:
         # Z_2 Z_3
         qml.CZ(wires=[ancilla_idx, 2])
         qml.CZ(wires=[ancilla_idx, 3])
+
+    elif idx == 4:
+        # Z_3 Z_4
+        qml.CZ(wires=[ancilla_idx, 3])
+        qml.CZ(wires=[ancilla_idx, 4])
 
 
 def variational_block(weights):
@@ -195,11 +195,11 @@ for it in range(steps):
 Id = np.identity(2)
 Z = np.array([[1, 0], [0, -1]])
 X = np.array([[0, 1], [1, 0]])
-A_0 = np.identity(n_qubits**2)
-A_1 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
-A_2 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
-A_3 = np.kron(Id, np.kron(Z, np.kron(Z, Id)))
-A_4 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
+A_0 = np.identity(2**n_qubits)
+A_1 = np.kron(X, np.kron(Id, np.kron(Id, np.kron(Id, Id))))
+A_2 = np.kron(Id, np.kron(X, np.kron(Id, np.kron(Id, Id))))
+A_3 = np.kron(Id, np.kron(Id, np.kron(Z, np.kron(Z, Id))))
+A_4 = np.kron(Id, np.kron(Id, np.kron(Id, np.kron(Z, Z))))
 
 
 A_num = c[0] * A_0 + c[1] * A_1 + c[2] * A_2 + c[3] * A_3 + c[4] * A_4

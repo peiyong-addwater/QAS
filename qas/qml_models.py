@@ -2496,7 +2496,7 @@ class VQLSDemo(ModelFromK):
         Z = np.array([[1, 0], [0, -1]])
         X = np.array([[0, 1], [1, 0]])
 
-        A_0 = np.identity(self.n_qubits ** 2)
+        A_0 = np.identity(2**self.n_qubits)
         A_1 = np.kron(X, np.kron(Id, np.kron(Id, Id)))
         A_2 = np.kron(Id, np.kron(X, np.kron(Id, Id)))
 
