@@ -12,6 +12,15 @@ graph =   [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
 #max-cut objective: -7.0
 #solution: [1 0 0 1 1 0 0]
 #solution objective: 7.0
+"""
+       More than one solutions:
+       '[1, 0, 0, 1, 1, 0, 0]': 7.0,
+       '[0, 1, 1, 0, 0, 1, 0]': 7.0,
+       '[0, 1, 1, 1, 0, 1, 0]': 7.0,
+       '[1, 0, 0, 0, 1, 0, 1]': 7.0,
+       '[1, 0, 0, 1, 1, 0, 1]': 7.0,
+       '[0, 1, 1, 0, 0, 1, 1]': 7.0
+"""
 # unitary operator U_B with parameter beta
 def U_B(beta):
     for wire in range(n_wires):
@@ -98,16 +107,18 @@ def qaoa_maxcut(n_layers=1):
     print("Optimized (gamma, beta) vectors:\n{}".format(params[:, :n_layers]))
     print("Most frequently sampled bit string is: {:07b}".format(most_freq_bit_string))
 
-    return -objective(params), bit_strings
+    return -objective(params), bit_strings, original_samples
 
 
 # perform qaoa on our graph with p=1,2 and
 # keep the bitstring sample lists
 p1 = 1
 p2 = 2
-bitstrings1 = qaoa_maxcut(n_layers=p1)[1]
-bitstrings2 = qaoa_maxcut(n_layers=p2)[1]
-
+bitstrings1, os1 = qaoa_maxcut(n_layers=p1)[1:]
+bitstrings2, os2 = qaoa_maxcut(n_layers=p2)[1:]
+print("{} layer(s): \n".format(p1), os1)
+print("{} layer(s): \n".format(p2), os2)
+"""
 import matplotlib.pyplot as plt
 
 xticks = range(0, 2**7)
@@ -129,3 +140,4 @@ plt.xticks(xticks, xtick_labels, rotation="vertical")
 plt.hist(bitstrings2, bins=bins)
 plt.tight_layout()
 plt.savefig('qaoa_large_test_no_vqc.png')
+"""
