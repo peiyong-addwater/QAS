@@ -2516,6 +2516,270 @@ class VQLSDemo(ModelFromK):
 
         return c_probs
 
+class VQLSDemo5Q(ModelFromK):
+    # Modified from https://pennylane.ai/qml/demos/tutorial_vqls.html
+    name = 'VQLSDemo_5Q'
+    def __init__(self, p:int, c:int, l:int, structure_list:List[int], op_pool:Union[QMLPool, dict]):
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.sample_shots = 10000
+        self.n_qubits = 5
+        self.tot_qubits = self.n_qubits + 1
+        self.ancilla_idx = self.n_qubits
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev_mu = qml.device("lightning.qubit", wires=self.tot_qubits)
+        self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
+        """
+        J = 0.1
+        zeta = 1
+        eta = 0.2
+        gamma = 0.1
+        A = zeta * I + J X_1 + J X_2 + eta Z_3 Z_4 + gamma Z_4 Z_5
+        |b> = H|0>
+        """
+        self.J = 0.1
+        self.zeta = 1
+        self.eta = 0.2
+        self.gamma = 0.1
+        self.coeff = np.array([self.zeta, self.J, self.J, self.eta, self.gamma])
+
+    def U_b(self):
+        """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
+        for idx in range(self.n_qubits):
+            qml.Hadamard(wires=idx)
+
+    def CA(self, idx):
+        """Controlled versions of the unitary components A_l of the problem matrix A."""
+        if idx == 0:
+            # identity
+            None
+
+        elif idx == 1:
+            # X_0
+            qml.CNOT(wires=[self.ancilla_idx, 0])
+
+        elif idx == 2:
+            # X_1
+            qml.CNOT(wires=[self.ancilla_idx, 1])
+
+        elif idx == 3:
+            # Z_2 Z_3
+            qml.CZ(wires=[self.ancilla_idx, 2])
+            qml.CZ(wires=[self.ancilla_idx, 3])
+
+        elif idx == 4:
+            # Z_3 Z_4
+            qml.CZ(wires=[self.ancilla_idx, 3])
+            qml.CZ(wires=[self.ancilla_idx, 4])
+
+    def backboneCirc(self, extracted_params):
+        for idx in range(self.n_qubits):
+            qml.Hadamard(wires=idx)
+        param_pos = 0
+        for i in range(self.p):
+            gate_dict = self.pool[self.k[i]]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                num_params = gate_obj.num_params
+                wires = gate_dict[gate_name]
+                if num_params > 0:
+                    gate_params = []
+                    for j in range(num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                else:
+                    gate_params = None
+                    qml_gate_obj = QMLGate(gate_name, wires, gate_params)
+                qml_gate_obj.getOp()
+
+    def constructFullCirc(self):
+        @qml.qnode(self.dev_mu)
+        def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
+
+            # First Hadamard gate applied to the ancillary qubit.
+            qml.Hadamard(wires=self.ancilla_idx)
+
+            # For estimating the imaginary part of the coefficient "mu", we must add a "-i"
+            # phase gate.
+            if part == "Im" or part == "im":
+                qml.PhaseShift(-np.pi / 2, wires=self.ancilla_idx)
+
+            # Variational circuit generating a guess for the solution vector |x>
+            self.backboneCirc(weights)
+
+            # Controlled application of the unitary component A_l of the problem matrix A.
+            self.CA(l)
+
+            # Adjoint of the unitary U_b associated to the problem vector |b>.
+            # In this specific example Adjoint(U_b) = U_b.
+            self.U_b()
+
+            # Controlled Z operator at position j. If j = -1, apply the identity.
+            if j != -1:
+                qml.CZ(wires=[self.ancilla_idx, j])
+
+            # Unitary U_b associated to the problem vector |b>.
+            self.U_b()
+
+            # Controlled application of Adjoint(A_lp).
+            # In this specific example Adjoint(A_lp) = A_lp.
+            self.CA(lp)
+
+            # Second Hadamard gate applied to the ancillary qubit.
+            qml.Hadamard(wires=self.ancilla_idx)
+
+            # Expectation value of Z for the ancillary qubit.
+            return qml.expval(qml.PauliZ(wires=self.ancilla_idx))
+
+        def mu(weights, l=None, lp=None, j=None):
+            """Generates the coefficients to compute the "local" cost function C_L."""
+
+            mu_real = local_hadamard_test(weights, l=l, lp=lp, j=j, part="Re")
+            mu_imag = local_hadamard_test(weights, l=l, lp=lp, j=j, part="Im")
+
+            return mu_real + 1.0j * mu_imag
+
+        def psi_norm(weights):
+            """Returns the normalization constant <psi|psi>, where |psi> = A |x>."""
+            norm = 0.0
+
+            for l in range(0, len(self.coeff)):
+                for lp in range(0, len(self.coeff)):
+                    norm = norm + self.coeff[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, -1)
+
+            return abs(norm)
+
+        def cost_loc(weights):
+            """Local version of the cost function. Tends to zero when A|x> is proportional to |b>."""
+            mu_sum = 0.0
+
+            for l in range(0, len(self.coeff)):
+                for lp in range(0, len(self.coeff)):
+                    for j in range(0, self.n_qubits):
+                        mu_sum = mu_sum + self.coeff[l] * np.conj(self.coeff[lp]) * mu(weights, l, lp, j)
+
+            mu_sum = abs(mu_sum)
+
+            # Cost function C_L
+            return 0.5 - 0.5 * mu_sum / (self.n_qubits * psi_norm(weights))
+
+        return cost_loc
+
+    def costFunc(self, extracted_params):
+        cost = self.constructFullCirc()
+        return cost(extracted_params)
+
+    def getLoss(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+        cost = self.costFunc(extracted_params)
+        return cost
+
+    def getReward(self, super_circ_params):
+        loss = self.getLoss(super_circ_params)
+        # scale the reward
+        return np.exp(-10*np.abs(loss))
+
+    def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
+        assert super_circ_params.shape[0] == self.p
+        assert super_circ_params.shape[1] == self.c
+        assert super_circ_params.shape[2] == self.l
+        extracted_params = []
+        gradients = np.zeros(super_circ_params.shape)
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
+        if len(extracted_params) == 0:
+            return gradients
+        cost_grad = qml.grad(self.costFunc)
+        extracted_gradients = cost_grad(extracted_params)
+        for i in range(len(self.param_indices)):
+            gradients[self.param_indices[i]] = extracted_gradients[i]
+        return gradients
+
+    def toList(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        gate_list = []
+        param_pos = 0
+        for i in self.k:
+            gate_dict = self.pool[i]
+            assert len(gate_dict.keys()) == 1
+            gate_name = list(gate_dict.keys())[0]
+            if gate_name != "PlaceHolder":
+                gate_pos = gate_dict[gate_name]
+                gate_obj = SUPPORTED_OPS_DICT[gate_name]
+                gate_num_params = gate_obj.num_params
+                if gate_num_params > 0:
+                    gate_params = []
+                    for j in range(gate_num_params):
+                        gate_params.append(extracted_params[param_pos])
+                        param_pos = param_pos + 1
+                    gate_list.append((gate_name, gate_pos, gate_params))
+                else:
+                    gate_list.append((gate_name, gate_pos, None))
+
+        return gate_list
+
+    def getQuantumSolution(self, super_circ_params):
+        extracted_params = []
+        for index in self.param_indices:
+            extracted_params.append(super_circ_params[index])
+        extracted_params = np.array(extracted_params)
+
+        @qml.qnode(self.div_x)
+        def prepare_and_sample(weights):
+            # Variational circuit generating a guess for the solution vector |x>
+            self.backboneCirc(weights)
+
+            # We assume that the system is measured in the computational basis.
+            # then sampling the device will give us a value of 0 or 1 for each qubit (n_qubits)
+            # this will be repeated for the total number of shots provided (n_shots)
+            return qml.sample()
+
+        raw_samples = prepare_and_sample(extracted_params)
+
+        # convert the raw samples (bit strings) into integers and count them
+        samples = []
+        for sam in raw_samples:
+            samples.append(int("".join(str(bs) for bs in sam), base=2))
+
+        q_probs = np.bincount(samples) / self.sample_shots
+
+        return q_probs
+
+    def getClassicalSolution(self):
+        Id = np.identity(2)
+        Z = np.array([[1, 0], [0, -1]])
+        X = np.array([[0, 1], [1, 0]])
+
+        A_0 = np.identity(2**self.n_qubits)
+        A_1 = np.kron(X, np.kron(Id, np.kron(Id, np.kron(Id, Id))))
+        A_2 = np.kron(Id, np.kron(X, np.kron(Id, np.kron(Id, Id))))
+        A_3 = np.kron(Id, np.kron(Id, np.kron(Z, np.kron(Z, Id))))
+        A_4 = np.kron(Id, np.kron(Id, np.kron(Id, np.kron(Z, Z))))
+
+
+        A_num = self.coeff[0] * A_0 + self.coeff[1] * A_1 + self.coeff[2] * A_2 + self.coeff[3] * A_3 + self.coeff[4] * A_4
+        b = np.ones(2 ** self.n_qubits) / np.sqrt(2 ** self.n_qubits)
+
+        print("A = \n", A_num)
+        print("b = \n", b)
+
+        A_inv = np.linalg.inv(A_num)
+        x = np.dot(A_inv, b)
+
+        c_probs = (x / np.linalg.norm(x)) ** 2
+
+        return c_probs
+
 
 class QAOAVQCDemo(ModelFromK):
     # Modified from https://pennylane.ai/qml/demos/tutorial_qaoa_maxcut.html
