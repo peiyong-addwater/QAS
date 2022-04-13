@@ -2523,7 +2523,7 @@ class VQLSDemo5Q(ModelFromK):
         self.k = structure_list
         self.pool = op_pool
         self.p, self.c, self.l = p, c, l
-        self.sample_shots = 10000
+        self.sample_shots = 10**6
         self.n_qubits = 5
         self.tot_qubits = self.n_qubits + 1
         self.ancilla_idx = self.n_qubits

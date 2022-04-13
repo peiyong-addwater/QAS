@@ -363,15 +363,16 @@ def qaoa_circuit_7q_2():
 """
 VQLS Results
 """
+n_qubits = 4
 sample_shots = 10**6
-dev_vqls_4_qubit = qml.device('lightning.qubit', wires=(0, 1, 2, 3), shots=sample_shots)
+dev_vqls = qml.device('lightning.qubit', wires=range(n_qubits), shots=sample_shots)
 J = 0.1
 zeta = 1
 eta = 0.2
 coeff = np.array([zeta, J, J, eta])
-@qml.qnode(dev_vqls_4_qubit)
+@qml.qnode(dev_vqls)
 def vqls_circ():
-    for i in range(4):
+    for i in range(n_qubits):
         qml.Hadamard(wires=i)
 
     qml.Rot(0.5604857779729846,
@@ -419,7 +420,7 @@ A_3 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
 
 
 A_num = coeff[0] * A_0 + coeff[1] * A_1 + coeff[2] * A_2 + coeff[3] * A_3
-b = np.ones(2 ** 4) / np.sqrt(2 ** 4)
+b = np.ones(2 ** n_qubits) / np.sqrt(2 ** n_qubits)
 
 print("A = \n", A_num)
 print("b = \n", b)
@@ -434,13 +435,13 @@ print("|<x|n>|^2=\n", q_probs)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
 
-ax1.bar(np.arange(0, 2 ** 4), c_probs)
-ax1.set_xlim(-0.5, 2 ** 4 - 0.5)
+ax1.bar(np.arange(0, 2 ** n_qubits), c_probs)
+ax1.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax1.set_xlabel("Vector space basis")
 ax1.set_title("Classical probabilities")
 
-ax2.bar(np.arange(0, 2 ** 4), q_probs)
-ax2.set_xlim(-0.5, 2 ** 4 - 0.5)
+ax2.bar(np.arange(0, 2 ** n_qubits), q_probs)
+ax2.set_xlim(-0.5, 2 ** n_qubits - 0.5)
 ax2.set_xlabel("Hilbert space basis")
 ax2.set_title("Quantum probabilities")
 
