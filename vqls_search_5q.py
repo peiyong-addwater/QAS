@@ -34,7 +34,10 @@ if __name__ == "__main__":
     state_class = QMLStateBasicGates
     num_qubits = 5
 
-    np.random.seed(42)
+    q_delta = 0.001  # Initial spread of random quantum weights
+    rng_seed = 42  # Seed for random number generator
+
+    np.random.seed(rng_seed)
 
     marker = nowtime()
     task = model.name + "_" + state_class.name
@@ -48,7 +51,7 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 10
+    p = 15
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p//2}
@@ -66,7 +69,7 @@ if __name__ == "__main__":
             return r - (ph_count - ph_count_limit) / 1
         return r
 
-    init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
+    init_params = np.random.randn(p, c, l)*q_delta
 
     final_params, final_best_arc, final_best_node, final_best_reward, final_controller, reward_list = search(
         model=model,
@@ -83,15 +86,15 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=20,
-        search_arc_batchsize=100,
+        warmup_arc_batchsize=10,
+        search_arc_batchsize=20,
         alpha_max=2,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
         prune_constant_min=0.50,
         max_visits_prune_threshold=5,
         min_num_children=5,
-        sampling_execute_rounds=10,
+        sampling_execute_rounds=50,
         exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
