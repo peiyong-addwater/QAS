@@ -43,16 +43,16 @@ if __name__ == "__main__":
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["Rot","PlaceHolder"]
-    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[4,3],[3,4], [0,4],[4,0]]
+    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[4,3],[3,4],[0,4],[4,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
+    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 20
+    p = 10
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p//2}
-    ph_count_limit = p
+    ph_count_limit = 0
 
     # penalty function:
     def penalty_func(r: float, node: TreeNode):

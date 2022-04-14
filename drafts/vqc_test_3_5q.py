@@ -69,42 +69,6 @@ def variational_block(weights):
     # A very minimal variational circuit.
     qml.StronglyEntanglingLayers(weights=weights, wires=range(n_qubits))
 
-def vqls_circ_1():
-    """
-    for
-    J = 0.1
-    zeta = 1
-    eta = 0.2
-    :return:
-    """
-    for i in range(4):
-        qml.Hadamard(wires=i)
-
-    qml.Rot(0.5604857779729846,
-                0.2975881694474745,
-                -0.16130212489384718, wires=1)
-    qml.Rot(-0.07462353342079096,
-                0.33125436215663834,
-                0.07889636851129728, wires=3)
-    qml.Rot(0.05215167213498776,
-                -1.4000847094560546e-07,
-                -0.05215168141170644, wires=0)
-    qml.CNOT(wires=[1,0])
-    qml.Rot(0.039182651193984515,
-                -0.29532920771860316,
-                0.08795141616001576, wires=1)
-    qml.CNOT(wires=[1,0])
-    qml.Rot(0.0882697884073239,
-                1.419131193023994e-07,
-                -0.08826979432942605, wires=0)
-    qml.Rot(-0.18223202170553732,
-                -4.199805334992931e-09,
-                0.1822320257843591, wires=2)
-    qml.CNOT(wires=[2,3])
-    qml.Rot(-0.6359327678530272,
-                0.015263241646471063,
-                0.10453369952015328, wires=1)
-    #return qml.sample()
 
 dev_mu = qml.device("default.qubit.autograd", wires=tot_qubits)
 
@@ -208,6 +172,8 @@ b = np.ones(2**n_qubits) / np.sqrt(2**n_qubits)
 print("A = \n", A_num)
 print("b = \n", b)
 
+print("Condition number of A: ", np.linalg.cond(A_num))
+print()
 A_inv = np.linalg.inv(A_num)
 x = np.dot(A_inv, b)
 
