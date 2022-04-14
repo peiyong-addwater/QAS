@@ -85,7 +85,7 @@ if __name__ == "__main__":
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=500,
         search_arc_batchsize=100,
-        alpha_max=1,
+        alpha_max=2,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
         prune_constant_min=0.60,
