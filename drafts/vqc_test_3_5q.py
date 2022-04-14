@@ -8,27 +8,50 @@ plt.style.use(['science','nature'])
 import time
 
 """
-A = zeta * I + J X_1 + J X_2 + eta Z_3 Z_4 + gamma Z_4 Z_5
+A = zeta * I + J X_1 X_2 + J X_2 Z_3 + eta Z_4 Z_5
 """
 
 J = 0.1
 zeta = 1
 eta = 0.2
-gamma = 0.1
+#gamma = 0.1
 
 n_layers =1
 n_qubits = 5  # Number of system qubits.
 n_shots = 10 ** 6  # Number of quantum measurements.
 tot_qubits = n_qubits + 1  # Addition of an ancillary qubit.
 ancilla_idx = n_qubits  # Index of the ancillary qubit (last position).
-steps = 3 # Number of optimization steps
+steps = 10 # Number of optimization steps
 learning_rate = 2  # Learning rate
-q_delta = 0.001  # Initial spread of random quantum weights
+q_delta = 0.01  # Initial spread of random quantum weights
 rng_seed =42 # Seed for random number generator
 
 print("Number of Strongly Entangled Layers: ", n_layers)
 # Coefficients of the linear combination A = c_0 A_0 + c_1 A_1 ...
-c = np.array([zeta, J, J, eta, gamma])
+c = np.array([zeta, J, J, eta])
+
+Id = np.identity(2)
+Z = np.array([[1, 0], [0, -1]])
+X = np.array([[0, 1], [1, 0]])
+A_0 = np.identity(2**n_qubits)
+A_1 = np.kron(X, np.kron(X, np.kron(Id, np.kron(Id, Id))))
+A_2 = np.kron(Id, np.kron(X, np.kron(Z, np.kron(Id, Id))))
+A_3 = np.kron(Id, np.kron(Id, np.kron(Id, np.kron(Z, Z))))
+#A_4 = np.kron(Id, np.kron(Id, np.kron(Id, np.kron(Id, Z))))
+
+
+A_num = c[0] * A_0 + c[1] * A_1 + c[2] * A_2 + c[3] * A_3 #+ c[4]*A_4
+b = np.ones(2**n_qubits) / np.sqrt(2**n_qubits)
+
+print("A = \n", A_num)
+print("b = \n", b)
+
+A_inv = np.linalg.inv(A_num)
+x = np.dot(A_inv, b)
+
+c_probs = (x / np.linalg.norm(x)) ** 2
+
+
 
 def U_b():
     """Unitary matrix rotating the ground state to the problem vector |b> = U_b |0>."""
@@ -42,22 +65,21 @@ def CA(idx):
         None
 
     elif idx == 1:
-        # X_0
+        # X_0 X_1
         qml.CNOT(wires=[ancilla_idx, 0])
-
-    elif idx == 2:
-        # X_1
         qml.CNOT(wires=[ancilla_idx, 1])
 
-    elif idx == 3:
-        # Z_2 Z_3
+    elif idx == 2:
+        # X_1 Z_2
+        qml.CNOT(wires=[ancilla_idx, 1])
         qml.CZ(wires=[ancilla_idx, 2])
-        qml.CZ(wires=[ancilla_idx, 3])
 
-    elif idx == 4:
-        # Z_3 Z_4
+    elif idx == 3:
+        # Z_4 Z_5
         qml.CZ(wires=[ancilla_idx, 3])
         qml.CZ(wires=[ancilla_idx, 4])
+
+
 
 
 def variational_block(weights):
@@ -68,43 +90,6 @@ def variational_block(weights):
 
     # A very minimal variational circuit.
     qml.StronglyEntanglingLayers(weights=weights, wires=range(n_qubits))
-
-def vqls_circ_1():
-    """
-    for
-    J = 0.1
-    zeta = 1
-    eta = 0.2
-    :return:
-    """
-    for i in range(4):
-        qml.Hadamard(wires=i)
-
-    qml.Rot(0.5604857779729846,
-                0.2975881694474745,
-                -0.16130212489384718, wires=1)
-    qml.Rot(-0.07462353342079096,
-                0.33125436215663834,
-                0.07889636851129728, wires=3)
-    qml.Rot(0.05215167213498776,
-                -1.4000847094560546e-07,
-                -0.05215168141170644, wires=0)
-    qml.CNOT(wires=[1,0])
-    qml.Rot(0.039182651193984515,
-                -0.29532920771860316,
-                0.08795141616001576, wires=1)
-    qml.CNOT(wires=[1,0])
-    qml.Rot(0.0882697884073239,
-                1.419131193023994e-07,
-                -0.08826979432942605, wires=0)
-    qml.Rot(-0.18223202170553732,
-                -4.199805334992931e-09,
-                0.1822320257843591, wires=2)
-    qml.CNOT(wires=[2,3])
-    qml.Rot(-0.6359327678530272,
-                0.015263241646471063,
-                0.10453369952015328, wires=1)
-    #return qml.sample()
 
 dev_mu = qml.device("default.qubit.autograd", wires=tot_qubits)
 
@@ -191,27 +176,6 @@ for it in range(steps):
     epoch_end = time.time()
     print("Step {:3d}       Cost_L = {:2.15f}    Time {:9.7f}".format(it, cost, epoch_end-epoch_start))
     cost_history.append(cost)
-
-Id = np.identity(2)
-Z = np.array([[1, 0], [0, -1]])
-X = np.array([[0, 1], [1, 0]])
-A_0 = np.identity(2**n_qubits)
-A_1 = np.kron(X, np.kron(Id, np.kron(Id, np.kron(Id, Id))))
-A_2 = np.kron(Id, np.kron(X, np.kron(Id, np.kron(Id, Id))))
-A_3 = np.kron(Id, np.kron(Id, np.kron(Z, np.kron(Z, Id))))
-A_4 = np.kron(Id, np.kron(Id, np.kron(Id, np.kron(Z, Z))))
-
-
-A_num = c[0] * A_0 + c[1] * A_1 + c[2] * A_2 + c[3] * A_3 + c[4] * A_4
-b = np.ones(2**n_qubits) / np.sqrt(2**n_qubits)
-
-print("A = \n", A_num)
-print("b = \n", b)
-
-A_inv = np.linalg.inv(A_num)
-x = np.dot(A_inv, b)
-
-c_probs = (x / np.linalg.norm(x)) ** 2
 
 dev_x = qml.device("default.qubit", wires=n_qubits, shots=n_shots)
 
