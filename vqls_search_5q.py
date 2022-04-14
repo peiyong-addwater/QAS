@@ -52,7 +52,7 @@ if __name__ == "__main__":
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p//2}
-    ph_count_limit = 0
+    ph_count_limit = p
 
     # penalty function:
     def penalty_func(r: float, node: TreeNode):
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         prune_constant_max=0.90,
         prune_constant_min=0.60,
         max_visits_prune_threshold=5,
-        min_num_children=4,
+        min_num_children=1,
         sampling_execute_rounds=20,
         exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
