@@ -38,10 +38,10 @@ draw_graph(G, colors, pos, 'fig_max_cut_large_7q.pdf')
 sol_1 = list("0110010")
 sol_2 = list("0111010")
 colors_1 = ["r" if sol_1[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_1, pos, 'fig_maxcut_res_0110010.pdf')
+draw_graph(G, colors_1, pos, 'fig_maxcut_1_res_0110010.pdf')
 
 colors_2 = ["r" if sol_2[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_2, pos, 'fig_maxcut_res_0111010.pdf')
+draw_graph(G, colors_2, pos, 'fig_maxcut_2_res_0111010.pdf')
 
 # Computing the weight matrix from the random graph
 w = np.zeros([n, n])
