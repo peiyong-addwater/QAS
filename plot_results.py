@@ -3,6 +3,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import pennylane as qml
+import networkx as nx
 plt.style.use(['science','nature'])
 cwd = os.getcwd()
 #print(cwd)
@@ -266,7 +267,7 @@ plt.plot(list(range(len(qaoa_7q_1_fine_tune_loss))), qaoa_7q_1_fine_tune_loss,li
 plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
-plt.ylabel('Loss (Energy, Ha)')
+plt.ylabel('Loss (Energy)')
 plt.legend()
 plt.savefig('fig_qaoa_7q_1_fine_tune_loss.pdf')
 plt.close()
@@ -276,7 +277,7 @@ plt.plot(list(range(len(qaoa_7q_2_fine_tune_loss))), qaoa_7q_2_fine_tune_loss,li
 plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
-plt.ylabel('Loss (Energy, Ha)')
+plt.ylabel('Loss (Energy)')
 plt.legend()
 plt.savefig('fig_qaoa_7q_2_fine_tune_loss.pdf')
 plt.close()

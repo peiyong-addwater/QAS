@@ -20,22 +20,28 @@ n = 7  # Number of nodes in graph
 G = nx.Graph()
 G.add_nodes_from(np.arange(0, n, 1))
 elist = [(0, 1), (0, 2),  (2, 3), (1, 4), (2, 4), (0 ,5),  (3, 6), (1,6)]
-# tuple is (i,j,weight) where (i,j) is the edge
 G.add_edges_from(elist)
 
-colors = ["r" for node in G.nodes()]
-pos = nx.spring_layout(G)
+colors = ["#00b4d9" for node in G.nodes()]
+pos = nx.spring_layout(G,seed=42)
 
 
 def draw_graph(G, colors, pos, save_name = 'qaoa_large_test.png'):
     default_axes = plt.axes(frameon=False)
-    nx.draw_networkx(G, node_color=colors, node_size=600, alpha=0.8, ax=default_axes, pos=pos)
-    edge_labels = nx.get_edge_attributes(G, "weight")
-    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels)
+    nx.draw_networkx(G, node_color=colors, node_size=300, alpha=0.8, pos=pos, ax=default_axes)
+    #edge_labels = nx.get_edge_attributes(G, "weight")
+    #nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels)
     plt.savefig(save_name)
 
 
-draw_graph(G, colors, pos, 'max_cut_large.png')
+draw_graph(G, colors, pos, 'fig_max_cut_large_7q.pdf')
+sol_1 = list("0110010")
+sol_2 = list("0111010")
+colors_1 = ["r" if sol_1[i] == "0" else "c" for i in range(n)]
+draw_graph(G, colors_1, pos, 'fig_maxcut_res_0110010.pdf')
+
+colors_2 = ["r" if sol_2[i] == "0" else "c" for i in range(n)]
+draw_graph(G, colors_2, pos, 'fig_maxcut_res_0111010.pdf')
 
 # Computing the weight matrix from the random graph
 w = np.zeros([n, n])
