@@ -49,7 +49,7 @@ if __name__ == "__main__":
     connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[4,3],[3,4],[0,4],[4,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
-    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
+    pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
     p = 15
     l = 3
