@@ -54,7 +54,7 @@ if __name__ == "__main__":
     p = 30
     l = 1
     c = len(pool)
-    gate_limit = {"CNOT": p//2}
+    gate_limit = {"CZ": p//2}
     ph_count_limit = 0
 
     # penalty function:
