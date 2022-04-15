@@ -52,7 +52,7 @@ if __name__ == "__main__":
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
     p = 30
-    l = 3
+    l = 1
     c = len(pool)
     gate_limit = {"CNOT": p//2}
     ph_count_limit = 0
