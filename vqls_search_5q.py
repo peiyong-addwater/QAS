@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
+    single_qubit_gate = ["U3","PlaceHolder"]
     connection_graph = [[0,1],[1,2],[2,3],[3,4], [1,0], [2,1], [3,2], [4,3], [0,4], [4,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         num_warmup_iterations=3,
         super_circ_train_optimizer=qml.GradientDescentOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=0.8,
+        early_stop_threshold=0.9,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
