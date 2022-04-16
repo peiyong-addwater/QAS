@@ -51,11 +51,11 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 10
+    p = 20
     l = 3
     c = len(pool)
     gate_limit = {"CNOT": p//2}
-    ph_count_limit = 0
+    ph_count_limit = 10
 
     # penalty function:
     def penalty_func(r: float, node: TreeNode):
