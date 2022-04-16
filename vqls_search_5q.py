@@ -55,7 +55,7 @@ if __name__ == "__main__":
     l = 3
     c = len(pool)
     gate_limit = {"CZ": p//2}
-    ph_count_limit = 0
+    ph_count_limit = p
 
     # penalty function:
     def penalty_func(r: float, node: TreeNode):
