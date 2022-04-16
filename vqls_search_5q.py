@@ -44,9 +44,9 @@ if __name__ == "__main__":
     filename = marker+'_' +task+'.json'
     print(task)
     init_qubit_with_actions = None
-    two_qubit_gate = ["CZ"]
-    single_qubit_gate = ["RY","PlaceHolder"]
-    connection_graph = [[0,1],[1,2],[2,3],[3,4]]
+    two_qubit_gate = ["CNOT"]
+    single_qubit_gate = ["Rot","PlaceHolder"]
+    connection_graph = [[0,1],[1,2],[2,3],[3,4], [1,0], [2,1], [3,2], [4,3], [0,4], [4,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
@@ -89,13 +89,13 @@ if __name__ == "__main__":
         warmup_arc_batchsize=500,
         search_arc_batchsize=200,
         alpha_max=1,
-        alpha_decay_rate=0.8,
+        alpha_decay_rate=0.99,
         prune_constant_max=0.80,
         prune_constant_min=0.50,
         max_visits_prune_threshold=5,
         min_num_children=5,
         sampling_execute_rounds=5,
-        exploit_execute_rounds=100,
+        exploit_execute_rounds=20,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         verbose=1,
