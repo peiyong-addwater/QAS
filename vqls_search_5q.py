@@ -54,7 +54,7 @@ if __name__ == "__main__":
     p = 10
     l = 3
     c = len(pool)
-    gate_limit = {"CZ": p//2}
+    gate_limit = {"CNOT": p//2}
     ph_count_limit = p
 
     # penalty function:
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=200,
-        num_warmup_iterations=20,
+        num_warmup_iterations=40,
         super_circ_train_optimizer=qml.GradientDescentOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=0.9,
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         cmab_exploit_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=True,
+        search_reset=False,
         avg_gradients=True
     )
 
