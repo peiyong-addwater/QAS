@@ -45,13 +45,13 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["U3","PlaceHolder"]
+    single_qubit_gate = ["Rot","PlaceHolder"]
     connection_graph = [[0,1],[1,2],[2,3],[3,4], [1,0], [2,1], [3,2], [4,3], [0,4], [4,0]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 30
+    p = 10
     l = 3
     c = len(pool)
     gate_limit = {"CZ": p//2}
@@ -77,8 +77,8 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=50,
-        num_warmup_iterations=3,
+        num_iterations=200,
+        num_warmup_iterations=20,
         super_circ_train_optimizer=qml.GradientDescentOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=0.9,
@@ -86,16 +86,16 @@ if __name__ == "__main__":
         super_circ_train_lr=0.1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=500,
-        search_arc_batchsize=200,
+        warmup_arc_batchsize=1000,
+        search_arc_batchsize=500,
         alpha_max=1,
         alpha_decay_rate=0.99,
-        prune_constant_max=0.80,
-        prune_constant_min=0.50,
-        max_visits_prune_threshold=5,
-        min_num_children=5,
-        sampling_execute_rounds=3,
-        exploit_execute_rounds=20,
+        prune_constant_max=0.70,
+        prune_constant_min=0.30,
+        max_visits_prune_threshold=10,
+        min_num_children=c//2+1,
+        sampling_execute_rounds=2,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         verbose=1,

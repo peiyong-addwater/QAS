@@ -591,8 +591,9 @@ def search(
                           sampling_execute_rounds,
                           exploit_execute_rounds)
                   + "=" * 10)
-            #TODO: No reset? Reset will (perhaps) lose all the reward information obtained during the warm up stage.
-            # However, the reward distribution will change after parameters being updated
+            # TODO: No reset? Reset will (perhaps) lose all the reward information obtained during the warm up stage.
+            # TODO: However, the reward distribution will change after parameters being updated
+            # TODO: But is there an approach to pass those reward information down to the next iteration but with a discount?
             if search_reset:
                 controller._reset() # reset
                 print("Search Reset...")
