@@ -2528,7 +2528,7 @@ class VQLSDemo5Q(ModelFromK):
         self.tot_qubits = self.n_qubits + 1
         self.ancilla_idx = self.n_qubits
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev_mu = qml.device('qulacs.simulator', wires=self.tot_qubits)
+        self.dev_mu = qml.device("lightning.qubit", wires=self.tot_qubits)
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
         """
         J = 0.1
@@ -2597,7 +2597,7 @@ class VQLSDemo5Q(ModelFromK):
                 qml_gate_obj.getOp()
 
     def constructFullCirc(self):
-        @qml.qnode(self.dev_mu)
+        @qml.qnode(self.dev_mu, diff_method="adjoint")
         def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
             # First Hadamard gate applied to the ancillary qubit.
