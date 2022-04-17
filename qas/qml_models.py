@@ -2528,7 +2528,7 @@ class VQLSDemo5Q(ModelFromK):
         self.tot_qubits = self.n_qubits + 1
         self.ancilla_idx = self.n_qubits
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev_mu = qml.device("lightning.qubit", wires=self.tot_qubits)
+        self.dev_mu = qml.device('qulacs.simulator', wires=self.tot_qubits)
         self.div_x = qml.device("lightning.qubit", wires = self.n_qubits, shots = self.sample_shots)
         """
         J = 0.1
