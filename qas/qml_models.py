@@ -2258,7 +2258,6 @@ class WStateFiveQubit(ModelFromK):
 
         return gate_list
 
-
 class VQLSDemo(ModelFromK):
     # Modified from https://pennylane.ai/qml/demos/tutorial_vqls.html
     name = 'VQLSDemo_4Q'
@@ -2333,7 +2332,7 @@ class VQLSDemo(ModelFromK):
                 qml_gate_obj.getOp()
 
     def constructFullCirc(self):
-        @qml.qnode(self.dev_mu)
+        @qml.qnode(self.dev_mu, diff_method='adjoint')
         def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
             # First Hadamard gate applied to the ancillary qubit.
@@ -2420,7 +2419,7 @@ class VQLSDemo(ModelFromK):
     def getReward(self, super_circ_params):
         loss = self.getLoss(super_circ_params)
         # scale the reward
-        return np.exp(-10*np.abs(loss))
+        return np.exp(-10*loss)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
@@ -2684,7 +2683,7 @@ class VQLSDemo5Q(ModelFromK):
     def getReward(self, super_circ_params):
         loss = self.getLoss(super_circ_params)
         # scale the reward
-        return np.exp(-20*np.abs(loss))
+        return np.exp(-30*loss)
 
     def getGradient(self, super_circ_params:Union[np.ndarray, pnp.ndarray, Sequence]):
         assert super_circ_params.shape[0] == self.p
