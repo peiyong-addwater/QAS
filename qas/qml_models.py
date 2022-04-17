@@ -2597,7 +2597,7 @@ class VQLSDemo5Q(ModelFromK):
                 qml_gate_obj.getOp()
 
     def constructFullCirc(self):
-        @qml.qnode(self.dev_mu, diff_method="adjoint")
+        @qml.qnode(self.dev_mu)
         def local_hadamard_test(weights, l=None, lp=None, j=None, part=None):
 
             # First Hadamard gate applied to the ancillary qubit.
