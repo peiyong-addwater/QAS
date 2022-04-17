@@ -35,9 +35,6 @@ if __name__ == "__main__":
     num_qubits = 5
 
     q_delta = 0.001  # Initial spread of random quantum weights
-    rng_seed = 42  # Seed for random number generator
-
-    np.random.seed(rng_seed)
 
     marker = nowtime()
     task = model.name + "_" + state_class.name
