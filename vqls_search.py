@@ -34,7 +34,6 @@ if __name__ == "__main__":
     state_class = QMLStateBasicGates
     num_qubits = 4
 
-    np.random.seed(42)
 
     marker = nowtime()
     task = model.name + "_" + state_class.name
