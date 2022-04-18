@@ -194,7 +194,7 @@ def prepare_and_sample(weights):
 
 
 raw_samples = prepare_and_sample(w)
-
+print(qml.draw(prepare_and_sample)(w))
 # convert the raw samples (bit strings) into integers and count them
 samples = []
 for sam in raw_samples:
