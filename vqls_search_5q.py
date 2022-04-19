@@ -97,7 +97,7 @@ if __name__ == "__main__":
         cmab_exploit_policy='local_optimal',
         verbose=1,
         state_class=state_class,
-        search_reset=False,
+        search_reset=True,
         avg_gradients=True
     )
 
