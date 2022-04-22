@@ -86,8 +86,8 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=100, # was 200
-        num_warmup_iterations=3,
+        num_iterations=200,
+        num_warmup_iterations=10,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=7.88,
