@@ -58,7 +58,7 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(12)
     pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 150
+    p = 100
     l = 3
     c = len(pool)
     ph_count_limit = p
