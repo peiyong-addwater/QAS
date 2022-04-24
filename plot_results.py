@@ -364,6 +364,32 @@ def qaoa_circuit_7q_2():
 """
 VQLS Results
 """
+vqls_4q_filename = "20220408-040418_VQLSDemo_4Q_QMLStateBasicGates.json"
+early_stop_4q = 0.9
+with open(os.path.join(cwd, vqls_4q_filename)) as f:
+    vqls_4q_res_dict = json.load(f)
+
+vqls_4q_reward_list = [c[2] for c in vqls_4q_res_dict['search_reward_list']]
+vqls_4q_finetune_loss = vqls_4q_res_dict['fine_tune_loss']
+
+fig = plt.figure()
+plt.plot(list(range(len(vqls_4q_reward_list))), vqls_4q_reward_list, linestyle = '-', marker='x', label='search reward')
+plt.axhline(y = early_stop_4q, color = 'r', linestyle = '--', label='early stop threshold')
+plt.xlabel('Epoch')
+plt.ylabel('Reward ($-C_L$)')
+plt.legend()
+plt.savefig('fig_vqls_4q_search_rewards.pdf')
+plt.close()
+
+fig=plt.figure()
+plt.plot(list(range(len(vqls_4q_finetune_loss))), vqls_4q_finetune_loss, linestyle = '-', marker='x', label='finetune loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss ($C_L$)')
+plt.legend()
+plt.savefig('fig_vqls_4q_finetune.pdf')
+plt.close()
+
+
 n_qubits = 4
 sample_shots = 10**6
 dev_vqls = qml.device('lightning.qubit', wires=range(n_qubits), shots=sample_shots)
