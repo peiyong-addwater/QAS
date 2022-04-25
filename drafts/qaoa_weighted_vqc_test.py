@@ -89,7 +89,7 @@ def circuit_train(weights, edge=None):
     return qml.expval(qml.Hermitian(pauli_z_2, wires=wires))
 
 def qaoa_vqc(n_layers = 1):
-    print("Number of Strongly Entangled Layers: ", n_layers)
+    print("Number of Layers: ", n_layers)
     np.random.seed(rng_seed)
     init_params = q_delta * np.random.randn(n_wires*n_layers*3, requires_grad=True).reshape((n_layers, n_wires, 3))
     obj_list = []
