@@ -15,6 +15,15 @@ from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.problems import QuadraticProgram
 from collections import OrderedDict
 
+"""
+optimal function value: 3.3
+optimal value: [0. 1. 1. 1. 0. 1. 0.]
+status: SUCCESS
+energy: -1.5
+max-cut objective: -3.3000000000000003
+solution: [0 1 1 1 0 1 0]
+solution objective: 3.3
+"""
 
 n = 7  # Number of nodes in graph
 G = nx.Graph()
@@ -23,7 +32,7 @@ elist = [(0, 1, 0.1), (0, 2, 0.2),  (2, 3, 0.3), (1, 4, 0.4), (2, 4, 0.5), (0 ,5
 G.add_weighted_edges_from(elist)
 
 colors = ["#00b4d9" for node in G.nodes()]
-pos = nx.spring_layout(G,seed=117)
+pos = nx.spring_layout(G,seed=2077)
 
 
 def draw_graph(G, colors, pos, save_name = 'qaoa_large_weighted_test.png'):
@@ -33,16 +42,16 @@ def draw_graph(G, colors, pos, save_name = 'qaoa_large_weighted_test.png'):
     nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels)
     plt.savefig(save_name)
 
-"""
-draw_graph(G, colors, pos, 'fig_max_cut_large_7q.pdf')
-sol_1 = list("0110010")
-sol_2 = list("0111010")
+
+draw_graph(G, colors, pos, 'fig_max_cut_weighted_large_7q.pdf')
+sol_1 = list("0111010")
+sol_2 = list("1000101")
 colors_1 = ["r" if sol_1[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_1, pos, 'fig_maxcut_1_res_0110010.pdf')
+draw_graph(G, colors_1, pos, 'fig_maxcut_weighted_1_res_0111010.pdf')
 
 colors_2 = ["r" if sol_2[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_2, pos, 'fig_maxcut_2_res_0111010.pdf')
-"""
+draw_graph(G, colors_2, pos, 'fig_maxcut_weighted_2_res_1000101.pdf')
+
 # Computing the weight matrix from the random graph
 w = np.zeros([n, n])
 for i in range(n):
