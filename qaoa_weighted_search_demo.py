@@ -46,12 +46,12 @@ if __name__ == "__main__":
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 30
+    p = 50
     l = 3
     c = len(pool)
     ph_count_limit = 1
     cnot_count_soft_limit = p
-    gate_limit = {"CNOT": p//2}
+    gate_limit = {"CNOT": p}
 
     init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         num_warmup_iterations=2,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
-        early_stop_threshold=3.2,
+        early_stop_threshold=3.25,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
         penalty_function=None,
@@ -78,8 +78,8 @@ if __name__ == "__main__":
         prune_constant_min=0.60,
         max_visits_prune_threshold=10,
         min_num_children=p//2,
-        sampling_execute_rounds=100,
-        exploit_execute_rounds=500,
+        sampling_execute_rounds=10,
+        exploit_execute_rounds=100,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         verbose=1,
