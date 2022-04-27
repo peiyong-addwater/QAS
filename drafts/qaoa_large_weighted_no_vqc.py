@@ -94,7 +94,7 @@ def qaoa_maxcut(n_layers=1):
     # sample measured bitstrings 100 times
     bit_strings = []
     original_samples = []
-    n_samples = 10000
+    n_samples = 1000
     for i in range(0, n_samples):
         bits = circuit(params[0], params[1], edge=None, n_layers=n_layers)
         bit_strings.append(bitstring_to_int(bits))
@@ -112,10 +112,10 @@ def qaoa_maxcut(n_layers=1):
     return -objective(params), bit_strings, original_samples
 
 
-# perform qaoa on our graph with p=1,2 and
+# perform qaoa on our graph with p=  and
 # keep the bitstring sample lists
 p1 = 1
-p2 = 2
+p2 = 3
 bitstrings1, os1 = qaoa_maxcut(n_layers=p1)[1:]
 bitstrings2, os2 = qaoa_maxcut(n_layers=p2)[1:]
 print("{} layer(s): \n".format(p1), os1)

@@ -40,18 +40,29 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = None
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
-    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3], [4,5], [5,4], [5,6], [6,5], [6,0],[0,6]]
+    single_qubit_gate = ["RZ","RX","PlaceHolder"]
+    #connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3], [4,5], [5,4], [5,6], [6,5], [6,0],[0,6]]
 
     # set a hard limit on the number of certain gate instead of using a penalty function
     pool = QMLPool(num_qubits, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)#, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 100
+    p = 40
     l = 3
     c = len(pool)
-    ph_count_limit = 1
+    ph_count_limit = p//2
     cnot_count_soft_limit = p
     gate_limit = {"CNOT": p}
+
+    def penalty_func(r: float, node: TreeNode):
+        k = node.state.getCurrK()
+        ph_count = 0
+        for op_index in k:
+            op_name = list(pool[op_index].keys())[0]
+            if op_name == 'PlaceHolder':
+                ph_count = ph_count + 1
+        if ph_count >= ph_count_limit:
+            return r - (ph_count - ph_count_limit) / 1
+        return r
 
     init_params = np.random.randn(p, c, l)*np.sqrt(2/(2**num_qubits))
 
@@ -61,16 +72,16 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=50,
-        num_warmup_iterations=2,
+        num_iterations=100,
+        num_warmup_iterations=10,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0,
         early_stop_threshold=3.25,
         early_stop_lookback_count=1,
         super_circ_train_lr=0.1,
-        penalty_function=None,
+        penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=100,
+        warmup_arc_batchsize=1000,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.9,
