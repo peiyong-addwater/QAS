@@ -23,7 +23,7 @@ solution objective: 3.3
 n_wires = 7
 graph =   [(0, 1, 0.1), (0, 2, 0.2),  (2, 3, 0.3), (1, 4, 0.4), (2, 4, 0.5), (0 ,5, 0.6),  (3, 6, 0.7), (1,6, 0.8)]
 n_shots = 100 # Number of quantum measurements.
-steps = 50 # Number of optimization steps
+steps = 100 # Number of optimization steps
 learning_rate = 0.5  # Learning rate
 q_delta = 0.001  # Initial spread of random quantum weights
 rng_seed = 0  # Seed for random number generator
@@ -124,8 +124,8 @@ def qaoa_vqc(n_layers = 1):
     print("Most frequently sampled bit string is: {:07b}".format(most_freq_bit_string))
     return -objective(params), bit_strings, obj_list
 
-layer_number_1 = 3
-layer_number_2 = 4
+layer_number_1 = 1
+layer_number_2 = 2
 
 
 _, bitstrings1, obj_list1 = qaoa_vqc(n_layers=layer_number_1)
