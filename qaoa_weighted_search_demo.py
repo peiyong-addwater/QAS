@@ -86,7 +86,7 @@ if __name__ == "__main__":
         alpha_max=1,
         alpha_decay_rate=0.9,
         prune_constant_max=0.90,
-        prune_constant_min=0.60,
+        prune_constant_min=0.80,
         max_visits_prune_threshold=10,
         min_num_children=p//2,
         sampling_execute_rounds=10,
