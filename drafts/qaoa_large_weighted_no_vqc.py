@@ -114,8 +114,8 @@ def qaoa_maxcut(n_layers=1):
 
 # perform qaoa on our graph with p=  and
 # keep the bitstring sample lists
-p1 = 1
-p2 = 3
+p1 = 10
+p2 = 20
 bitstrings1, os1 = qaoa_maxcut(n_layers=p1)[1:]
 bitstrings2, os2 = qaoa_maxcut(n_layers=p2)[1:]
 print("{} layer(s): \n".format(p1), os1)
