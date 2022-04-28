@@ -10,6 +10,11 @@ np.random.seed(42)
 n_wires = 7
 graph =   [(0, 1, 0.1), (0, 2, 0.2),  (2, 3, 0.3), (1, 4, 0.4), (2, 4, 0.5), (0 ,5, 0.6),  (3, 6, 0.7), (1,6, 0.8)]
 n_steps = 50
+
+# perform qaoa on our graph with p=  and
+# keep the bitstring sample lists
+p1 = 10
+p2 = 20
 """
 The cost Hamiltonian:
 C_alpha = 1/2 * (1 - Z_j Z_k)*w
@@ -112,10 +117,6 @@ def qaoa_maxcut(n_layers=1):
     return -objective(params), bit_strings, original_samples
 
 
-# perform qaoa on our graph with p=  and
-# keep the bitstring sample lists
-p1 = 10
-p2 = 20
 bitstrings1, os1 = qaoa_maxcut(n_layers=p1)[1:]
 bitstrings2, os2 = qaoa_maxcut(n_layers=p2)[1:]
 print("{} layer(s): \n".format(p1), os1)
