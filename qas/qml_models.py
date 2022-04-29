@@ -3099,7 +3099,7 @@ class QAOAWeightedVQCDemo(ModelFromK):
         most_freq_bit_string = np.argmax(counts)
         original_samples = Counter(original_samples)
         original_samples = dict(OrderedDict(original_samples.most_common()))
-        return "{:07b}".format(most_freq_bit_string), original_samples
+        return "{:05b}".format(most_freq_bit_string), original_samples
 
     def getClassicalSolution(self):
-        return {'[0. 1. 1. 1. 0. 1. 0.]': 3.3}
+        return {'[1, 1, 1, 0, 0]': 18.0, '[0, 0, 0, 1, 1]': 18.0}
