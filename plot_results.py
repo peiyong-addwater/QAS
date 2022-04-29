@@ -249,7 +249,7 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(qaoa_5q_finetune_loss_1))), qaoa_5q_finetune_loss_1,linestyle = '-',marker = 'x')
-plt.axhline(y = -17, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+plt.axhline(y = -18, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy)')
