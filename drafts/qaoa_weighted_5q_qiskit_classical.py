@@ -16,13 +16,21 @@ from qiskit_optimization.problems import QuadraticProgram
 from collections import OrderedDict
 
 """
-optimal function value: 3.3
-optimal value: [0. 1. 1. 1. 0. 1. 0.]
+Offset: -10.5
+Ising Hamiltonian:
+0.5 * IIIZZ
++ 1.0 * IIZIZ
++ 1.5 * IZZII
++ 3.0 * ZIIIZ
++ 2.0 * ZIIZI
++ 2.5 * ZIZII
+optimal function value: 18.0
+optimal value: [0. 0. 0. 1. 1.]
 status: SUCCESS
-energy: -1.5
-max-cut objective: -3.3000000000000003
-solution: [0 1 1 1 0 1 0]
-solution objective: 3.3
+energy: -7.5
+max-cut objective: -18.0
+solution: [0 0 0 1 1]
+solution objective: 18.0
 """
 
 n = 5  # Number of nodes in graph
@@ -44,15 +52,15 @@ def draw_graph(G, colors, pos, save_name = 'qaoa_5q_weighted_test.png'):
 
 
 draw_graph(G, colors, pos, 'fig_max_cut_weighted_5q.pdf')
-"""
-sol_1 = list("0111010")
-sol_2 = list("1000101")
+
+sol_1 = list("11100")
+sol_2 = list("00011")
 colors_1 = ["r" if sol_1[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_1, pos, 'fig_maxcut_5q_1_res_0111010.pdf')
+draw_graph(G, colors_1, pos, 'fig_maxcut_5q_res_11100.pdf')
 
 colors_2 = ["r" if sol_2[i] == "0" else "c" for i in range(n)]
-draw_graph(G, colors_2, pos, 'fig_maxcut_5q_2_res_1000101.pdf')
-"""
+draw_graph(G, colors_2, pos, 'fig_maxcut_5q_res_00011.pdf')
+
 # Computing the weight matrix from the random graph
 w = np.zeros([n, n])
 for i in range(n):
