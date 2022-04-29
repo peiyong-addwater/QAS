@@ -227,6 +227,69 @@ plt.savefig('fig_qaoa_search_measurements_more_samples.pdf')
 plt.close()
 
 """
+QAOA 5 Qubit
+"""
+qaoa_5q_early_stopping = 16.5
+
+qaoa_5q_1_filename = "20220429-044101_QAOAWeightedVQCDemo_5Q_QMLStateBasicGates.json"
+with open(os.path.join(cwd, qaoa_5q_1_filename)) as f:
+    qaoa_dict_5q_1 = json.load(f)
+
+qaoa_5q_search_reward_list_1 = [s[2] for s in qaoa_dict_5q_1['search_reward_list']]
+qaoa_5q_finetune_loss_1 = qaoa_dict_5q_1['fine_tune_loss']
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_5q_search_reward_list_1))), qaoa_5q_search_reward_list_1, marker = 'x')
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Objective)')
+plt.axhline(y = qaoa_5q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_5q_early_stopping))
+plt.legend()
+plt.savefig('fig_qaoa_5q_1_search_rewards.pdf')
+plt.close()
+
+fig = plt.figure()
+plt.plot(list(range(len(qaoa_5q_finetune_loss_1))), qaoa_5q_finetune_loss_1,linestyle = '-',marker = 'x')
+plt.axhline(y = -17, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy)')
+plt.legend()
+plt.savefig('fig_qaoa_5q_1_fine_tune_loss.pdf')
+plt.close()
+
+dev_qaoa_5_qubit = qml.device('lightning.qubit', wires=(0, 1, 2, 3, 4), shots=1)
+@qml.qnode(dev_qaoa_5_qubit)
+def qaoa_circuit_5q_1():
+    for wire in range(5):
+        qml.Hadamard(wires=wire)
+
+    qml.Rot(-0.38173845607538814,
+                0.9067659463333607,
+                0.3814142580159696, wires=4)
+    qml.CNOT(wires=[4,0])
+    qml.Rot(0.19591582037207156,
+                0.7512618503754793,
+                0.20408548408219923, wires=4)
+    qml.Rot(0.00010965282979182945,
+                -1.5707963268102163,
+                -0.9936554657183598, wires=1)
+    qml.Rot(1.7677290917417184e-13,
+                1.5707963267948857,
+                -0.05531231276375175, wires=0)
+    qml.CNOT(wires=[4,0])
+    qml.CNOT(wires=[1,2])
+    qml.Rot(1.447953629484945e-13,
+                -1.5707963267907148,
+                -0.16760111836032035, wires=2)
+    qml.Rot(-8.642119045772874e-13,
+                1.570796326796216,
+                -0.10867496585753135, wires=3)
+    qml.CNOT(wires=[2,3])
+    return qml.sample()
+
+
+
+"""
 QAOA 7 Qubit
 """
 qaoa_7q_1_filename = "20220409-091016_QAOAVQCDemo_7Q_QMLStateBasicGates.json"
@@ -449,16 +512,16 @@ A_3 = np.kron(Id, np.kron(Id, np.kron(Z, Z)))
 A_num = coeff[0] * A_0 + coeff[1] * A_1 + coeff[2] * A_2 + coeff[3] * A_3
 b = np.ones(2 ** n_qubits) / np.sqrt(2 ** n_qubits)
 
-print("A = \n", A_num)
-print("b = \n", b)
+#print("A = \n", A_num)
+#print("b = \n", b)
 
 A_inv = np.linalg.inv(A_num)
 x = np.dot(A_inv, b)
 
 c_probs = (x / np.linalg.norm(x)) ** 2
 
-print("x_n^2 =\n", c_probs)
-print("|<x|n>|^2=\n", q_probs)
+#print("x_n^2 =\n", c_probs)
+#print("|<x|n>|^2=\n", q_probs)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
 
@@ -504,4 +567,8 @@ plt.close()
 
 fig, ax = qml.draw_mpl(vqls_circ)()
 plt.savefig('fig_vqls_circ.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(qaoa_circuit_5q_1)()
+plt.savefig('fig_qaoa_5q_circ.pdf')
 plt.close()
