@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
     print(pool)
-    p = 100
+    p = 150
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -80,14 +80,14 @@ if __name__ == "__main__":
         num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=7.7,
+        early_stop_threshold=7.6,
         early_stop_lookback_count=1,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=500,
         search_arc_batchsize=25,
-        alpha_max=1.5,
+        alpha_max=2,
         alpha_decay_rate=0.99,
         prune_constant_max=0.9,
         prune_constant_min=0.8,
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     final_params, loss_list = circuitModelTuning(
         initial_params=final_params,
         model=model,
-        num_epochs=400,
+        num_epochs=100,
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
