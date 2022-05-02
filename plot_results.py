@@ -88,6 +88,36 @@ plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
 plt.close()
 
 """
+LiH Results
+"""
+Min_energy_LiH = -7.8825378193
+lih_early_stopping = 7.6
+lih_results_file = '20220430-043910_LiH_QMLStateBasicGates.json'
+with open(os.path.join(cwd, lih_results_file)) as f:
+    lih_results = json.load(f)
+
+lih_search_rewards = [s[2] for s in lih_results['search_reward_list']]
+lih_finetuen_rewards = lih_results['fine_tune_loss']
+fig = plt.figure()
+plt.plot(list(range(len(lih_search_rewards))), lih_search_rewards, marker = 'x')
+plt.axhline(y = lih_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(lih_early_stopping))
+plt.xlabel('Epoch')
+plt.ylabel('Reward(-Energy, Ha)')
+plt.legend()
+plt.savefig('fig_LiH_search_rewards.pdf')
+
+fig = plt.figure()
+plt.plot(list(range(len(lih_finetuen_rewards))), lih_finetuen_rewards,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
+plt.axhline(y = Min_energy_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.8825 Ha$")
+#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_LiH_fine_tune_loss.pdf')
+plt.close()
+
+
+"""
 QAOA results
 """
 n_new_samples = 1000
