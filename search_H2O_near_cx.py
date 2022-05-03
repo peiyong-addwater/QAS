@@ -53,8 +53,9 @@ if __name__ == "__main__":
 
 
     marker = nowtime()
-    filename = marker + '.json'
     task = model.name + "_" + state_class.name
+    print(task)
+    filename = marker + "_" + task + '.json'
     print(task)
     init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(8)
     pool = QMLPool(8, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 150
+    p = 100
     l = 3
     c = len(pool)
     ph_count_limit = p
