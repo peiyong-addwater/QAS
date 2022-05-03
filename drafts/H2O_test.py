@@ -14,13 +14,16 @@ electrons = 10
 orbitals = 7
 
 import pyscf
-
+from pyscf import gto
+"""
 mol = pyscf.M(
     atom = 'H -0.0399 -0.0038 0.0; O 1.5780 0.8540 0.0; H 2.7909 -0.5159 0.0',  # in Angstrom
     #atom = 'Li 0.0 0.0 0.0; H 0.0 0.0 1.5065',
     basis = basis_set,
     symmetry = True,
 )
+"""
+mol = gto.M(atom = 'H2O.xyz',basis = basis_set,symmetry = True)
 myhf = mol.RHF().run()
 
 #
@@ -45,15 +48,12 @@ print('E(FCI) = %.12f' % cisolver.kernel()[0])
 """
 Results from code above:
 
-converged SCF energy = -74.4935133327445
-E(FCI) = -74.785070221303
-converged SCF energy = -74.4935133328179  <S^2> = 3.2764902e-12  2S+1 = 1
-E(UHF-FCI) = -74.785070221296
-E(FCI) = -74.785070221303
+converged SCF energy = -74.9384706706654
+E(FCI) = -74.991104690127
+converged SCF energy = -74.9384706705535  <S^2> = 6.1889427e-10  2S+1 = 1
+E(UHF-FCI) = -74.991104690127
+E(FCI) = -74.991104690127
 """
-
-
-
 
 core, active = qchem.active_space(electrons, orbitals, active_electrons=4, active_orbitals=4)
 print("List of core orbitals: {:}".format(core))
@@ -70,8 +70,8 @@ H, qubits = qchem.molecular_hamiltonian(
 )
 
 print("Number of qubits required to perform quantum simulations: {:}".format(qubits))
-print("Hamiltonian of the water molecule")
-print(H)
+#print("Hamiltonian of the water molecule")
+#print(H)
 active_electrons = 4
 
 singles, doubles = qchem.excitations(active_electrons, qubits)
