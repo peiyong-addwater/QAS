@@ -56,6 +56,7 @@ for i in range(len(doubles)):
     print(f"Excitation : {doubles[i]}, Gradient: {grads[i]}")
 
 doubles_select = [doubles[i] for i in range(len(doubles)) if abs(grads[i]) > 1.0e-5]
+# [[0, 1, 4, 5], [0, 1, 4, 7], [0, 1, 5, 6], [0, 1, 6, 7], [2, 3, 4, 5], [2, 3, 4, 7], [2, 3, 5, 6], [2, 3, 6, 7]]
 print("Selected double excitation: ", doubles_select)
 
 opt = qml.GradientDescentOptimizer(stepsize=0.5)
@@ -95,6 +96,7 @@ for i in range(len(singles)):
     print(f"Excitation : {singles[i]}, Gradient: {grads[i]}")
 
 singles_select = [singles[i] for i in range(len(singles)) if abs(grads[i]) > 1.0e-5]
+# [[0, 4], [1, 5]]
 print("Selected single excitation: ", singles_select)
 
 cost_fn = qml.ExpvalCost(circuit_1, H, dev, optimize=True)
