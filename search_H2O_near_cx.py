@@ -42,6 +42,7 @@ if __name__ == "__main__":
     shutup.please()
 
     # adaptive circuit solution:
+    # total number of qubits: 8
     # Total number of gates: 236
     # Total number of two-qubit control gates: 124
 
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     single_qubit_gate = ["U3","PlaceHolder"]
     # set a hard limit on the number of certain gate instead of using a penalty function
     cx_connections = generate_near_cx_connection_list(8)
-    pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
+    pool = QMLPool(8, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
     p = 150
     l = 3
