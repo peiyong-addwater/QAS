@@ -116,6 +116,25 @@ plt.legend()
 plt.savefig('fig_LiH_fine_tune_loss.pdf')
 plt.close()
 
+print("LiH circuit length: {}".format(len(lih_results['op_list'])))
+_LiH_SYMBOLS = ["Li", "H"]
+_LiH_COORDINATES = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527]) # units in Bohr
+_LiH_HAM, _LiH_QUBITS = qml.qchem.molecular_hamiltonian(_LiH_SYMBOLS, _LiH_COORDINATES) # ground-state energy = -7.8825378193 Ha
+lih_dev = qml.device('default.qubit', wires=_LiH_QUBITS)
+lih_hf = qml.qchem.hf_state(2, _LiH_QUBITS)
+
+@qml.qnode(lih_dev,diff_method="parameter-shift")
+def lih_circuit():
+    qml.BasisState(lih_hf, wires=range(_LiH_QUBITS))
+    for c in lih_results['op_list']:
+        gate_name = c[0]
+        wires = c[1]
+        params = c[2]
+        if gate_name == 'U3':
+            qml.U3(*params, wires=wires)
+        if gate_name == 'CNOT':
+            qml.CNOT(wires=wires)
+    return qml.expval(qml.SparseHamiltonian(qml.utils.sparse_hamiltonian(_LiH_HAM), wires=range(_LiH_QUBITS)))
 
 """
 QAOA results
@@ -601,4 +620,8 @@ plt.close()
 
 fig, ax = qml.draw_mpl(qaoa_circuit_5q_1)()
 plt.savefig('fig_qaoa_5q_circ.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(lih_circuit)()
+plt.savefig('fig_lih_circ.pdf')
 plt.close()
