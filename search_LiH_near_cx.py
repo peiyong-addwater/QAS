@@ -58,11 +58,11 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(12)
     pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 100
+    p = 150
     l = 3
     c = len(pool)
     ph_count_limit = p
-    gate_limit = {"CNOT": p}
+    gate_limit = {"CNOT": p//2}
 
 
     # penalty function:
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         num_warmup_iterations=10,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=7.88,
+        early_stop_threshold=7.6,
         early_stop_lookback_count=1,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
@@ -99,8 +99,8 @@ if __name__ == "__main__":
         search_arc_batchsize=25,
         alpha_max=2,
         alpha_decay_rate=0.99,
-        prune_constant_max=0.8,
-        prune_constant_min=0.4,
+        prune_constant_max=0.9,
+        prune_constant_min=0.8,
         max_visits_prune_threshold=10,
         min_num_children=5,
         sampling_execute_rounds=3,
