@@ -70,7 +70,7 @@ H, qubits = qchem.molecular_hamiltonian(
     active_orbitals=4,
 )
 
-print("Number of qubits required to perform quantum simulations: {:}".format(qubits))
+print("Number of qubits required to perform quantum simulations: {:}".format(qubits)) # 8
 #print("Hamiltonian of the water molecule")
 #print(H)
 active_electrons = 4
