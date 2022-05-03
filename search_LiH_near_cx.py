@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print(task)
     init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
+    single_qubit_gate = ["U3","PlaceHolder"]
     # set a hard limit on the number of certain gate instead of using a penalty function
     cx_connections = generate_near_cx_connection_list(12)
     pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
