@@ -3,8 +3,10 @@ from pennylane import qchem
 import pennylane as qml
 import time
 
-symbols = ["H", "O", "H"]
-coordinates = np.array([-0.0399, -0.0038, 0.0, 1.5780, 0.8540, 0.0, 2.7909, -0.5159, 0.0])
+#symbols = ["H", "O", "H"]
+#coordinates = np.array([-0.0399, -0.0038, 0.0, 1.5780, 0.8540, 0.0, 2.7909, -0.5159, 0.0])
+symbols, coordinates = qchem.read_structure("H2O.xyz")
+print(symbols, coordinates)
 charge = 0
 multiplicity = 1
 basis_set = "sto-3g"
@@ -15,6 +17,7 @@ import pyscf
 
 mol = pyscf.M(
     atom = 'H -0.0399 -0.0038 0.0; O 1.5780 0.8540 0.0; H 2.7909 -0.5159 0.0',  # in Angstrom
+    #atom = 'Li 0.0 0.0 0.0; H 0.0 0.0 1.5065',
     basis = basis_set,
     symmetry = True,
 )
