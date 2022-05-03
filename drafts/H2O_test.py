@@ -141,7 +141,7 @@ for i in range(len(singles)):
     print(f"Excitation : {singles[i]}, Gradient: {grads[i]}")
 
 singles_select = [singles[i] for i in range(len(singles)) if abs(grads[i]) > 1.0e-5]
-# [[0, 4], [1, 5]]
+# [[0, 4], [0, 6], [1, 5], [1, 7]]
 print("Selected single excitation: ", singles_select)
 
 cost_fn = qml.ExpvalCost(circuit_1, H, dev, optimize=True)
@@ -186,5 +186,7 @@ for n in range(20):
     t2 = time.time()
     print("n = {:},  E = {:.8f} H, t = {:.2f} s".format(n, energy, t2 - t1))
 
-print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n "
-      f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}") #
+print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n"
+      f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}")
+# Total number of gates: 236
+# Total number of two-qubit control gates: 124
