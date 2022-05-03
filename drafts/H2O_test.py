@@ -10,6 +10,48 @@ multiplicity = 1
 basis_set = "sto-3g"
 electrons = 10
 orbitals = 7
+
+import pyscf
+
+mol = pyscf.M(
+    atom = 'H -0.0399 -0.0038 0.0; O 1.5780 0.8540 0.0; H 2.7909 -0.5159 0.0',  # in Angstrom
+    basis = basis_set,
+    symmetry = True,
+)
+myhf = mol.RHF().run()
+
+#
+# create an FCI solver based on the SCF object
+#
+cisolver = pyscf.fci.FCI(myhf)
+print('E(FCI) = %.12f' % cisolver.kernel()[0])
+
+#
+# create an FCI solver based on the SCF object
+#
+myuhf = mol.UHF().run()
+cisolver = pyscf.fci.FCI(myuhf)
+print('E(UHF-FCI) = %.12f' % cisolver.kernel()[0])
+
+#
+# create an FCI solver based on the given orbitals and the num. electrons and
+# spin of the mol object
+#
+cisolver = pyscf.fci.FCI(mol, myhf.mo_coeff)
+print('E(FCI) = %.12f' % cisolver.kernel()[0])
+"""
+Results from code above:
+
+converged SCF energy = -74.4935133327445
+E(FCI) = -74.785070221303
+converged SCF energy = -74.4935133328179  <S^2> = 3.2764902e-12  2S+1 = 1
+E(UHF-FCI) = -74.785070221296
+E(FCI) = -74.785070221303
+"""
+
+
+
+
 core, active = qchem.active_space(electrons, orbitals, active_electrons=4, active_orbitals=4)
 print("List of core orbitals: {:}".format(core))
 print("List of active orbitals: {:}".format(active))
@@ -140,3 +182,6 @@ for n in range(20):
     params, energy = opt.step_and_cost(cost, params)
     t2 = time.time()
     print("n = {:},  E = {:.8f} H, t = {:.2f} s".format(n, energy, t2 - t1))
+
+print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n "
+      f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}") #
