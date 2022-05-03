@@ -3,10 +3,11 @@ from pennylane import qchem
 import pennylane as qml
 import time
 
-#symbols = ["H", "O", "H"]
-#coordinates = np.array([-0.0399, -0.0038, 0.0, 1.5780, 0.8540, 0.0, 2.7909, -0.5159, 0.0])
+
 symbols, coordinates = qchem.read_structure("H2O.xyz")
 print(symbols, coordinates)
+# ['H', 'O', 'H']
+# [0.         0.         0.         1.63234543 0.86417176 0. 3.36087791 0.         0.        ]
 charge = 0
 multiplicity = 1
 basis_set = "sto-3g"
