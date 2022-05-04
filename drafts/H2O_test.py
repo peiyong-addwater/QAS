@@ -11,7 +11,7 @@ print(symbols, coordinates)
 # [0.         0.         0.         1.63234543 0.86417176 0. 3.36087791 0.         0.        ]
 charge = 0
 multiplicity = 1
-basis_set = "sto-3g"
+basis_set = "sto-6g"
 electrons = 10
 orbitals = 7
 

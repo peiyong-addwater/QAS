@@ -44,7 +44,6 @@ import pennylane as qml
 import time
 
 
-#symbols, coordinates = qchem.read_structure("H2O.xyz")
 
 
 H, qubits = qchem.molecular_hamiltonian(
@@ -61,7 +60,7 @@ singles, doubles = qchem.excitations(active_electrons, qubits)
 
 print(f"Total number of excitations = {len(singles) + len(doubles)}")
 
-print("Number of qubits required to perform quantum simulations: {:}".format(qubits)) # 8
+print("Number of qubits required to perform quantum simulations: {:}".format(qubits))
 
 
 
@@ -90,7 +89,7 @@ for i in range(len(doubles)):
     print(f"Excitation : {doubles[i]}, Gradient: {grads[i]}")
 
 doubles_select = [doubles[i] for i in range(len(doubles)) if abs(grads[i]) > 1.0e-5]
-#
+# [[0, 1, 2, 3], [0, 1, 2, 9], [0, 1, 3, 8], [0, 1, 4, 5], [0, 1, 6, 7], [0, 1, 8, 9]]
 print("Selected double excitation: ", doubles_select)
 
 opt = qml.GradientDescentOptimizer(stepsize=0.5)
@@ -130,7 +129,7 @@ for i in range(len(singles)):
     print(f"Excitation : {singles[i]}, Gradient: {grads[i]}")
 
 singles_select = [singles[i] for i in range(len(singles)) if abs(grads[i]) > 1.0e-5]
-#
+# [[0, 2], [0, 8], [1, 3], [1, 9]]
 print("Selected single excitation: ", singles_select)
 
 cost_fn = qml.ExpvalCost(circuit_1, H, dev, optimize=True)
@@ -171,5 +170,5 @@ for n in range(100):
 
 print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n"
       f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}")
-# Total number of gates: 528
-# Total number of two-qubit control gates: 276
+# Total number of gates: 180
+# Total number of two-qubit control gates: 96

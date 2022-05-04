@@ -40,12 +40,12 @@ if __name__ == "__main__":
 
     import shutup
     shutup.please()
-    # Classical solution:
-    # converged SCF energy = -74.44718476354
-    # E(FCI) = -74.772208258794
-    # converged SCF energy = -74.4471847635389  <S^2> = 1.2511592e-10  2S+1 = 1
-    # E(UHF-FCI) = -74.772208258746
-    # E(FCI) = -74.772208258794
+    # Classical solution: (sto-6g)
+    # converged SCF energy = -75.1645758157887
+    # E(FCI) = -75.491788196432
+    # converged SCF energy = -75.1645758157637  <S^2> = 4.0233861e-10  2S+1 = 1
+    # E(UHF-FCI) = -75.491788196430
+    # E(FCI) = -75.491788196432
 
     # adaptive circuit solution:
     # total number of qubits: 8

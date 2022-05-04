@@ -41,7 +41,13 @@ if __name__ == "__main__":
     import shutup
     shutup.please()
 
-    model = LiH # ground-state energy = -7.8825378193 Ha
+    model = LiH
+    # classical results (sto-6g)
+    # converged SCF energy = -7.80324297491404
+    # E(FCI) = -7.888567271126
+    # converged SCF energy = -7.80324297491407  <S^2> = 3.5527137e-15  2S+1 = 1
+    # E(UHF-FCI) = -7.888567271127
+    # E(FCI) = -7.888567271126
     state_class = QMLStateBasicGates
 
     target_energy = -7.888567271126
