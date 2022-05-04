@@ -51,7 +51,8 @@ H, qubits = qchem.molecular_hamiltonian(
     symbols,
     geometry,
     active_electrons=2,
-    active_orbitals=5
+    active_orbitals=5,
+    basis=basis_set
 )
 
 active_electrons = 2
@@ -61,12 +62,10 @@ singles, doubles = qchem.excitations(active_electrons, qubits)
 print(f"Total number of excitations = {len(singles) + len(doubles)}")
 
 print("Number of qubits required to perform quantum simulations: {:}".format(qubits)) # 8
-#print("Hamiltonian of the water molecule")
-#print(H)
-active_electrons = 4
+print("Hamiltonian of the molecule")
+print(H)
 
-singles, doubles = qchem.excitations(active_electrons, qubits)
-print(f"Total number of excitations = {len(singles) + len(doubles)}")
+
 
 hf_state = qchem.hf_state(active_electrons, qubits)
 
