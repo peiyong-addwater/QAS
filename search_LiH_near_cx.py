@@ -96,7 +96,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=50,
-        num_warmup_iterations=3,
+        num_warmup_iterations=2,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=999,
