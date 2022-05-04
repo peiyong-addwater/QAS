@@ -1620,7 +1620,7 @@ class H2O(ModelFromK):
         self.num_active_electrons = 4
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
         self.dev = qml.device('default.qubit', wires=self.num_qubits)
-        self.H = qml.utils.sparse_hamiltonian(_H2O_HAM)  # ground-state energy = -74.991104690127 Ha
+        self.H = qml.utils.sparse_hamiltonian(_H2O_HAM)
         self.hf = qml.qchem.hf_state(self.num_active_electrons, self.num_qubits)
 
     #@qml.template
