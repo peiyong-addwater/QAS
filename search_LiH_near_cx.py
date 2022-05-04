@@ -64,8 +64,8 @@ if __name__ == "__main__":
     two_qubit_gate = ["CNOT"]
     single_qubit_gate = ["Rot","PlaceHolder"]
     # set a hard limit on the number of certain gate instead of using a penalty function
-    cx_connections = generate_near_cx_connection_list(12)
-    pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
+    cx_connections = generate_near_cx_connection_list(10)
+    pool = QMLPool(10, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
     p = 20
     l = 3
