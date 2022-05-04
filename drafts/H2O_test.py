@@ -4,7 +4,8 @@ import pennylane as qml
 import time
 
 
-symbols, coordinates = qchem.read_structure("H2O.xyz")
+#symbols, coordinates = qchem.read_structure("H2O.xyz")
+symbols, coordinates =  ['H', 'O', 'H'], np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.])*1.88973 # Angstrom to Bohr
 print(symbols, coordinates)
 # ['H', 'O', 'H']
 # [0.         0.         0.         1.63234543 0.86417176 0. 3.36087791 0.         0.        ]
@@ -16,15 +17,14 @@ orbitals = 7
 
 import pyscf
 from pyscf import gto
-"""
+
 mol = pyscf.M(
-    atom = 'H -0.0399 -0.0038 0.0; O 1.5780 0.8540 0.0; H 2.7909 -0.5159 0.0',  # in Angstrom
-    #atom = 'Li 0.0 0.0 0.0; H 0.0 0.0 1.5065',
+    atom = 'H 0. 0. 0.; O 1.63234543 0.86417176 0; H 3.36087791 0. 0.  ',  # in Angstrom
     basis = basis_set,
     symmetry = True,
 )
-"""
-mol = gto.M(atom = 'H2O.xyz',basis = basis_set,symmetry = True)
+mol.unit = 'A'
+#mol = gto.M(atom = 'H2O.xyz',basis = basis_set,symmetry = True)
 myhf = mol.RHF().run()
 
 #
@@ -49,11 +49,11 @@ print('E(FCI) = %.12f' % cisolver.kernel()[0])
 """
 Results from code above:
 
-converged SCF energy = -74.9384706706654
-E(FCI) = -74.991104690127
-converged SCF energy = -74.9384706705535  <S^2> = 6.1889427e-10  2S+1 = 1
-E(UHF-FCI) = -74.991104690127
-E(FCI) = -74.991104690127
+converged SCF energy = -74.44718476354
+E(FCI) = -74.772208258794
+converged SCF energy = -74.4471847635389  <S^2> = 1.2511592e-10  2S+1 = 1
+E(UHF-FCI) = -74.772208258746
+E(FCI) = -74.772208258794
 """
 
 core, active = qchem.active_space(electrons, orbitals, active_electrons=4, active_orbitals=4)
@@ -102,7 +102,7 @@ for i in range(len(doubles)):
     print(f"Excitation : {doubles[i]}, Gradient: {grads[i]}")
 
 doubles_select = [doubles[i] for i in range(len(doubles)) if abs(grads[i]) > 1.0e-5]
-# [[0, 1, 4, 5], [0, 1, 4, 7], [0, 1, 5, 6], [0, 1, 6, 7], [2, 3, 4, 5], [2, 3, 4, 7], [2, 3, 5, 6], [2, 3, 6, 7]]
+# [[0, 1, 4, 5], [0, 1, 4, 7], [0, 1, 5, 6], [0, 1, 6, 7], [0, 2, 4, 6], [0, 3, 4, 5], [0, 3, 4, 7], [0, 3, 5, 6], [0, 3, 6, 7], [1, 2, 4, 5], [1, 2, 4, 7], [1, 2, 5, 6], [1, 2, 6, 7], [1, 3, 5, 7], [2, 3, 4, 5], [2, 3, 4, 7], [2, 3, 5, 6], [2, 3, 6, 7]]
 print("Selected double excitation: ", doubles_select)
 
 opt = qml.GradientDescentOptimizer(stepsize=0.5)
@@ -142,7 +142,7 @@ for i in range(len(singles)):
     print(f"Excitation : {singles[i]}, Gradient: {grads[i]}")
 
 singles_select = [singles[i] for i in range(len(singles)) if abs(grads[i]) > 1.0e-5]
-# [[0, 4], [0, 6], [1, 5], [1, 7]]
+# [[0, 4], [0, 6], [1, 5], [1, 7], [2, 4], [2, 6], [3, 5], [3, 7]]
 print("Selected single excitation: ", singles_select)
 
 cost_fn = qml.ExpvalCost(circuit_1, H, dev, optimize=True)

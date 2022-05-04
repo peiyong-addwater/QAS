@@ -40,6 +40,12 @@ if __name__ == "__main__":
 
     import shutup
     shutup.please()
+    # Classical solution:
+    # converged SCF energy = -74.44718476354
+    # E(FCI) = -74.772208258794
+    # converged SCF energy = -74.4471847635389  <S^2> = 1.2511592e-10  2S+1 = 1
+    # E(UHF-FCI) = -74.772208258746
+    # E(FCI) = -74.772208258794
 
     # adaptive circuit solution:
     # total number of qubits: 8
@@ -49,7 +55,7 @@ if __name__ == "__main__":
     model = H2O # ground-state energy E(FCI) = -74.991104690127 Ha
     state_class = QMLStateBasicGates
 
-    target_energy = -74.991104690127
+    target_energy = -74.772208258794
 
 
     marker = nowtime()
@@ -63,7 +69,7 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(8)
     pool = QMLPool(8, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 50
+    p = 2
     l = 3
     c = len(pool)
     ph_count_limit = 0
@@ -95,7 +101,7 @@ if __name__ == "__main__":
         num_warmup_iterations=2,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=74.9,
+        early_stop_threshold=74.7,
         early_stop_lookback_count=1,
         super_circ_train_lr=1,
         penalty_function=penalty_func,

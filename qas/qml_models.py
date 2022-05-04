@@ -1374,7 +1374,7 @@ _LiH_COORDINATES = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527]) # units in B
 _LiH_HAM, _LiH_QUBITS = qml.qchem.molecular_hamiltonian(_LiH_SYMBOLS, _LiH_COORDINATES) # ground-state energy = -7.8825378193 Ha
 
 _H2O_SYMBOLS = ['H', 'O', 'H']
-_H2O_COORDINATES = np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.])
+_H2O_COORDINATES = np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.]) *1.88973 # Angstrom to Bohr
 _H2O_HAM, _H2O_QUBITS = qml.qchem.molecular_hamiltonian(
     _H2O_SYMBOLS,
     _H2O_COORDINATES,
