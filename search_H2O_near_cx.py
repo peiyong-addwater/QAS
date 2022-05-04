@@ -49,10 +49,10 @@ if __name__ == "__main__":
 
     # adaptive circuit solution:
     # total number of qubits: 8
-    # Total number of gates: 236
-    # Total number of two-qubit control gates: 124
+    # Total number of gates: 528
+    # Total number of two-qubit control gates: 276
 
-    model = H2O # ground-state energy E(FCI) = -74.991104690127 Ha
+    model = H2O
     state_class = QMLStateBasicGates
 
     target_energy = -74.772208258794

@@ -151,12 +151,6 @@ params = np.zeros(len(doubles_select + singles_select), requires_grad=True)
 
 gates_select = doubles_select + singles_select
 
-for n in range(20):
-    t1 = time.time()
-    params, energy = opt.step_and_cost(cost_fn, params, excitations=gates_select)
-    t2 = time.time()
-    print("n = {:},  E = {:.8f} H, t = {:.2f} s".format(n, energy, t2 - t1))
-
 H_sparse = qml.utils.sparse_hamiltonian(H)
 opt = qml.GradientDescentOptimizer(stepsize=0.5)
 
@@ -181,7 +175,7 @@ def cost(params):
     return circuit(params)
 
 
-for n in range(20):
+for n in range(50):
     t1 = time.time()
     params, energy = opt.step_and_cost(cost, params)
     t2 = time.time()
@@ -189,5 +183,5 @@ for n in range(20):
 
 print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n"
       f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}")
-# Total number of gates: 236
-# Total number of two-qubit control gates: 124
+# Total number of gates: 528
+# Total number of two-qubit control gates: 276
