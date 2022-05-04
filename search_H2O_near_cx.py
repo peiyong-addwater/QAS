@@ -63,7 +63,7 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(8)
     pool = QMLPool(8, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 100
+    p = 50
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=74,
+        early_stop_threshold=74.9,
         early_stop_lookback_count=1,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
