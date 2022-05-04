@@ -62,8 +62,7 @@ singles, doubles = qchem.excitations(active_electrons, qubits)
 print(f"Total number of excitations = {len(singles) + len(doubles)}")
 
 print("Number of qubits required to perform quantum simulations: {:}".format(qubits)) # 8
-print("Hamiltonian of the molecule")
-print(H)
+
 
 
 
