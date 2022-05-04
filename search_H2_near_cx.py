@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import FourQubitH2
+from qas.qml_models import FourQubitH2_VaccumInitial
 import json
 import numpy as np
 import pennylane as qml
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     import shutup
     shutup.please()
 
-    model = FourQubitH2
+    model = FourQubitH2_VaccumInitial
     # classical results:
     # converged SCF energy = -1.1145697422375
     # E(FCI) = -1.131902147424
