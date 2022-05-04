@@ -69,10 +69,10 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(8)
     pool = QMLPool(8, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 2
+    p = 20
     l = 3
     c = len(pool)
-    ph_count_limit = 0
+    ph_count_limit = p
     gate_limit = {"CNOT": p//2}
 
 

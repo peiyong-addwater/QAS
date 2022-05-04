@@ -1648,7 +1648,6 @@ class H2O(ModelFromK):
     def constructFullCirc(self):
         @qml.qnode(self.dev,diff_method="parameter-shift")
         def fullCirc(extracted_params):
-            #qml.BasisState(self.hf, wires=range(self.num_qubits))
             self.backboneCirc(extracted_params)
             return qml.expval(qml.SparseHamiltonian(self.H, wires=range(self.num_qubits)))
         return fullCirc

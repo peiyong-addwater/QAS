@@ -175,7 +175,7 @@ def cost(params):
     return circuit(params)
 
 
-for n in range(50):
+for n in range(100):
     t1 = time.time()
     params, energy = opt.step_and_cost(cost, params)
     t2 = time.time()
