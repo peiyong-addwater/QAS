@@ -100,14 +100,14 @@ h2o_search_rewards = [s[2] for s in h2o_results['search_reward_list']]
 h2o_finetuen_rewards = h2o_results['fine_tune_loss']
 fig = plt.figure()
 plt.plot(list(range(len(h2o_search_rewards))), h2o_search_rewards, marker ='x')
-plt.axhline(y = h2o_early_stopping, color ='r', linestyle ='--', label =r"Early Stopping at {}".format(h2o_early_stopping))
+#plt.axhline(y = h2o_early_stopping, color ='r', linestyle ='--', label =r"Early Stopping at {}".format(h2o_early_stopping))
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy, Ha)')
 plt.legend()
 plt.savefig('fig_H2O_search_rewards.pdf')
 
 fig = plt.figure()
-plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{Search}$", linestyle ='-', marker ='x')
+plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='x')
 plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-74.99 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -139,7 +139,7 @@ def h2o_circuit():
         wires = c[1]
         params = c[2]
         if gate_name == 'Rot':
-            qml.U3(*params, wires=wires)
+            qml.Rot(*params, wires=wires)
         if gate_name == 'CNOT':
             qml.CNOT(wires=wires)
     return qml.expval(qml.SparseHamiltonian(qml.utils.sparse_hamiltonian(_H2O_HAM), wires=range(_H2O_QUBITS)))
