@@ -88,53 +88,61 @@ plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
 plt.close()
 
 """
-LiH Results
+H2O Results
 """
-Min_energy_LiH = -7.8825378193
-lih_early_stopping = 7.6
-lih_results_file = '20220430-043910_LiH_QMLStateBasicGates.json'
-with open(os.path.join(cwd, lih_results_file)) as f:
-    lih_results = json.load(f)
+Min_energy_H2O = -74.991104690127
+h2o_early_stopping = -74.9
+h2o_results_file = '20220504-004109_H2O_QMLStateBasicGates.json'
+with open(os.path.join(cwd, h2o_results_file)) as f:
+    h2o_results = json.load(f)
 
-lih_search_rewards = [s[2] for s in lih_results['search_reward_list']]
-lih_finetuen_rewards = lih_results['fine_tune_loss']
+h2o_search_rewards = [s[2] for s in h2o_results['search_reward_list']]
+h2o_finetuen_rewards = h2o_results['fine_tune_loss']
 fig = plt.figure()
-plt.plot(list(range(len(lih_search_rewards))), lih_search_rewards, marker = 'x')
-plt.axhline(y = lih_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(lih_early_stopping))
+plt.plot(list(range(len(h2o_search_rewards))), h2o_search_rewards, marker ='x')
+plt.axhline(y = h2o_early_stopping, color ='r', linestyle ='--', label =r"Early Stopping at {}".format(h2o_early_stopping))
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy, Ha)')
 plt.legend()
-plt.savefig('fig_LiH_search_rewards.pdf')
+plt.savefig('fig_H2O_search_rewards.pdf')
 
 fig = plt.figure()
-plt.plot(list(range(len(lih_finetuen_rewards))), lih_finetuen_rewards,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
-plt.axhline(y = Min_energy_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.8825 Ha$")
+plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{Search}$", linestyle ='-', marker ='x')
+plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-74.99 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
-plt.savefig('fig_LiH_fine_tune_loss.pdf')
+plt.savefig('fig_H2O_fine_tune_loss.pdf')
 plt.close()
 
-print("LiH circuit length: {}".format(len(lih_results['op_list'])))
-_LiH_SYMBOLS = ["Li", "H"]
-_LiH_COORDINATES = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527]) # units in Bohr
-_LiH_HAM, _LiH_QUBITS = qml.qchem.molecular_hamiltonian(_LiH_SYMBOLS, _LiH_COORDINATES) # ground-state energy = -7.8825378193 Ha
-lih_dev = qml.device('default.qubit', wires=_LiH_QUBITS)
-lih_hf = qml.qchem.hf_state(2, _LiH_QUBITS)
+print("H2O circuit length: {}".format(len(h2o_results['op_list'])))
+_H2O_SYMBOLS = ['H', 'O', 'H']
+_H2O_COORDINATES = np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.])
+_H2O_HAM, _H2O_QUBITS = qml.qchem.molecular_hamiltonian(
+    _H2O_SYMBOLS,
+    _H2O_COORDINATES,
+    charge=0,
+    mult=1,
+    basis="sto-3g",
+    active_electrons=4,
+    active_orbitals=4,
+)
+h2o_dev = qml.device('default.qubit', wires=_H2O_QUBITS)
+h2o_hf = qml.qchem.hf_state(2, _H2O_QUBITS)
 
-@qml.qnode(lih_dev,diff_method="parameter-shift")
-def lih_circuit():
-    qml.BasisState(lih_hf, wires=range(_LiH_QUBITS))
-    for c in lih_results['op_list']:
+@qml.qnode(h2o_dev,diff_method="parameter-shift")
+def h2o_circuit():
+    qml.BasisState(h2o_hf, wires=range(_H2O_QUBITS))
+    for c in h2o_results['op_list']:
         gate_name = c[0]
         wires = c[1]
         params = c[2]
-        if gate_name == 'U3':
+        if gate_name == 'Rot':
             qml.U3(*params, wires=wires)
         if gate_name == 'CNOT':
             qml.CNOT(wires=wires)
-    return qml.expval(qml.SparseHamiltonian(qml.utils.sparse_hamiltonian(_LiH_HAM), wires=range(_LiH_QUBITS)))
+    return qml.expval(qml.SparseHamiltonian(qml.utils.sparse_hamiltonian(_H2O_HAM), wires=range(_H2O_QUBITS)))
 
 """
 QAOA results
@@ -622,6 +630,6 @@ fig, ax = qml.draw_mpl(qaoa_circuit_5q_1)()
 plt.savefig('fig_qaoa_5q_circ.pdf')
 plt.close()
 
-fig, ax = qml.draw_mpl(lih_circuit)()
-plt.savefig('fig_lih_circ.pdf')
+fig, ax = qml.draw_mpl(h2o_circuit)()
+plt.savefig('fig_h2o_circ.pdf')
 plt.close()
