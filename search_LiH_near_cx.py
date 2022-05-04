@@ -132,7 +132,7 @@ if __name__ == "__main__":
         lr=0.1,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=target_energy
+        early_stop_threshold=-99999
     )
 
     res_dict = {
