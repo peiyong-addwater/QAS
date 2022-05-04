@@ -7,7 +7,13 @@ from pyscf import gto
 symbols = ["Li", "H"]
 geometry = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527])
 
-
+"""
+converged SCF energy = -7.80324297491405
+E(FCI) = -7.888567271126
+converged SCF energy = -7.80324297491408  <S^2> = 5.5511151e-15  2S+1 = 1
+E(UHF-FCI) = -7.888567271127
+E(FCI) = -7.888567271126
+"""
 
 basis_set = "sto-6g"
 mol = pyscf.M(
