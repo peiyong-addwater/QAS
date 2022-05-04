@@ -57,8 +57,8 @@ if __name__ == "__main__":
 
 
     marker = nowtime()
-    filename = marker + '.json'
     task = model.name + "_" + state_class.name
+    filename = marker + "_" + task + '.json'
     print(task)
     init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
