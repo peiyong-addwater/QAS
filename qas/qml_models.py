@@ -1425,7 +1425,7 @@ class FourQubitH2(ModelFromK):
     def constructFullCirc(self):
         @qml.qnode(self.dev)
         def fullCirc(extracted_params):
-            qml.BasisState(self.hf, wires=[0,1,2,3])
+            #qml.BasisState(self.hf, wires=[0,1,2,3])
             self.backboneCirc(extracted_params)
             return qml.expval(self.H)
         return fullCirc
