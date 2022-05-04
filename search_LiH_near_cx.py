@@ -44,7 +44,7 @@ if __name__ == "__main__":
     model = LiH # ground-state energy = -7.8825378193 Ha
     state_class = QMLStateBasicGates
 
-    target_energy = -7.8825378193
+    target_energy = -7.888567271126
 
 
     marker = nowtime()
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     cx_connections = generate_near_cx_connection_list(12)
     pool = QMLPool(12, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=cx_connections)
     print(pool)
-    p = 150
+    p = 20
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -86,8 +86,8 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=200,
-        num_warmup_iterations=10,
+        num_iterations=50,
+        num_warmup_iterations=3,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=7.6,
