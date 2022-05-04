@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False, two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 20
+    p = 30
     l = 3
     c = len(pool)
     ph_count_limit = p
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=50,
-        num_warmup_iterations=2,
+        num_warmup_iterations=5,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=999,
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
         warmup_arc_batchsize=500,
-        search_arc_batchsize=25,
+        search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.99,
         prune_constant_max=0.9,
