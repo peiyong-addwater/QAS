@@ -90,9 +90,9 @@ plt.close()
 """
 H2O Results
 """
-Min_energy_H2O = -74.991104690127
+Min_energy_H2O = -75.491788196432
 h2o_early_stopping = -74.9
-h2o_results_file = '20220504-004109_H2O_QMLStateBasicGates.json'
+h2o_results_file = '20220504-074905_H2O_QMLStateBasicGates.json'
 with open(os.path.join(cwd, h2o_results_file)) as f:
     h2o_results = json.load(f)
 
@@ -108,7 +108,7 @@ plt.savefig('fig_H2O_search_rewards.pdf')
 
 fig = plt.figure()
 plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='x')
-plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-74.99 Ha$")
+plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-75.49 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -133,7 +133,6 @@ h2o_hf = qml.qchem.hf_state(2, _H2O_QUBITS)
 
 @qml.qnode(h2o_dev,diff_method="parameter-shift")
 def h2o_circuit():
-    qml.BasisState(h2o_hf, wires=range(_H2O_QUBITS))
     for c in h2o_results['op_list']:
         gate_name = c[0]
         wires = c[1]

@@ -49,11 +49,11 @@ print('E(FCI) = %.12f' % cisolver.kernel()[0])
 """
 Results from code above:
 
-converged SCF energy = -74.44718476354
-E(FCI) = -74.772208258794
-converged SCF energy = -74.4471847635389  <S^2> = 1.2511592e-10  2S+1 = 1
-E(UHF-FCI) = -74.772208258746
-E(FCI) = -74.772208258794
+converged SCF energy = -75.1645758157887
+E(FCI) = -75.491788196432
+converged SCF energy = -75.1645758157636  <S^2> = 4.0234216e-10  2S+1 = 1
+E(UHF-FCI) = -75.491788196430
+E(FCI) = -75.491788196432
 """
 
 core, active = qchem.active_space(electrons, orbitals, active_electrons=4, active_orbitals=4)
