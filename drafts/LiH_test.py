@@ -1,6 +1,6 @@
-import pennylane as qml
+import pennylane.numpy as np
 from pennylane import qchem
-from pennylane import numpy as np
+import pennylane as qml
 import time
 import pyscf
 from pyscf import gto
@@ -44,10 +44,7 @@ print('E(UHF-FCI) = %.12f' % cisolver.kernel()[0])
 cisolver = pyscf.fci.FCI(mol, myhf.mo_coeff)
 print('E(FCI) = %.12f' % cisolver.kernel()[0])
 
-import pennylane.numpy as np
-from pennylane import qchem
-import pennylane as qml
-import time
+
 
 
 
@@ -173,6 +170,8 @@ for n in range(100):
     params, energy = opt.step_and_cost(cost, params)
     t2 = time.time()
     print("n = {:},  E = {:.8f} H, t = {:.2f} s".format(n, energy, t2 - t1))
+
+# n = 99,  E = -7.97240884 H, t = 0.14 s
 
 print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n"
       f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}")

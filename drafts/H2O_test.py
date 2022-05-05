@@ -181,6 +181,8 @@ for n in range(100):
     t2 = time.time()
     print("n = {:},  E = {:.8f} H, t = {:.2f} s".format(n, energy, t2 - t1))
 
+# n = 99,  E = -75.48163437 H, t = 0.80 s
+
 print(f"Total number of gates: {len(singles_select)*3+len(doubles_select)*28}\n"
       f"Total number of two-qubit control gates: {len(singles_select)*3 + len(doubles_select)*14}")
 # Total number of gates: 528
