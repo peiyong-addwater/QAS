@@ -111,7 +111,7 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(h2_vac_ini_finetune_loss))), h2_vac_ini_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = 'x')
-plt.axhline(y = E_FCI_H2, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.132 Ha$")
+#plt.axhline(y = E_FCI_H2, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.132 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
