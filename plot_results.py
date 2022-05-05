@@ -3,6 +3,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import pennylane as qml
+from scipy.ndimage import uniform_filter1d
 import networkx as nx
 plt.style.use(['science','nature'])
 cwd = os.getcwd()
@@ -88,19 +89,73 @@ plt.savefig('fig_all_cnots_fine_tune_loss.pdf')
 plt.close()
 
 """
+H2 Results with Vacuum Initial State
+"""
+h2_vac_ini_res_file = "20220504-143659_FourQubitH2_VaccumInitial_QMLStateBasicGates.json"
+E_FCI_H2 = -1.131902147424
+with open(os.path.join(cwd, h2_vac_ini_res_file)) as f:
+    h2_vac_ini_res = json.load(f)
+
+h2_vac_search_rewards = [s[2] for s in h2_vac_ini_res['search_reward_list']]
+h2_search_rewards_running_average = uniform_filter1d(h2_vac_search_rewards, size = len(h2_vac_search_rewards),  mode ='nearest')
+h2_vac_ini_finetune_loss = h2_vac_ini_res['fine_tune_loss']
+print("H2 circuit length: {}".format(len(h2_vac_ini_res['op_list']))) #22
+fig = plt.figure()
+plt.plot(list(range(len(h2_vac_search_rewards))), h2_vac_search_rewards, marker = 'x')
+#plt.plot(list(range(len(h2_vac_search_rewards))), h2_search_rewards_running_average, label = 'Running Average', linestyle = '-')
+plt.xlabel("Epoch")
+plt.ylabel("Reward (-Energy, Ha)")
+plt.legend()
+plt.savefig('fig_h2_vac_init_search_rewards.pdf')
+plt.close()
+
+fig = plt.figure()
+plt.plot(list(range(len(h2_vac_ini_finetune_loss))), h2_vac_ini_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = 'x')
+plt.axhline(y = E_FCI_H2, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.132 Ha$")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_h2_vac_init_fine_tune_loss.pdf')
+plt.close()
+
+
+
+h2_symbols, h2_coordinates =  ["H", "H"], np.array([0.0, 0.0, -0.6614, 0.0, 0.0, 0.6614]) # Bohr
+H_h2, qubits_h2 = qml.qchem.molecular_hamiltonian(
+    h2_symbols,
+    h2_coordinates,
+    basis="sto-3g"
+)
+
+h2_dev = qml.device('default.qubit', wires = qubits_h2)
+
+@qml.qnode(h2_dev)
+def h2_vacc_ini_circ():
+    for c in h2_vac_ini_res['op_list']:
+        gate_name = c[0]
+        wires=c[1]
+        params = c[2]
+        if gate_name == 'Rot':
+            qml.Rot(*params, wires=wires)
+        if gate_name == 'CNOT':
+            qml.CNOT(wires=wires)
+    return qml.expval(H_h2)
+
+
+"""
 H2O Results
 """
 Min_energy_H2O = -75.491788196432
-h2o_early_stopping = -74.9
 h2o_results_file = '20220504-074905_H2O_QMLStateBasicGates.json'
 with open(os.path.join(cwd, h2o_results_file)) as f:
     h2o_results = json.load(f)
 
 h2o_search_rewards = [s[2] for s in h2o_results['search_reward_list']]
+h2o_search_running_mean = uniform_filter1d(h2o_search_rewards, size = len(h2o_search_rewards),  mode ='nearest')
 h2o_finetuen_rewards = h2o_results['fine_tune_loss']
 fig = plt.figure()
 plt.plot(list(range(len(h2o_search_rewards))), h2o_search_rewards, marker ='x')
-#plt.axhline(y = h2o_early_stopping, color ='r', linestyle ='--', label =r"Early Stopping at {}".format(h2o_early_stopping))
+#plt.plot(list(range(len(h2o_search_rewards))), h2o_search_running_mean, label='Running Average', linestyle = '-')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy, Ha)')
 plt.legend()
@@ -109,14 +164,13 @@ plt.savefig('fig_H2O_search_rewards.pdf')
 fig = plt.figure()
 plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='x')
 plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-75.49 Ha$")
-#plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
 plt.savefig('fig_H2O_fine_tune_loss.pdf')
 plt.close()
 
-print("H2O circuit length: {}".format(len(h2o_results['op_list'])))
+print("H2O circuit length: {}".format(len(h2o_results['op_list']))) # 38
 _H2O_SYMBOLS = ['H', 'O', 'H']
 _H2O_COORDINATES = np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.])
 _H2O_HAM, _H2O_QUBITS = qml.qchem.molecular_hamiltonian(
@@ -142,6 +196,59 @@ def h2o_circuit():
         if gate_name == 'CNOT':
             qml.CNOT(wires=wires)
     return qml.expval(qml.SparseHamiltonian(qml.utils.sparse_hamiltonian(_H2O_HAM), wires=range(_H2O_QUBITS)))
+
+"""
+LiH Results
+"""
+lih_file = '20220504-141016_LiH_QMLStateBasicGates.json'
+E_FCI_LiH = -7.888567271126
+lih_symbols = ["Li", "H"]
+lih_geometry = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527])
+H_LiH, qubits_LiH = qml.qchem.molecular_hamiltonian(
+    lih_symbols,
+    lih_geometry,
+    active_electrons=2,
+    active_orbitals=5,
+    basis='sto-6g'
+)
+
+with open(os.path.join(cwd, lih_file)) as f:
+    lih_res = json.load(f)
+
+lih_search_rewards = [s[2] for s in lih_res['search_reward_list']]
+lih_finetune_loss = lih_res['fine_tune_loss']
+
+print("LiH Circuit Length: {}".format(len(lih_res['op_list']))) # 13
+
+fig = plt.figure()
+plt.plot(list(range(len(lih_search_rewards))), lih_search_rewards, marker = 'x')
+plt.xlabel("Epoch")
+plt.ylabel("Reward (-Energy, Ha)")
+plt.legend()
+plt.savefig('fig_lih_search_rewards.pdf')
+plt.close()
+
+fig = plt.figure()
+plt.plot(list(range(len(lih_finetune_loss))), lih_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = 'x')
+#plt.axhline(y = E_FCI_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.888 Ha$")
+plt.xlabel('Epoch')
+plt.ylabel('Loss (Energy, Ha)')
+plt.legend()
+plt.savefig('fig_lih_fine_tune_loss.pdf')
+plt.close()
+
+lih_dev = qml.device('default.qubit', wires = qubits_LiH)
+@qml.qnode(lih_dev)
+def lih_circ():
+    for c in lih_res['op_list']:
+        gate_name = c[0]
+        wires=c[1]
+        params = c[2]
+        if gate_name == 'Rot':
+            qml.Rot(*params, wires=wires)
+        if gate_name == 'CNOT':
+            qml.CNOT(wires=wires)
+    return qml.expval(H_LiH)
 
 """
 QAOA results
@@ -631,4 +738,12 @@ plt.close()
 
 fig, ax = qml.draw_mpl(h2o_circuit)()
 plt.savefig('fig_h2o_circ.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(h2_vacc_ini_circ)()
+plt.savefig('fig_h2_vac_init_circ.pdf')
+plt.close()
+
+fig, ax = qml.draw_mpl(lih_circ)()
+plt.savefig('fig_lih_circ.pdf')
 plt.close()
