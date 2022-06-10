@@ -40,7 +40,7 @@ elist = [(0, 1, 1), (0, 2, 2),  (2, 3, 3), (1, 4, 4), (2, 4, 5), (0, 4, 6)]
 G.add_weighted_edges_from(elist)
 
 colors = ["#00b4d9" for node in G.nodes()]
-pos = nx.spring_layout(G,seed=2077)
+pos = nx.spring_layout(G,seed=42)
 
 
 def draw_graph(G, colors, pos, save_name = 'qaoa_5q_weighted_test.png'):
