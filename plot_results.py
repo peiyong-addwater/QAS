@@ -711,7 +711,9 @@ plt.close()
 """
 Draw circuits (always at last to avoid ugly boundaries on the bar chart)
 """
+# plt.rcParams.update({'font.size': 52})
 qml.drawer.use_style('black_white')
+plt.rcParams.update({'font.size': 52})
 fig, ax = qml.draw_mpl(qaoa_circuit_1)()
 plt.savefig('fig_qaoa_circ_1.pdf')
 plt.close()
