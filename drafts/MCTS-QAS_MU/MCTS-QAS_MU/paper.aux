@@ -1,0 +1,296 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\babel@aux[2]{}
+\@nameuse{bbl@beforestart}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{peruzzo2014variational}
+\citation{schuldpetruccione2021}
+\citation{RevModPhys.92.015003}
+\citation{2020optionpricing}
+\citation{johnson2017qvector}
+\citation{Xu2021-dt}
+\citation{2017hardwareefficientvqe}
+\citation{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}
+\citation{Xu2021-dt}
+\babel@aux{english}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{intro}{{1}{1}{Introduction}{section.1}{}}
+\citation{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}
+\citation{alphafold2Jumper2021-lw}
+\citation{Davies2021-xh}
+\citation{DARTS_DBLP:conf/iclr/LiuSY19}
+\citation{PNAS10.1007/978-3-030-01246-5_2}
+\citation{ENASpmlr-v80-pham18a}
+\citation{AlphaXDBLP:conf/aaai/WangZJTF20}
+\citation{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}
+\citation{huang2021neural}
+\citation{DARTS_DBLP:conf/iclr/LiuSY19}
+\citation{zhang2021differentiable}
+\citation{zhang2021neural}
+\citation{OpenAIGYMDBLP:journals/corr/BrockmanCPSSTZ16}
+\citation{kuo2021quantum}
+\citation{chen2021quantum}
+\citation{du2020quantum}
+\citation{Linghu2022-yy}
+\citation{9566740mctsqas}
+\citation{CMAB_RTS}
+\citation{zhang2021differentiable}
+\citation{chen2021quantum}
+\citation{kuo2021quantum}
+\citation{zhang2021differentiable}
+\citation{du2020quantum}
+\citation{zhang2021neural}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methods}{3}{section.2}\protected@file@percent }
+\newlabel{methods}{{2}{3}{Methods}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Problem Formulation}{3}{subsection.2.1}\protected@file@percent }
+\newlabel{eq:U1U3U1U2}{{3}{4}{Problem Formulation}{equation.2.3}{}}
+\newlabel{eq:U1U3U1U2_list}{{4}{4}{Problem Formulation}{equation.2.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The tree representation (along the arc with blue-shaded circles) of the unitary described in Eqns. (\ref  {eq:U1U3U1U2}) and (\ref  {eq:U1U3U1U2_list}). We can also see that some of the possible branches along the blue-node path are pruned, leading to the size of operation pool at some node smaller than the total number of possible choices c = $\vert \mathcal  {C}\vert $\relax }}{4}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:treeexample}{{1}{4}{The tree representation (along the arc with blue-shaded circles) of the unitary described in Eqns. (\ref {eq:U1U3U1U2}) and (\ref {eq:U1U3U1U2_list}). We can also see that some of the possible branches along the blue-node path are pruned, leading to the size of operation pool at some node smaller than the total number of possible choices c = $\vert \mathcal {C}\vert $\relax }{figure.caption.1}{}}
+\citation{nielsen00}
+\citation{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}
+\citation{AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}
+\citation{MCTS_for_game10.5555/3022539.3022579}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Four stages of Monte Carlo tree search. From left to right, up to down: Selection: Go down from the root node to a non fully expanded leaf node; Expansion: Expand the selected node by taking an action; Simulation: Simulate the game, which in our case is the quantum circuit, to obtain reward information \textbf  {R}; Backpropagation: Back-propagate the reward information along the path (arc) taken.\relax }}{6}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:mcts}{{2}{6}{Four stages of Monte Carlo tree search. From left to right, up to down: Selection: Go down from the root node to a non fully expanded leaf node; Expansion: Expand the selected node by taking an action; Simulation: Simulate the game, which in our case is the quantum circuit, to obtain reward information \textbf {R}; Backpropagation: Back-propagate the reward information along the path (arc) taken.\relax }{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Monte Carlo tree search (MCTS), nested MCTS and the na\"ive assumption}{6}{subsection.2.2}\protected@file@percent }
+\citation{nestedmontecarlosearch}
+\citation{CMAB_RTS}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Nested Monte Carlo tree search. Left: The root node has three possible actions, which in this case are unselected initially. We perform MCTS on all three children nodes (generated by the three possible actions) to update their reward information. In this case, the right child has the highest reward. Middle: After selecting the right side child node, we perform the same MCTS on all three possible children nodes as before, which gives updated reward information. In this case the middle child node has the highest reward, meaning that at this level we expand the middle child node. Right: Similar operations as before. If we only perform nested MCTS at the root node level, then it will be a level-1 nested MCTS.\relax }}{7}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:nestedmcts}{{3}{7}{Nested Monte Carlo tree search. Left: The root node has three possible actions, which in this case are unselected initially. We perform MCTS on all three children nodes (generated by the three possible actions) to update their reward information. In this case, the right child has the highest reward. Middle: After selecting the right side child node, we perform the same MCTS on all three possible children nodes as before, which gives updated reward information. In this case the middle child node has the highest reward, meaning that at this level we expand the middle child node. Right: Similar operations as before. If we only perform nested MCTS at the root node level, then it will be a level-1 nested MCTS.\relax }{figure.caption.3}{}}
+\citation{nestedmontecarlosearch}
+\citation{UCB_paper_10.5555/944919.944941}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}QAS with Nested Na\"ive MCTS}{8}{subsection.2.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces SampleArc\relax }}{9}{algorithm.1}\protected@file@percent }
+\newlabel{alg:sampleArc}{{1}{9}{SampleArc\relax }{algorithm.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces ExploitArc\relax }}{9}{algorithm.2}\protected@file@percent }
+\newlabel{alg:exploitArc}{{2}{9}{ExploitArc\relax }{algorithm.2}{}}
+\citation{qec_intro_guide}
+\citation{qec_intro_guide}
+\citation{qec_intro_guide}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces SelectNode\relax }}{10}{algorithm.3}\protected@file@percent }
+\newlabel{alg:selectChild}{{3}{10}{SelectNode\relax }{algorithm.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces ExecuteSingleRound\relax }}{10}{algorithm.4}\protected@file@percent }
+\newlabel{alg:executeSingleRound}{{4}{10}{ExecuteSingleRound\relax }{algorithm.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Numerical Experiments and Results}{10}{section.3}\protected@file@percent }
+\newlabel{experiments}{{3}{10}{Numerical Experiments and Results}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Searching for the encoding circuit of [[4,2,2]] quantum error detection code}{10}{subsection.3.1}\protected@file@percent }
+\newlabel{422}{{3.1}{10}{Searching for the encoding circuit of [[4,2,2]] quantum error detection code}{subsection.3.1}{}}
+\citation{qec_intro_guide}
+\citation{bergholm2020pennylane}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Encoding circuit of the [[4,2,2]] code \cite  {qec_intro_guide} to detect X- and Z-errors. It needs 4 physical qubits for 2 logical qubits and has a code distance 2\relax }}{11}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:lit422}{{4}{11}{Encoding circuit of the [[4,2,2]] code \cite {qec_intro_guide} to detect X- and Z-errors. It needs 4 physical qubits for 2 logical qubits and has a code distance 2\relax }{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Experiment Settings}{11}{subsubsection.3.1.1}\protected@file@percent }
+\citation{Bravo-Prieto_undated-oq}
+\citation{HHL}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}Results}{12}{subsubsection.3.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Rewards when searching for encoding circuits of the [[4,2,2]] code. We can see that in both cases the algorithm was able find the encoding circuit that generated the required code words in just a few iterations. `Circuit a' refers to the search rewards for the circuit in Fig \ref  {fig:422_first_circ} and `Circuit b' refers to the search rewards for the circuit in Fig \ref  {fig:422_second_circ}.\relax }}{12}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:422_reward}{{5}{12}{Rewards when searching for encoding circuits of the [[4,2,2]] code. We can see that in both cases the algorithm was able find the encoding circuit that generated the required code words in just a few iterations. `Circuit a' refers to the search rewards for the circuit in Fig \ref {fig:422_first_circ} and `Circuit b' refers to the search rewards for the circuit in Fig \ref {fig:422_second_circ}.\relax }{figure.caption.5}{}}
+\newlabel{fig:422_first_circ}{{6a}{12}{\relax }{figure.caption.6}{}}
+\newlabel{sub@fig:422_first_circ}{{a}{12}{\relax }{figure.caption.6}{}}
+\newlabel{fig:422_second_circ}{{6b}{12}{\relax }{figure.caption.6}{}}
+\newlabel{sub@fig:422_second_circ}{{b}{12}{\relax }{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Two different encoding circuits of the [[4,2,2]] code produced by the search algorithm.\relax }}{12}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:422_circ}{{6}{12}{Two different encoding circuits of the [[4,2,2]] code produced by the search algorithm.\relax }{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Solving linear equations}{12}{subsection.3.2}\protected@file@percent }
+\citation{Bravo-Prieto_undated-oq}
+\citation{pennylane_vqls}
+\citation{nielsen00}
+\newlabel{eqn:vqls_local_loss}{{19}{13}{Solving linear equations}{equation.3.19}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Experiment Settings}{13}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Results}{14}{subsubsection.3.2.2}\protected@file@percent }
+\newlabel{fig:vqls_4q_search}{{7a}{14}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.7}{}}
+\newlabel{sub@fig:vqls_4q_search}{{a}{14}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.7}{}}
+\newlabel{fig:vqls_4q_finetune}{{7b}{14}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimized to achieve smaller losses. The final loss of the optimized parameters is very close to 0.\relax }{figure.caption.7}{}}
+\newlabel{sub@fig:vqls_4q_finetune}{{b}{14}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimized to achieve smaller losses. The final loss of the optimized parameters is very close to 0.\relax }{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The search rewards and fine-tune loss for VQLS experiment. \relax }}{14}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:vqls_search_finetune}{{7}{14}{The search rewards and fine-tune loss for VQLS experiment. \relax }{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Circuit searched for the VQLS problem.\relax }}{14}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:vqls_circ}{{8}{14}{Circuit searched for the VQLS problem.\relax }{figure.caption.8}{}}
+\citation{li2017efficient}
+\citation{mcclean2016theory}
+\citation{wecker2015progress}
+\citation{peruzzo2014variational}
+\citation{o2016scalable}
+\citation{colless2017implementing}
+\citation{kandala2017hardware}
+\citation{colless2018computation}
+\citation{dumitrescu2018cloud}
+\citation{sakurai_napolitano_2017}
+\citation{sakurai_napolitano_2017}
+\citation{bergholm2020pennylane}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Comparison between classical probabilities of the normalized solution vector $\frac  {x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket {x}$ produced by the trained circuit in Fig~\ref  {fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, proving that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.\relax }}{15}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:vqls_results_compare}{{9}{15}{Comparison between classical probabilities of the normalized solution vector $\frac {x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket {x}$ produced by the trained circuit in Fig~\ref {fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, proving that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Search for quantum chemistry ansatzes}{15}{subsection.3.3}\protected@file@percent }
+\newlabel{h2}{{3.3}{15}{Search for quantum chemistry ansatzes}{subsection.3.3}{}}
+\newlabel{eq:variational}{{24}{15}{Search for quantum chemistry ansatzes}{equation.3.24}{}}
+\citation{pennylane_dev_team_2021}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Experiment settings}{16}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Search an ansatz for finding the ground energy of $H_2$:}{16}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Search an ansatz for finding the ground energy of $LiH$}{16}{section*.11}\protected@file@percent }
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\@writefile{toc}{\contentsline {paragraph}{Search an ansatz for finding the ground energy of $H_2 O$}{17}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}Results}{17}{subsubsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{$H_2$ Results}{17}{section*.13}\protected@file@percent }
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\newlabel{fig:h2_search}{{10a}{18}{Search rewards for the $H_2$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 0.7.\relax }{figure.caption.14}{}}
+\newlabel{sub@fig:h2_search}{{a}{18}{Search rewards for the $H_2$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 0.7.\relax }{figure.caption.14}{}}
+\newlabel{fig:h2_finetune}{{10b}{18}{Fine-tune loss for the searched $H_2$ circuit. At the last iteration of optimization, the energy is around -1.1359 Ha, which is very close to the classically computed full configuration interaction result with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -1.132 Ha and marked by the red horizontal dashed line.\relax }{figure.caption.14}{}}
+\newlabel{sub@fig:h2_finetune}{{b}{18}{Fine-tune loss for the searched $H_2$ circuit. At the last iteration of optimization, the energy is around -1.1359 Ha, which is very close to the classically computed full configuration interaction result with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -1.132 Ha and marked by the red horizontal dashed line.\relax }{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces The search rewards and fine-tune loss for $H_2$ circuit. experiment.\relax }}{18}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:h2_search_finetune}{{10}{18}{The search rewards and fine-tune loss for $H_2$ circuit. experiment.\relax }{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces The circuit for finding the ground energy of the $H_2$ molecule produced by the search algorithm. We can see that there are already familiar structures emerging: Red box: decomposition of the SWAP gate; Blue double-line box: Ising coupling-like circuit.\relax }}{18}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:h2_circ}{{11}{18}{The circuit for finding the ground energy of the $H_2$ molecule produced by the search algorithm. We can see that there are already familiar structures emerging: Red box: decomposition of the SWAP gate; Blue double-line box: Ising coupling-like circuit.\relax }{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {paragraph}{$LiH$ Results}{18}{section*.16}\protected@file@percent }
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\citation{Sun2018-nq}
+\citation{Sun2020-ej}
+\newlabel{fig:lih_search}{{12a}{19}{Search rewards for the $LiH$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 7.7.\relax }{figure.caption.17}{}}
+\newlabel{sub@fig:lih_search}{{a}{19}{Search rewards for the $LiH$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 7.7.\relax }{figure.caption.17}{}}
+\newlabel{fig:lih_finetune}{{12b}{19}{Fine-tune loss for the searched $LiH$ circuit. At the last iteration of optimization, the energy is around -7.9526 Ha, very close to the classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -7.8885 Ha\relax }{figure.caption.17}{}}
+\newlabel{sub@fig:lih_finetune}{{b}{19}{Fine-tune loss for the searched $LiH$ circuit. At the last iteration of optimization, the energy is around -7.9526 Ha, very close to the classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -7.8885 Ha\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces The search rewards and fine-tune loss for $LiH$ circuit. experiment.\relax }}{19}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:lih_search_finetune}{{12}{19}{The search rewards and fine-tune loss for $LiH$ circuit. experiment.\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Circuit structure produced by the search algorithm for LiH. We can see that the structure of the circuit is quite simple, compared to the circuit for $H_2$ in Fig~\ref  {fig:h2_circ}, indicating that the vacuum state $\ket {\psi _0} = \ket {0}^{\otimes 10}$ is already very close to the ground energy state.\relax }}{19}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:lih_circ}{{13}{19}{Circuit structure produced by the search algorithm for LiH. We can see that the structure of the circuit is quite simple, compared to the circuit for $H_2$ in Fig~\ref {fig:h2_circ}, indicating that the vacuum state $\ket {\psi _0} = \ket {0}^{\otimes 10}$ is already very close to the ground energy state.\relax }{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {paragraph}{$H_2 O$ Results}{19}{section*.19}\protected@file@percent }
+\citation{Bharti2022-sw}
+\newlabel{fig:h2o_search}{{14a}{20}{Search rewards for the $H_2 O$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 74.9.\relax }{figure.caption.20}{}}
+\newlabel{sub@fig:h2o_search}{{a}{20}{Search rewards for the $H_2 O$ ansatz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 74.9.\relax }{figure.caption.20}{}}
+\newlabel{fig:h2o_finetune}{{14b}{20}{Fine-tune loss for the searched $H_2 O$ circuit. At the last iteration of optimization, the energy is around -75.4220 Ha, very close to the classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -75.4917 Ha\relax }{figure.caption.20}{}}
+\newlabel{sub@fig:h2o_finetune}{{b}{20}{Fine-tune loss for the searched $H_2 O$ circuit. At the last iteration of optimization, the energy is around -75.4220 Ha, very close to the classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -75.4917 Ha\relax }{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces The search rewards and fine-tune loss for $LiH$ circuit.\relax }}{20}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:h2o_search_finetune}{{14}{20}{The search rewards and fine-tune loss for $LiH$ circuit.\relax }{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Circuit for $H_2 O$ produced by the search algorithm.\relax }}{20}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:h2o_circ}{{15}{20}{Circuit for $H_2 O$ produced by the search algorithm.\relax }{figure.caption.21}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Solving the \textsc  {MaxCut} problem}{20}{subsection.3.4}\protected@file@percent }
+\citation{Farhi2014-ug}
+\newlabel{qaoa_ham}{{3.4}{21}{Solving the \textsc {MaxCut} problem}{equation.3.38}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Experiment Settings}{21}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Problem graph for the unweighted \textsc  {MaxCut} experiment\relax }}{21}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:max_cut_prob}{{16}{21}{Problem graph for the unweighted \textsc {MaxCut} experiment\relax }{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {paragraph}{Unweighted \textsc  {MaxCut}}{21}{figure.caption.23}\protected@file@percent }
+\citation{nielsen00}
+\@writefile{toc}{\contentsline {paragraph}{Weighted \textsc  {MaxCut}}{22}{section*.24}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Problem graph for the weighted \textsc  {MaxCut} experiment\relax }}{22}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:max_cut_weighted_prob}{{17}{22}{Problem graph for the weighted \textsc {MaxCut} experiment\relax }{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Results}{22}{subsubsection.3.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Unweighted \textsc  {MaxCut}}{22}{section*.26}\protected@file@percent }
+\newlabel{fig:qaoa_7q_first_circ}{{18a}{23}{\relax }{figure.caption.27}{}}
+\newlabel{sub@fig:qaoa_7q_first_circ}{{a}{23}{\relax }{figure.caption.27}{}}
+\newlabel{fig:qaoa_7q_second_circ}{{18b}{23}{\relax }{figure.caption.27}{}}
+\newlabel{sub@fig:qaoa_7q_second_circ}{{b}{23}{\relax }{figure.caption.27}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Two different circuits finding two different solutions of the \textsc  {MaxCut} problem shown in Fig. \ref  {fig:max_cut_prob}. Fig. \ref  {fig:qaoa_7q_first_circ} gives the solution 0110010 (see Fig. \ref  {fig:qaoa_7q_first_solution}) and Fig. \ref  {fig:qaoa_7q_second_circ} gives the solution 0111010 (see Fig. \ref  {fig:qaoa_7q_second_solution}).\relax }}{23}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:qaoa_7q_circ}{{18}{23}{Two different circuits finding two different solutions of the \textsc {MaxCut} problem shown in Fig. \ref {fig:max_cut_prob}. Fig. \ref {fig:qaoa_7q_first_circ} gives the solution 0110010 (see Fig. \ref {fig:qaoa_7q_first_solution}) and Fig. \ref {fig:qaoa_7q_second_circ} gives the solution 0111010 (see Fig. \ref {fig:qaoa_7q_second_solution}).\relax }{figure.caption.27}{}}
+\newlabel{fig:qaoa_7q_first_solution}{{19a}{23}{\relax }{figure.caption.28}{}}
+\newlabel{sub@fig:qaoa_7q_first_solution}{{a}{23}{\relax }{figure.caption.28}{}}
+\newlabel{fig:qaoa_7q_second_solution}{{19b}{23}{\relax }{figure.caption.28}{}}
+\newlabel{sub@fig:qaoa_7q_second_solution}{{b}{23}{\relax }{figure.caption.28}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Two different optimal solutions found by the circuits in Fig. \ref  {fig:qaoa_7q_first_circ} and Fig. \ref  {fig:qaoa_7q_second_circ}, respectively.\relax }}{23}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:qaoa_7q_solution}{{19}{23}{Two different optimal solutions found by the circuits in Fig. \ref {fig:qaoa_7q_first_circ} and Fig. \ref {fig:qaoa_7q_second_circ}, respectively.\relax }{figure.caption.28}{}}
+\newlabel{fig:qaoa_search_reward_1}{{20a}{24}{The change of rewards w.r.t. search iteration during the search for the ansatz (in Fig \ref {fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref {fig:qaoa_7q_first_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.\relax }{figure.caption.29}{}}
+\newlabel{sub@fig:qaoa_search_reward_1}{{a}{24}{The change of rewards w.r.t. search iteration during the search for the ansatz (in Fig \ref {fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref {fig:qaoa_7q_first_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.\relax }{figure.caption.29}{}}
+\newlabel{fig:qaoa_finetune_1}{{20b}{24}{The change of loss w.r.t. optimization iteration during the fine-tune for the ansatz (in Fig \ref {fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref {fig:qaoa_7q_first_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.\relax }{figure.caption.29}{}}
+\newlabel{sub@fig:qaoa_finetune_1}{{b}{24}{The change of loss w.r.t. optimization iteration during the fine-tune for the ansatz (in Fig \ref {fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref {fig:qaoa_7q_first_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.\relax }{figure.caption.29}{}}
+\newlabel{fig:qaoa_search_reward_2}{{20c}{24}{The change of rewards w.r.t. search iteration during the search for the ansatz (in Fig \ref {fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref {fig:qaoa_7q_second_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.\relax }{figure.caption.29}{}}
+\newlabel{sub@fig:qaoa_search_reward_2}{{c}{24}{The change of rewards w.r.t. search iteration during the search for the ansatz (in Fig \ref {fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref {fig:qaoa_7q_second_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.\relax }{figure.caption.29}{}}
+\newlabel{fig:qaoa_finetune_2}{{20d}{24}{The change of loss w.r.t. optimization iteration during the fine-tune for the ansatz (in Fig \ref {fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref {fig:qaoa_7q_second_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.\relax }{figure.caption.29}{}}
+\newlabel{sub@fig:qaoa_finetune_2}{{d}{24}{The change of loss w.r.t. optimization iteration during the fine-tune for the ansatz (in Fig \ref {fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref {fig:qaoa_7q_second_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.\relax }{figure.caption.29}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Search and fine-tune rewards for the circuits in Fig~\ref  {fig:qaoa_7q_circ}. \relax }}{24}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:qaoa_7q_search_finetune_both}{{20}{24}{Search and fine-tune rewards for the circuits in Fig~\ref {fig:qaoa_7q_circ}. \relax }{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {paragraph}{Weighted \textsc  {MaxCut}}{24}{section*.30}\protected@file@percent }
+\citation{zhang2021differentiable}
+\citation{chen2021quantum}
+\citation{kuo2021quantum}
+\citation{zhang2021differentiable}
+\citation{du2020quantum}
+\citation{zhang2021neural}
+\newlabel{fig:qaoa_5q_search}{{21a}{25}{Search rewards for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.31}{}}
+\newlabel{sub@fig:qaoa_5q_search}{{a}{25}{Search rewards for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.31}{}}
+\newlabel{fig:qaoa_5q_finetune}{{21b}{25}{Fine-tune loss for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.31}{}}
+\newlabel{sub@fig:qaoa_5q_finetune}{{b}{25}{Fine-tune loss for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.31}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces The search rewards and fine-tune losses of for the five-node \textsc  {MaxCut} problem.\relax }}{25}{figure.caption.31}\protected@file@percent }
+\newlabel{fig:qaoa_5q_search_and_finetune}{{21}{25}{The search rewards and fine-tune losses of for the five-node \textsc {MaxCut} problem.\relax }{figure.caption.31}{}}
+\newlabel{fig:qaoa_5q_circ}{{22a}{25}{The searched circuit for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.32}{}}
+\newlabel{sub@fig:qaoa_5q_circ}{{a}{25}{The searched circuit for the five-node weighted \textsc {MaxCut} problem\relax }{figure.caption.32}{}}
+\newlabel{fig:qaoa_5q_solution}{{22b}{25}{The solution sampled, which is 00011, from the circuit shown left.\relax }{figure.caption.32}{}}
+\newlabel{sub@fig:qaoa_5q_solution}{{b}{25}{The solution sampled, which is 00011, from the circuit shown left.\relax }{figure.caption.32}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces The searched circuit and sampled solution for the five-node \textsc  {MaxCut} problem.\relax }}{25}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:qaoa_5q_circ_and_solution}{{22}{25}{The searched circuit and sampled solution for the five-node \textsc {MaxCut} problem.\relax }{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{25}{section.4}\protected@file@percent }
+\newlabel{discussion}{{4}{25}{Discussion}{section.4}{}}
+\bibstyle{plain}
+\bibdata{reference}
+\bibcite{pennylane_vqls}{1}
+\bibcite{UCB_paper_10.5555/944919.944941}{2}
+\bibcite{bergholm2020pennylane}{3}
+\bibcite{Bharti2022-sw}{4}
+\bibcite{Bravo-Prieto_undated-oq}{5}
+\bibcite{OpenAIGYMDBLP:journals/corr/BrockmanCPSSTZ16}{6}
+\bibcite{nestedmontecarlosearch}{7}
+\bibcite{MCTS_for_game10.5555/3022539.3022579}{8}
+\bibcite{colless2017implementing}{9}
+\bibcite{colless2018computation}{10}
+\bibcite{Davies2021-xh}{11}
+\bibcite{pennylane_dev_team_2021}{12}
+\bibcite{du2020quantum}{13}
+\bibcite{dumitrescu2018cloud}{14}
+\bibcite{Farhi2014-ug}{15}
+\bibcite{HHL}{16}
+\bibcite{chen2021quantum}{17}
+\bibcite{huang2021neural}{18}
+\bibcite{johnson2017qvector}{19}
+\bibcite{alphafold2Jumper2021-lw}{20}
+\bibcite{2017hardwareefficientvqe}{21}
+\bibcite{kandala2017hardware}{22}
+\bibcite{kuo2021quantum}{23}
+\bibcite{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}{24}
+\bibcite{li2017efficient}{25}
+\bibcite{Linghu2022-yy}{26}
+\bibcite{PNAS10.1007/978-3-030-01246-5_2}{27}
+\bibcite{DARTS_DBLP:conf/iclr/LiuSY19}{28}
+\bibcite{RevModPhys.92.015003}{29}
+\bibcite{mcclean2016theory}{30}
+\bibcite{9566740mctsqas}{31}
+\bibcite{nielsen00}{32}
+\bibcite{CMAB_RTS}{33}
+\bibcite{o2016scalable}{34}
+\bibcite{peruzzo2014variational}{35}
+\bibcite{ENASpmlr-v80-pham18a}{36}
+\bibcite{qec_intro_guide}{37}
+\bibcite{sakurai_napolitano_2017}{38}
+\bibcite{schuldpetruccione2021}{39}
+\bibcite{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}{40}
+\bibcite{AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}{41}
+\bibcite{2020optionpricing}{42}
+\bibcite{Sun2018-nq}{43}
+\bibcite{Sun2020-ej}{44}
+\bibcite{AlphaXDBLP:conf/aaai/WangZJTF20}{45}
+\bibcite{wecker2015progress}{46}
+\bibcite{Xu2021-dt}{47}
+\bibcite{zhang2021differentiable}{48}
+\bibcite{zhang2021neural}{49}
+\gdef \@abspage@last{30}
