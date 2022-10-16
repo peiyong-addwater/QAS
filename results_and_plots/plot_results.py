@@ -209,7 +209,7 @@ H_LiH, qubits_LiH = qml.qchem.molecular_hamiltonian(
     lih_geometry,
     active_electrons=2,
     active_orbitals=5,
-    basis='sto-3g' # was 'sto-6g'
+    basis='sto-6g' # was 'sto-6g'
 )
 
 with open(os.path.join(cwd, lih_file)) as f:
