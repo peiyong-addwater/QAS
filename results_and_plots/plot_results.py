@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pennylane as qml
 from scipy.ndimage import uniform_filter1d
 import networkx as nx
-plt.style.use(['science','nature'])
+plt.style.use(['ieee'])
 cwd = os.getcwd()
 #print(cwd)
 
@@ -62,7 +62,7 @@ plt.savefig('fig_nei_cnots_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(neigh_cnots_fine_tune_loss))), neigh_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
+plt.plot(list(range(len(neigh_cnots_fine_tune_loss))), neigh_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
 plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -80,7 +80,7 @@ plt.savefig('fig_all_cnots_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(all_cnots_fine_tune_loss))), all_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = 'x')
+plt.plot(list(range(len(all_cnots_fine_tune_loss))), all_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
 plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088Ha$")
 #plt.title("Fine-tune Loss after Search, No Restrictions on CNOT Locations")
 plt.xlabel('Epoch')
@@ -101,7 +101,7 @@ h2_search_rewards_running_average = uniform_filter1d(h2_vac_search_rewards, size
 h2_vac_ini_finetune_loss = h2_vac_ini_res['fine_tune_loss']
 print("H2 circuit length: {}".format(len(h2_vac_ini_res['op_list']))) #22
 fig = plt.figure()
-plt.plot(list(range(len(h2_vac_search_rewards))), h2_vac_search_rewards, marker = 'x')
+plt.plot(list(range(len(h2_vac_search_rewards))), h2_vac_search_rewards, marker = '.')
 #plt.plot(list(range(len(h2_vac_search_rewards))), h2_search_rewards_running_average, label = 'Running Average', linestyle = '-')
 plt.xlabel("Epoch")
 plt.ylabel("Reward (-Energy, Ha)")
@@ -110,7 +110,7 @@ plt.savefig('fig_h2_vac_init_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(h2_vac_ini_finetune_loss))), h2_vac_ini_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = 'x')
+plt.plot(list(range(len(h2_vac_ini_finetune_loss))), h2_vac_ini_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = '.')
 #plt.axhline(y = E_FCI_H2, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.132 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -154,7 +154,7 @@ h2o_search_rewards = [s[2] for s in h2o_results['search_reward_list']]
 h2o_search_running_mean = uniform_filter1d(h2o_search_rewards, size = len(h2o_search_rewards),  mode ='nearest')
 h2o_finetuen_rewards = h2o_results['fine_tune_loss']
 fig = plt.figure()
-plt.plot(list(range(len(h2o_search_rewards))), h2o_search_rewards, marker ='x')
+plt.plot(list(range(len(h2o_search_rewards))), h2o_search_rewards, marker ='.')
 #plt.plot(list(range(len(h2o_search_rewards))), h2o_search_running_mean, label='Running Average', linestyle = '-')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Energy, Ha)')
@@ -162,7 +162,7 @@ plt.legend()
 plt.savefig('fig_H2O_search_rewards.pdf')
 
 fig = plt.figure()
-plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='x')
+plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='.')
 plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-75.49 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -209,7 +209,7 @@ H_LiH, qubits_LiH = qml.qchem.molecular_hamiltonian(
     lih_geometry,
     active_electrons=2,
     active_orbitals=5,
-    basis='sto-6g'
+    basis='sto-3g' # was 'sto-6g'
 )
 
 with open(os.path.join(cwd, lih_file)) as f:
@@ -221,7 +221,7 @@ lih_finetune_loss = lih_res['fine_tune_loss']
 print("LiH Circuit Length: {}".format(len(lih_res['op_list']))) # 13
 
 fig = plt.figure()
-plt.plot(list(range(len(lih_search_rewards))), lih_search_rewards, marker = 'x')
+plt.plot(list(range(len(lih_search_rewards))), lih_search_rewards, marker = '.')
 plt.xlabel("Epoch")
 plt.ylabel("Reward (-Energy, Ha)")
 plt.legend()
@@ -229,7 +229,7 @@ plt.savefig('fig_lih_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(lih_finetune_loss))), lih_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = 'x')
+plt.plot(list(range(len(lih_finetune_loss))), lih_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = '.')
 #plt.axhline(y = E_FCI_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.888 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -272,7 +272,7 @@ qaoa_2_fine_tune_loss = qaoa_dict_2['fine_tune_loss']
 qaoa_2_measurement_result = qaoa_dict_2['quantum_result'][1]
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_1_search_reward_list))), qaoa_1_search_reward_list,marker = 'x')
+plt.plot(list(range(len(qaoa_1_search_reward_list))), qaoa_1_search_reward_list,marker = '.')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
@@ -281,7 +281,7 @@ plt.savefig('fig_qaoa_1_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_2_search_reward_list))), qaoa_2_search_reward_list,marker = 'x')
+plt.plot(list(range(len(qaoa_2_search_reward_list))), qaoa_2_search_reward_list,marker = '.')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at 3.9")
@@ -290,7 +290,7 @@ plt.savefig('fig_qaoa_2_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_1_fine_tune_loss))), qaoa_1_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.plot(list(range(len(qaoa_1_fine_tune_loss))), qaoa_1_fine_tune_loss,linestyle = '-',marker = '.')
 plt.axhline(y = -4, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -300,7 +300,7 @@ plt.savefig('fig_qaoa_1_fine_tune_loss.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_2_fine_tune_loss))), qaoa_2_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.plot(list(range(len(qaoa_2_fine_tune_loss))), qaoa_2_fine_tune_loss,linestyle = '-',marker = '.')
 plt.axhline(y = -4, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -402,7 +402,7 @@ qaoa_5q_search_reward_list_1 = [s[2] for s in qaoa_dict_5q_1['search_reward_list
 qaoa_5q_finetune_loss_1 = qaoa_dict_5q_1['fine_tune_loss']
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_5q_search_reward_list_1))), qaoa_5q_search_reward_list_1, marker = 'x')
+plt.plot(list(range(len(qaoa_5q_search_reward_list_1))), qaoa_5q_search_reward_list_1, marker = '.')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_5q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_5q_early_stopping))
@@ -411,7 +411,7 @@ plt.savefig('fig_qaoa_5q_1_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_5q_finetune_loss_1))), qaoa_5q_finetune_loss_1,linestyle = '-',marker = 'x')
+plt.plot(list(range(len(qaoa_5q_finetune_loss_1))), qaoa_5q_finetune_loss_1,linestyle = '-',marker = '.')
 plt.axhline(y = -18, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -471,7 +471,7 @@ qaoa_7q_2_search_reward_list = [s[2] for s in qaoa_dict_7q_2['search_reward_list
 qaoa_7q_2_fine_tune_loss = qaoa_dict_7q_2['fine_tune_loss']
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_7q_1_search_reward_list))), qaoa_7q_1_search_reward_list,marker = 'x')
+plt.plot(list(range(len(qaoa_7q_1_search_reward_list))), qaoa_7q_1_search_reward_list,marker = '.')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
@@ -480,7 +480,7 @@ plt.savefig('fig_qaoa_7q_1_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_7q_2_search_reward_list))), qaoa_7q_2_search_reward_list,marker = 'x')
+plt.plot(list(range(len(qaoa_7q_2_search_reward_list))), qaoa_7q_2_search_reward_list,marker = '.')
 plt.xlabel('Epoch')
 plt.ylabel('Reward(-Objective)')
 plt.axhline(y = qaoa_7q_early_stopping, color = 'r', linestyle = '--',label = r"Early Stopping at {}".format(qaoa_7q_early_stopping))
@@ -489,7 +489,7 @@ plt.savefig('fig_qaoa_7q_2_search_rewards.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_7q_1_fine_tune_loss))), qaoa_7q_1_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.plot(list(range(len(qaoa_7q_1_fine_tune_loss))), qaoa_7q_1_fine_tune_loss,linestyle = '-',marker = '.')
 plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -499,7 +499,7 @@ plt.savefig('fig_qaoa_7q_1_fine_tune_loss.pdf')
 plt.close()
 
 fig = plt.figure()
-plt.plot(list(range(len(qaoa_7q_2_fine_tune_loss))), qaoa_7q_2_fine_tune_loss,linestyle = '-',marker = 'x')
+plt.plot(list(range(len(qaoa_7q_2_fine_tune_loss))), qaoa_7q_2_fine_tune_loss,linestyle = '-',marker = '.')
 plt.axhline(y = -7, color = 'r', linestyle = '--',label = r"Objective at optimal solution")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
@@ -599,7 +599,7 @@ vqls_4q_reward_list = [c[2] for c in vqls_4q_res_dict['search_reward_list']]
 vqls_4q_finetune_loss = vqls_4q_res_dict['fine_tune_loss']
 
 fig = plt.figure()
-plt.plot(list(range(len(vqls_4q_reward_list))), vqls_4q_reward_list, linestyle = '-', marker='x', label='search reward')
+plt.plot(list(range(len(vqls_4q_reward_list))), vqls_4q_reward_list, linestyle = '-', marker='.', label='search reward')
 plt.axhline(y = early_stop_4q, color = 'r', linestyle = '--', label='early stop threshold')
 plt.xlabel('Epoch')
 plt.ylabel('Reward ($e^{-10C_L}$)')
@@ -608,7 +608,7 @@ plt.savefig('fig_vqls_4q_search_rewards.pdf')
 plt.close()
 
 fig=plt.figure()
-plt.plot(list(range(len(vqls_4q_finetune_loss))), vqls_4q_finetune_loss, linestyle = '-', marker='x', label='finetune loss')
+plt.plot(list(range(len(vqls_4q_finetune_loss))), vqls_4q_finetune_loss, linestyle = '-', marker='.', label='finetune loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss ($C_L$)')
 plt.legend()
