@@ -33,26 +33,40 @@
 \doi{10.1109/TQE.2020.DOI}
 
 \title{Automated Quantum Circuit Design with Nested Monte Carlo Tree Search}
-\author{\uppercase{First A. Author}\authorrefmark{1}, \IEEEmembership{Fellow, IEEE},
-\uppercase{Second B. Author\authorrefmark{2}, and Third C. Author,
-Jr}.\authorrefmark{3},
-\IEEEmembership{Member, IEEE}}
-\address[1]{National Institute of Standards and 
-Technology, Boulder, CO 80305 USA (email: author@boulder.nist.gov)}
-\address[2]{Department of Physics, Colorado State University, Fort Collins, 
-CO 80523 USA (email: author@lamar.colostate.edu)}
-\address[3]{Electrical Engineering Department, University of Colorado, Boulder, CO 
-80309 USA}
+
+
+
+
+
+
+\author{\uppercase{Pei-Yong Wang}\authorrefmark{1},
+\uppercase{Muhammad Usman}\authorrefmark{2,3}, \uppercase{Udaya Parampalli}\authorrefmark{1}\IEEEmembership{Seniro Member, IEEE}, \uppercase{Lloyd C. L. Hollenberg}\authorrefmark{2} and \uppercase{Casey R. Myers}\authorrefmark{1,4}}
+
+
+
+
+\address[1]{School of Computing and Information Systems, Faculty of Engineering and Information Technology, The University of Melbourne, Melbourne VIC 3010, Australia}
+\address[2]{School of Physics, The University of Melbourne, Parkville, VIC 3010, Australia}
+\address[3]{Data61, CSIRO, Clayton, Victoria, Australia}
+\address[4]{Silicon Quantum Computing Pty Ltd., Level 2, Newton Building, UNSW Sydney, Kensington, NSW 2052, Australia}
 \tfootnote{This paragraph of the first footnote will contain support 
 information, including sponsor and financial support acknowledgment. For 
 example, ``This work was supported in part by the U.S. Department of 
 Commerce under Grant BS123456.''}
 
 \markboth
-{Author \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
-{Author \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
+{Wang \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
+{Wang \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
 
-\corresp{Corresponding author: First A. Author (email: author@ boulder.nist.gov).}
+\corresp{Corresponding author: Pei-Yong Wang (email: peiyongw@student.unimelb.edu.au).}
+
+
+
+
+
+
+
+
 
 \begin{abstract}
 Quantum algorithms based on variational approaches are one of the most promising methods to construct quantum solutions and have found a myriad of applications in the last few years. Despite the adaptability and simplicity, their scalability and the selection of suitable ans\"atzs remain key challenges. In this work, we report an algorithmic framework based on nested Monte-Carlo Tree Search (MCTS) coupled with the combinatorial multi-armed bandit (CMAB) model  for the automated design of quantum circuits. Through numerical experiments, we demonstrated our algorithm applied to various kinds of problems, including the ground energy problem in quantum chemistry, quantum optimisation on a graph, solving  systems of linear equations, and finding encoding circuit for quantum error detection codes. Compared to the existing approaches, the results indicate that our circuit design algorithm can explore larger search spaces and optimise quantum circuits for larger systems, showing both versatility and scalability.
@@ -302,6 +316,294 @@ With the na\"ive assumption, which means the reward is evenly distributed on the
 \State $Backpropagate(n', R)$ \Comment{Back-propagate the reward information along the arc}
 \end{algorithmic}
 \end{algorithm}
+
+\section{Numerical Experiments and Results}\label{experiments}
+\subsection{Searching for the encoding circuit of [[4,2,2]] quantum error detection code}\label{422}
+
+%\textcolor{red}{You need to introduce the [[4,2,2]] code here. Why is it useful to consider, what can it do, why is it useful as a quantum test bed? Cite some of the important literature around the [[4,2,2]] code. }
+The [[4,2,2]] quantum error detection code is a simple quantum error detection code, which needs 4 physical qubits for 2 logical qubits and has a code distance 2. It is the smallest stabilizer code that can detect X- and Z-errors \cite{qec_intro_guide}. One possible set of code words for the [[4,2,2]] error detection code is:
+
+
+\begin{equation}
+\mathcal{E}_{\rm [[4,2,2]]}=\operatorname{span}\left\{\begin{array}{l}
+|00\rangle_{L}=\frac{1}{\sqrt{2}}(|0000\rangle+|1111\rangle) \\
+|01\rangle_{L}=\frac{1}{\sqrt{2}}(|0110\rangle+|1001\rangle) \\
+|10\rangle_{L}=\frac{1}{\sqrt{2}}(|1010\rangle+|0101\rangle) \\
+|11\rangle_{L}=\frac{1}{\sqrt{2}}(|1100\rangle+|0011\rangle)
+\end{array}\right\}
+\end{equation}
+
+The corresponding encoding circuit is shown in Fig.\ref{fig:lit422}.
+
+\begin{figure}[H]
+  \centering
+  \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
+\qw & \ctrl{0} & \qw & \qw & \qw & \targ{}\vqw{0} & \qw\\
+\qw & \qw & \ctrl{0} & \qw & \targ{}\vqw{0} & \qw & \qw\\
+\qw & \targ{}\vqw{-2} & \targ{}\vqw{-1} & \targ{}\vqw{0} & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \ctrl{-1} & \ctrl{-2} & \ctrl{-3} & \qw
+\end{quantikz}
+%  \includegraphics[width=0.5\linewidth]{Figures/422_from_literature.png}
+  \caption{Encoding circuit of the [[4,2,2]] code \cite{qec_intro_guide} to detect X- and Z-errors. It needs 4 physical qubits for 2 logical qubits and has a code distance 2. By our settings, the number of layers equals to the number of operations in the circuit. In this figure, the number of layers is 6.}
+\label{fig:lit422}
+\end{figure}
+
+Quantum error detection and correction is vital to large-scale fault-tolerant quantum computing. By searching for the encoding circuit of the [[4,2,2]] error detection code, we demonstrate that our algorithm has the potential to automatically find  device-specific encoding circuits of quantum error detection and correction codes for future quantum processors.
+
+\subsubsection{Experiment Settings}
+When searching for the encoding circuit of the [[4,2,2]] quantum error correction code, we adopted an operation pool consisting of only non-parametric operations: the Hadamard gate on each of the four qubits and CNOT gates between any two qubits. The total size of the operation pool is $4 + \frac{4!}{2!\times2!}\times2=16$. When there are 6 layers in total, the overall size of the search space is $16^6\approx1.67\times10^7$.
+
+The loss function for this task is based on the fidelity between the output state of the searched circuit and the output generated by the encoding circuit from Section 4.3 of \cite{qec_intro_guide} (also shown in Fig.~\ref{fig:lit422}) when input states taken from the set of Pauli operator eigenstates and the magic state $\vert T \rangle$ are used:
+\begin{equation}
+    \mathcal{S}=\{\vert 0 \rangle, \vert 1 \rangle, \vert + \rangle, \vert - \rangle, \vert +i \rangle, \vert -i \rangle, \vert T \rangle\}
+\end{equation}
+where $\vert T \rangle = \frac{\vert 0 \rangle + e^{i\pi/4}\vert 1 \rangle}{\sqrt{2}}$.
+
+
+The input states (initialised on all four qubits) are
+\begin{equation}
+    \mathcal{I}_{[[4,2,2]]} = \{\vert \varphi_1 \rangle \otimes \vert \varphi_2 \rangle\otimes\vert 00\rangle \; \vert \; \vert \varphi_1 \rangle, \vert \varphi_2 \rangle \in \mathcal{S}\}
+\end{equation}
+
+We denote the unitary on all four qubits shown in Fig.~\ref{fig:lit422} as $U_{[[4,2,2]]}$, and the unitary from the searched circuit as $U_{Searched\;[[4,2,2]]}$, which is a function of the structure $\mathcal{P}_{Searched\;[[4,2,2]]}$. The loss and reward function can then be expressed as:
+\begin{equation}
+    \begin{split}
+        &L_{[[4,2,2]]} = 1-\\ &\frac{1}{\vert \mathcal{I}_{[[4,2,2]]} \vert}\sum_{\vert \psi_i\rangle\in  \mathcal{I}_{[[4,2,2]]}} \\& \langle \psi_i \vert U_{\rm Searched\;[[4,2,2]]}^{\dagger} O_{[[4,2,2]]}(\vert \psi_i\rangle)  U_{\rm Searched\;[[4,2,2]]} \vert \psi_i\rangle
+    \end{split}
+\end{equation}
+
+
+\begin{equation}
+    R_{[[4,2,2]]} = 1-L_{[[4,2,2]]}
+\end{equation}
+where
+\begin{equation}
+    O_{[[4,2,2]]}(\vert \psi_i\rangle) = U_{[[4,2,2]]} \vert \psi_i\rangle \langle \psi_i \vert U_{[[4,2,2]]}^{\dagger},\; \vert \psi_i\rangle\in  \mathcal{I}_{[[4,2,2]]}
+\end{equation}
+
+The circuit simulator used in this and the following numerical experiments is Pennylane \cite{bergholm2020pennylane}.
+\subsubsection{Results}
+To verify whether the search algorithm will always reach the same solution, we ran the search algorithm twice, and both times the algorithm found an encoding circuit within a small numbers of iterations (Fig.~\ref{fig:422_reward}), although the actual circuit are different from each other, as shown in Fig.~\ref{fig:422_circ}. The search process that gave the circuit in Fig.\ref{fig:422_first_circ} met the early-stopping criteria in four iterations, and the search process that gave the circuit in Fig.\ref{fig:422_second_circ} met the early-stopping criteria in eight iterations, as shown in Fig.~\ref{fig:422_reward}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{peiyong_fig_5.pdf}
+    \caption{Rewards when searching for encoding circuits of the [[4,2,2]] code. We can see that in both cases the algorithm was able find the encoding circuit that generated the required code words in just a few iterations. `Circuit a' refers to the search rewards for the circuit in Fig.\ref{fig:422_first_circ} and `Circuit b' refers to the search rewards for the circuit in Fig.\ref{fig:422_second_circ}.}\label{fig:422_reward}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.4\linewidth}
+    \centering
+        %\includegraphics[width=\linewidth]{Figures/422_searched_1.png}
+        \begin{quantikz}[transparent, row sep={0.6cm,between origins}, column sep=0.2cm]
+\qw & \qw & \ctrl{0} & \targ{}\vqw{0} & \qw & \qw & \ctrl{0} & \qw\\
+\qw & \qw & \qw & \qw & \ctrl{0} & \targ{}\vqw{0} & \qw & \qw\\
+\qw & \qw & \qw & \qw & \targ{}\vqw{-1} & \qw & \targ{}\vqw{-2} & \qw\\
+\qw & \gate{H} & \targ{}\vqw{-3} & \ctrl{-3} & \qw & \ctrl{-2} & \qw & \qw
+\end{quantikz}
+        \caption{}
+        \label{fig:422_first_circ}
+    \end{subfigure}
+    \qquad %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.4\linewidth}
+    \centering
+        %\includegraphics[width=0.9\linewidth]{Figures/422_searched_2.png}
+        \begin{quantikz}[transparent, row sep={0.6cm,between origins}, column sep=0.2cm]
+\qw & \ctrl{0} & \qw & \qw & \ctrl{0} & \targ{}\vqw{0} & \qw\\
+\qw & \targ{}\vqw{-1} & \targ{}\vqw{0} & \ctrl{0} & \targ{}\vqw{-1} & \qw & \qw\\
+\qw & \qw & \qw & \targ{}\vqw{-1} & \qw & \qw & \qw\\
+\qw & \gate{H} & \ctrl{-2} & \qw & \qw & \ctrl{-3} & \qw
+\end{quantikz}
+
+        \caption{}
+        \label{fig:422_second_circ}
+    \end{subfigure}
+    \caption{Two different encoding circuits of the [[4,2,2]] code produced by the search algorithm.}\label{fig:422_circ}
+\end{figure}
+
+\subsection{Solving linear equations}
+The variational quantum linear solver (VQLS), first proposed in \cite{Bravo-Prieto_undated-oq}, is designed to solve linear systems $Ax=b$ on near term quantum devices. Instead of using quantum phase estimation like the HHL algorithm \cite{HHL}, which is unfeasible on near term devices due to large circuit depth, VQLS adopts a variational circuit to prepare a state $\ket{x}$ such that 
+\begin{equation}
+    A\ket{x} \propto \ket{b}
+\end{equation}
+In this section, we will task our algorithm to automatically search for a variantional circuit to prepare a state $\ket{x}$ to solve $Ax = b$ with A in the form of 
+\begin{equation}
+    A = \sum_l c_l A_l
+\end{equation}
+where $A_l$ are unitaries, and $\ket{b} = H^{\otimes n}\ket{\mathbf{0}}$.
+\noindent
+We will also adopt the local cost function $C_L$ described in \cite{Bravo-Prieto_undated-oq}:
+\begin{equation}\label{eqn:vqls_local_loss}
+C_{L}=1-\frac{\sum_{l, l^{\prime}} c_{l} c_{l^{\prime}}^{*}\bra{0}V^{\dagger} A_{l^{\prime}}^{\dagger} U P U^{\dagger} A_{l} V\ket{0}}{\sum_{l, l^{\prime}} c_{l} c_{l^{\prime}}^{*}\bra{0}V^{\dagger} A_{l^{\prime}}^{\dagger} A_{l} V\ket{0}}
+\end{equation}
+where $U=H^{\otimes n}$, $V$ is the (searched) variational circuit that can produce the solution state $V\ket{0} = \ket{x}$, and $P=\frac{1}{2}+\frac{1}{2 n} \sum_{j=0}^{n-1} Z_{j}$ \cite{pennylane_vqls}.
+
+\subsubsection{Experiment Settings}
+The linear system to be solved in our demonstration is:
+\begin{equation}
+    A = \zeta  I + J X_1 + J X_2  + \eta Z_3 Z_4
+\end{equation}
+\begin{equation}
+    \ket{b} = H^{\otimes 4}\ket{0}
+\end{equation}
+with $J = 0.1, \zeta = 1, \eta = 0.2$.
+The loss function we adopted follows the local loss $C_L$ in Eqn.~\ref{eqn:vqls_local_loss}. However, since the starting point of the loss values often has a magnitude of $10^{-2}\sim 10^{-3}$, we will need scaling in the reward function:
+\begin{equation}
+    \mathcal{R} = e^{-10 C_L}-\lambda
+\end{equation}
+where $\lambda$ is a penalty term depending on the number of Placeholder gates in the circuit. The operation pool consists of CNOT gates between neighbouring two qubits as well as the first and fourth qubits, the Placeholder and the single qubit rotation gate Rot \cite{nielsen00}:
+
+\begin{equation}
+\begin{split}
+    & Rot(\phi, \theta, \omega)=R_Z(\omega) R_Y(\theta) R_Z(\phi)= \\
+    & \left[\begin{array}{cc}
+e^{-i(\phi+\omega) / 2} \cos (\theta / 2) & -e^{i(\phi-\omega) / 2} \sin (\theta / 2) \\
+e^{-i(\phi-\omega) / 2} \sin (\theta / 2) & e^{i(\phi+\omega) / 2} \cos (\theta / 2)
+\end{array}\right]
+\end{split}
+\end{equation}
+
+The size of the operation pool $c = \vert \mathcal{C}\vert = 16$, and number of layers $p = 10$, giving us a search space of size $\vert \mathcal{S} \vert = 10^{16}$. There is also an additional restriction of maximum number of CNOT gates in the circuit, which is 8, the number of CNOT gates required to created two layers of circular entanglement.
+
+
+\subsubsection{Results}
+The search rewards as well as fine-tune losses are shown in Fig~\ref{fig:vqls_search_finetune}. We can see that the search algorithm can produce a circuit with high reward (exceeds the threshold) quickly and the loss of the optimised parameters can reach close to 0. Although facing a large search space, our algorithm can still find a circuit (shown in Fig~\ref{fig:vqls_circ}) that minimises the loss function (Fig~\ref{fig:vqls_4q_finetune}) and leads us to results close to the classical solution. A comparison of the results obtained by directly solving the linear equation $Ax=b$ and the results obtained by sampling the state $\ket{x}$ produced by the searched circuit is shown in Fig~\ref{fig:vqls_results_compare}. 
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_6.pdf}
+        \caption{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.}
+        \label{fig:vqls_4q_search}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_7.pdf}
+        \caption{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref{fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimised to achieve smaller losses. The final loss of the optimised parameters is very close to 0.}
+        \label{fig:vqls_4q_finetune}
+    \end{subfigure}
+    \caption{The search rewards and fine-tune loss for VQLS experiment. }\label{fig:vqls_search_finetune}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    %\includegraphics[width=0.75\linewidth]{Figures/fig_vqls_circ.pdf}
+    \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
+  \qw & \gate{H} & \gate{Rot} & \targ{}\vqw{0} & \qw & \targ{}\vqw{0} & \gate{Rot} & \qw\\
+  \qw & \gate{H} & \gate{Rot} & \ctrl{-1} & \gate{Rot} & \ctrl{-1} & \gate{Rot} & \qw\\
+  \qw & \gate{H} & \gate{Rot} & \ctrl{0} & \qw & \qw & \qw & \qw\\
+  \qw & \gate{H} & \gate{Rot} & \targ{}\vqw{-1} & \qw & \qw & \qw & \qw
+  \end{quantikz}
+    \caption{Circuit searched for the VQLS problem. $Rot(\phi, \theta, \omega)=R_Z(\omega) R_Y(\theta) R_Z(\phi)$. The four Hadamard gates at the beginning of the circuit are to put everything in an equal superposition, and not included when constructing the search tree, i.e. the composed circuits will always start with four Hadamard gates placed on the four qubits. When drawing the circuit, the Placeholder gates, which are just identity gates, are removed from searched $\mathcal{P}$, although they were considered when constructing the search tree.}
+    \label{fig:vqls_circ}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{peiyong_fig_8.pdf}
+    \caption{Comparison between classical probabilities, which obtained from solving the matrix equation with the classical method, i.e. $x = A^{-1}b$, of the normalised solution vector $\frac{x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket{x}$ produced by the trained circuit in Fig~\ref{fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, showing that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.}
+    \label{fig:vqls_results_compare}
+  \end{figure}
+
+  \subsection{Search for quantum chemistry ans\"atze}\label{h2}
+
+
+  %\textcolor{red}{[Need a better lead in sentence for quantum chemistry here: Recent progress on solving the ground state energy problem on a quantum computer has been made with near-term parameterised circuits~\cite{}...]}
+  Recently, there has been a lot of progress made on finding the ground state energy of a molecule on a quantum computer with variational circuit, both on theoretical \cite{li2017efficient,mcclean2016theory,wecker2015progress} and experimental \cite{peruzzo2014variational,o2016scalable, colless2017implementing, kandala2017hardware, colless2018computation, dumitrescu2018cloud} front. 
+  Normally, when designing the ans\"atz for the ground energy problem either a physically plausible or a hardware efficient ans\"atz needs to be found. However, our algorithm provides an approach which can minimise the effort needed to carefully choose an ans\"atz and automatically design the circuit according to the device gate set and topology.
+  
+  Generally speaking, solving the ground energy problem with quantum computers is an application of the variational principle \cite{sakurai_napolitano_2017}:
+  \begin{equation}
+  E_0 \leq \frac{\langle\tilde{0}|H| \tilde{0}\rangle}{\langle\tilde{0} \mid \tilde{0}\rangle} \label{eq:variational}
+  \end{equation}
+  where $H$ is the system Hamiltonian, $| \tilde{0}\rangle$ is the ``trail ket'' \cite{sakurai_napolitano_2017}, or ans\"atz, trying to mimic the real wave function at ground state with energy $E_0$, which is the smallest eigenvalue of the system Hamiltonian H. Starting from $\ket{0^{\otimes n}}$ for an $n-$qubit system, the ``trial ket'' can be written as a function of a set of (real) parameters $\theta$:
+  \begin{equation}
+      \ket{\tilde{0}} = \ket{\varphi (\theta)} = U(\theta)\ket{0^{\otimes n}}
+  \end{equation}
+  Given an ans\"atz, the goal of optimisation is to find a set of parameters $\theta$ that minimises the right hand side of Eqn \ref{eq:variational}. However, in our research, the form of the trail wave function will no longer be fixed. We will not only vary the parameters, but also the circuit structure that represent the ans\"atz.
+  
+  \subsubsection{Experiment settings}
+  \paragraph{Search an ans\"atz for finding the ground energy of $\text{H}_2$:}
+In this experiment, we adopted the 4-qubit Hamiltonian $H_{hydrogen}$ for the hydrogen molecule $\text{H}_2$ generated by the Pennylane-QChem \cite{bergholm2020pennylane} package, when the coordinates of the two hydrogen atoms are $(0, 0, -0.66140414)$ and $(0, 0, 0.66140414)$, respectively, in atom units. The goal of this experiment is to find an ans\"atz that can produce similar states as the four-qubit Givens rotation for single and double excitation.
+The unitary operator \footnote{see \url{https://pennylane.readthedocs.io/en/latest/code/api/pennylane.SingleExcitation.html}} that performs single excitation on a subspace spanned by $\{\ket{01}, \ket{10} \}$ can be written as 
+\begin{equation}
+U(\phi)=\left[\begin{array}{cccc}
+1 & 0 & 0 & 0 \\
+0 & \cos (\phi / 2) & -\sin (\phi / 2) & 0 \\
+0 & \sin (\phi / 2) & \cos (\phi / 2) & 0 \\
+0 & 0 & 0 & 1
+\end{array}\right]
+\end{equation}
+And the transformation of the double excitation on the subspace spanned by $\{|1100\rangle,|0011\rangle\}$ is\footnote{see \url{https://pennylane.readthedocs.io/en/latest/code/api/pennylane.DoubleExcitation.html}} :
+\begin{equation}
+\begin{aligned}
+&|0011\rangle \rightarrow \cos (\phi / 2)|0011\rangle+\sin (\phi / 2)|1100\rangle \\
+&|1100\rangle \rightarrow \cos (\phi / 2)|1100\rangle-\sin (\phi / 2)|0011\rangle
+\end{aligned}
+\end{equation}
+
+Following \cite{pennylane_dev_team_2021}, we initialised the circuit with the 4-qubit vacuum state $\vert \psi_0\rangle=\vert 0000\rangle$. We denote the unitary for the searched ans\"atz $U_{\rm SearchedAnsatz}$, which is a function of its structure $\mathcal{P}_{\rm SearchedAnsatz}$ and corresponding parameters. Then the loss and reward functions can be written as:
+\begin{equation}
+    L_{\text{H}_2} =\langle \psi_0 \vert U_{\rm SearchedAnsatz}^{\dagger} H_{\rm Hydrogen} U_{\rm SearchedAnsatz} \vert \psi_0\rangle
+\end{equation}
+\begin{equation}
+    R_{\text{H}_2} = -L_{\text{H}_2}
+\end{equation}
+
+The operation pool consists of Placeholder gates, Rot gates and CNOT gates with a linear entanglement topology (nearest neighbour interactions). The maximum number of layers is 30, with maximum number of CNOT gates $30/2 = 15$, and no penalty term for the number of Placeholder gates:
+\begin{equation}
+    \mathcal{R}_{\text{H}_2, \rm Pool\;1} = R_{\text{H}_2}
+\end{equation}
+
+Such settings of operation pool and number of layers will give us an overall search space of size $14^{30}\approx 2.42\times 10^{34}$. However, the imposed hard limits and gate limits will drastically reduce the size of the search space.
+
+
+\paragraph{Search an ans\"atz for finding the ground energy of $\text{LiH}$}
+The loss and reward functions for the $\text{LiH}$ task are similar to the $\text{H}_2$ one:
+\begin{equation}
+    L_{\text{LiH}} =\langle \psi_0 \vert U_{\rm SearchedAnsatz}^{\dagger} H_{\text{LiH}} U_{\rm SearchedAnsatz} \vert \psi_0\rangle
+\end{equation}
+\begin{equation}
+    R_{\text{LiH}} = -L_{\text{LiH}}
+\end{equation}
+and the initial state is also the vacuum state $\ket{\psi_0} = \ket{0}^{\otimes 10}$. The Hamiltonian is obtained at bond length 2.969280527 Bohr, or 1.5712755873606 Angstrom, with 2 active electrons and 5 active orbitals. The size of the operation pool $c = \vert \mathcal{C} \vert = 38$, including Rot gates, Placeholder and CNOT gates operating on neighbouring qubits on a line topology. The maximum number of layers is 20, giving us a search space of size $\vert \mathcal{S} \vert = 38^{20} \approx 3.94\times 10^{31}$. The `hard limit' on the number of CNOT gates in the circuit is $20/2=10$.
+
+\paragraph{Search an ans\"atz for finding the ground energy of $\text{H}_2\text{O}$} The loss and reward functions of the water molecule are shown as follows:
+\begin{equation}
+    L_{\text{H}_2\text{O}} =\langle \psi_0 \vert U_{\rm SearchedAnsatz}^{\dagger} H_{\text{H}_2\text{O}} U_{\rm SearchedAnsatz} \vert \psi_0\rangle
+\end{equation}
+\begin{equation}
+    R_{\text{H}_2\text{O}} = -L_{\text{H}_2\text{O}}
+\end{equation}
+and the initial state is also the vacuum state $\ket{\psi_0} = \ket{0}^{\otimes 8}$. The Hamiltonian is obtained when the three atoms are positioned at the following coordinates:
+\begin{equation}
+    \begin{split}
+    &\text{H}:(0.,0.,0.); \\
+    &\text{O}:(1.63234543, 0.86417176, 0);\\
+    &\text{H}:(3.36087791, 0.,0.)
+    \end{split}
+\end{equation}
+Units are in Angstrom.
+Active electrons is set to 4 and active orbitals is set to 4. The size of the operation pool $c = \vert \mathcal{C} \vert = 30$, including Rot gates, Placeholder and CNOT gates operating on neighbouring qubits on a line topology. The maximum number of layers is 20, giving us a search space of size $\vert \mathcal{S} \vert = 30^{50} \approx 7.18\times 10^{73}$. The `hard limit' on the number of CNOT gates in the circuit is 25.
+\subsubsection{Results}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
