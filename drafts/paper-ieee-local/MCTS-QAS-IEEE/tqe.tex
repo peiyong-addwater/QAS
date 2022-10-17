@@ -216,7 +216,7 @@ where $\vert \varphi_{\rm init}\rangle$ is the initial state of the quantum circ
   
   We denote a quantum circuit with $p$ layers $\mathcal{P} = [k_1,\cdots, k_p]$, with each layer $k_i$ having a search space no greater than $\vert \mathcal{C} \vert = c$ (where $c$ is the number of possible unitary operations, as defined earlier). Then each choice for layer $k_i$ is a \textit{local arm} for the \textit{local MAB}, $MAB_i$. The set of these choices is also denoted as $k_i$. The combination of all $p$ layers in $\mathcal{P}$ forms a valid quantum circuit, which is called a \textit{global arm} of the \textit{global MAB, $MAB_g$}. 
   
-  Since the global arm can be formed from the combination of the local arms, if we use the na\"ive assumption \cite{CMAB_RTS}, the global reward $R_{\rm global}$ for $MAB_g$ can be approximated by the sum of the reward of local MABs, and each local reward only depends on the choice made in each local MAB. This also means that, if the global reward is more easily accessed than the local rewards, then the local rewards can be approximated from the global reward. With the na\"ive assumption, we can have a linear relationship between the global reward and local rewards:
+  Since the global arm can be formed from the combination of the local arms, if we use the na\"ive assumption \cite{CMAB_RTS}, the global reward $R_{\rm global}$ for $MAB_g$ can be approximated by the sum of the reward of local MABs, and each local reward only depends on the choice made in each local MAB. This also means that, if the global reward is more easily accessed than the local rewards, then the local rewards can be approximated from the global reward. To simplify the algorithm itself and reduce complexity, we will adopt the na\"ive assumption for the distribution of local and global rewards, where we can have a linear relationship between the global reward and local rewards:
   \begin{equation}
       R_{\rm global} = \frac{1}{p}\sum_{i=1}^p R_i
   \end{equation}
@@ -228,7 +228,7 @@ where $\vert \varphi_{\rm init}\rangle$ is the initial state of the quantum circ
   %\textcolor{red}{but how, by just a simple division of the global reward, or is there some weighting that needs to be taken into account?} 
   Also, if we use the na\"ive assumption, we will not need to directly optimise on the large space of global arms as in  traditional MABs. Instead, we can apply MCTS on the local MABs to find the best combination of local arms.
   
-  In the original work on nested MCTS~\cite{nestedmontecarlosearch}, a random policy was adopted for sampling. In this paper we will instead change it to the famous UCB policy~\cite{UCB_paper_10.5555/944919.944941}. Given a local $MAB_i$, with the set of all the possible choices $k_i$, the UCB policy can be defined as:
+  In the original work on nested MCTS~\cite{nestedmontecarlosearch}, a random policy was adopted for sampling. In this paper we will instead adopt the UCB policy~\cite{UCB_paper_10.5555/944919.944941}, since we already made the assumption that the global rewards can be linearly approximated by local rewards with the na\"ive assumption. Given a local $MAB_i$, with the set of all the possible choices $k_i$, the UCB policy can be defined as:
   \begin{equation}
       UCB: \argmax_{arm_j\in k_i} \Bar{R}(k_i, arm_j) + \alpha \sqrt{\frac{2\ln n_i}{n_j}}
   \end{equation}
