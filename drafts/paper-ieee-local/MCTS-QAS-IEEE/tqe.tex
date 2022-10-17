@@ -1,16 +1,31 @@
+\let\TeXyear\year
 \documentclass{ieeeaccess}
+\let\setyear\year
+\let\year\TeXyear
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{quantikz}
+\NewSpotColorSpace{PANTONE}
+\AddSpotColor{PANTONE} {PANTONE3015C} {PANTONE\SpotSpace 3015\SpotSpace C} {1 0.3 0 0.2}
+\SetPageColorSpace{PANTONE}
+\definecolor{accessblue}{cmyk}{1, 0.3, 0, 0.2}
+\definecolor{greycolor}{cmyk}{0,0,0,1}
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{physics}
 \usepackage[normalem]{ulem}
 \usepackage{color,soul}
 \renewcommand{\arraystretch}{1.5}
+\DeclareMathOperator*{\argmax}{argmax}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+
+\newtheorem{theorem}{Theorem}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -68,6 +83,8 @@ However, NAS algorithms based on policy gradient reinforcement learning have bee
 
 In order to develop a search technique that can be applied to larger search spaces and different variational quantum problems, we introduce an algorithm for QAS problems based on combinatorial multi-armed bandit (CMAB) model as well as Monte-Carlo Tree Search (MCTS). In order to explore extremely large search spaces compared to previous work in the literature, the working of our strategy is underpinned by a reward scheme which dictates the choices of the quantum operations at each step of the algorithm with the na\"ive assumption \cite{CMAB_RTS}. This enabled our strategy to work on larger systems, more than 7 qubits, whereas the existing examples \cite{zhang2021differentiable, chen2021quantum, kuo2021quantum, zhang2021differentiable, du2020quantum, zhang2021neural} are restricted to typically 3 or 4 qubits, with the largest being 6 qubits. To demonstrate the working of our method, we showed its application to a variety of problems including encoding the logic states for the [[4,2,2]] quantum error detection code, solving the ground energy problem for different molecules as well as linear systems of equations, and searching the ans\"atz for solving optimisations problems. Our work confirms that the automated quantum architecture search based on the MCTS+CMAB approach exhibits great versatility and scalability, and therefore should provide an efficient solution and new insights to the problems of designing variational quantum circuits.
 
+\Figure[ht!](topskip=0pt, botskip=0pt, midskip=0pt)[width=\textwidth]{peiyong_fig_1.png}{An overview of the algorithmic framework proposed in this paper. The operation pool (c) is obtained by tailoring the basic operations (a) with respect to the device topology (b). After that, we formulate the combinations of different choices of operations at different layer position in the circuit (d) as a search tree (e). In (f), we evaluate our circuit on a quantum processor or quantum simulator to get value of the loss or reward function, and according to the value of the loss/reward function we update the parameters on a classical computer, then use MCTS to search for the current best circuit. We then send the updated circuit structure together with the updated parameters to the quantum processor/simulator to obtain a new set of loss/reward values. The process depicted in (f) will repeat until a circuit that meets the stopping criteria is found. Then, as shown in (g), we will follow the usual process to optimize the parameters in the searched variational quantum circuit by classical-quantum hybrid computing..\label{fig:overview}}
+
 This paper is organised as follows: Section~\ref{methods} introduces the basic notion of Monte-Carlo tree search, as well as other techniques required for our algorithm, including nested MCTS and na\"ive assumptions from the CMAB model. Section \ref{experiments}  reports the results based on the application of our search algorithm to various problems, including searching for encoding circuits for the [[4,2,2]] quantum error detection code, the ans\"atz circuit for finding the ground state energy of different molecules, as well as circuits for solving linear system of equations and optimisation. In Section \ref{discussion} we discuss the results and conclusions.
 
 \section{Methods}\label{methods}
@@ -75,7 +92,7 @@ This paper is organised as follows: Section~\ref{methods} introduces the basic n
 In this paper, we formulate the quantum ans\"atz search problem, which is aimed to automatically design variational quantum circuits to perform various tasks, as a tree structure. We slice a quantum circuit into layers, and for each layer there is a pool of candidate operations. Starting with an empty circuit, we fill the layers with operations chosen by the search algorithm, from the first to the final layer. 
 
 
-\Figure[t!](topskip=0pt, botskip=0pt, midskip=0pt)[width=\textwidth]{peiyong_fig_1.png}{An overview of the algorithmic framework proposed in this paper. The operation pool (c) is obtained by tailoring the basic operations (a) with respect to the device topology (b). After that, we formulate the combinations of different choices of operations at different layer position in the circuit (d) as a search tree (e). In (f), we evaluate our circuit on a quantum processor or quantum simulator to get value of the loss or reward function, and according to the value of the loss/reward function we update the parameters on a classical computer, then use MCTS to search for the current best circuit. We then send the updated circuit structure together with the updated parameters to the quantum processor/simulator to obtain a new set of loss/reward values. The process depicted in (f) will repeat until a circuit that meets the stopping criteria is found. Then, as shown in (g), we will follow the usual process to optimize the parameters in the searched variational quantum circuit by classical-quantum hybrid computing..\label{fig:overview}}
+
 
 A quantum circuit is represented as a (ordered) list, $\mathcal{P}$, of operations of length $p$ chosen from the operation list. The length of this list is fixed within the problem.
 The operation pool is a set 
@@ -91,6 +108,212 @@ where, according to the search algorithm, the operations chosen for the first, s
     \vert\varphi_{\rm out}\rangle = U_1 U_2 U_1 U_0 \vert\varphi_{\rm init}\rangle\label{eq:U1U3U1U2},
 \end{equation}
 where $\vert \varphi_{\rm init}\rangle$ is the initial state of the quantum circuit. For simplicity, we will use integers to denote the chosen operations (such operations can be whole-layer unitaries, like the mixing Hamiltonians often seen in typical QAOA circuits, or just single- and two-qubit gates). 
+
+\begin{figure}[H]
+    \centering
+    %\includegraphics[width=0.4\linewidth]{Figures/tree_example.png}
+    \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
+  \qw & \midstick[wires=3,brackets=right]{$|\varphi_{\rm init}\rangle$} & \gate[2,disable auto height]{U_0} & \qw & \qw & \qw & \qw\\
+  \qw &  & \qw & \gate[2,disable auto height]{U_1} & \gate{U_2} & \gate[2,disable auto height]{U_1} & \qw\\
+  \qw &  & \qw & \qw & \qw & \qw & \qw
+  \end{quantikz}
+    \caption{An example of the circuit corresponding to the series of unitaries applied to $\vert \varphi_{\rm init}\rangle$ in Eqn.\ref{eq:U1U3U1U2}.}
+    \label{fig:U1U3U1U2_circ}
+  \end{figure}
+  For example, the  quantum circuit from Eqn.~\ref{eq:U1U3U1U2} can be written as:
+  \begin{equation}
+      \mathcal{P} = [0, 1, 2, 1]\label{eq:U1U3U1U2_list}
+  \end{equation}
+  and the operation at the $i^{th}$ layer can be referred as $k_i$. For example, in the quantum circuit above, we have $k_2=1$.
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{peiyong_fig_2.png}
+    \caption{The tree representation (along the arc with blue-shaded circles) of the unitary described in Eqns. \ref{eq:U1U3U1U2} and \ref{eq:U1U3U1U2_list} as well as Fig.~\ref{fig:U1U3U1U2_circ}. The circle with $s_0$ is the root of the tree, which represents an empty circuit. Other circles with $s_i^j$ in it denote the $j^{th}$ node at the $i^{th}$ level of the tree. $i$ can also indicate the number of layers currently in the circuit at state $s_i^j$. For example, on the leftmost branch of the tree, there is a node labelled $s_2^0$, indicating that it is the $0^{th}$ node at level $2$. At $s_2^0$, the circuit would be $\mathcal{P}_{s_2^0}=[U_0, U_0]$, which clearly only has 2 layers. We can also see that some of the possible branches along the blue-node path are pruned, leading to the size of operation pool at some node smaller than the total number of possible choices $c = \vert \mathcal{C}\vert$.}
+    \label{fig:treeexample}
+  \end{figure}
+
+  The performance of the quantum circuit can be evaluated from the loss $\mathcal{L}$ or reward $\mathcal{R}$, where the reward is just the negative of the loss. Both are functions of $\mathcal{P}$, and the parameters of the chosen operations $\boldsymbol{\theta}$:
+  \begin{equation}
+      \mathcal{L}(\mathcal{P},\boldsymbol{\theta})=L(\mathcal{P}, \boldsymbol{\theta})+\lambda
+  \end{equation}
+  
+  \begin{equation}
+      \mathcal{R}(\mathcal{P},\boldsymbol{\theta})=R(\mathcal{P}, \boldsymbol{\theta})-\lambda,
+  \end{equation}
+  where $\lambda$ is some penalty function that may only appear when certain circuit structures appear, as well as other kinds of penalty terms, like penalty on the sum of absolute value of weights or the number of certain type of gates in the circuit; $L$ and $R$ are the loss/reward before applying the penalty. The purpose of the penalty term $\lambda$ is to `sway' the search algorithm from structures we do not desire.
+  %\textcolor{red}{can you motivate this $\lambda$ penalty term a bit better?}. 
+  Instead of storing all the operation parameters for each different quantum circuit, we share the parameters for a single operation at a certain location. That is, we have a multidimensional array of shape $(p, c, l)$, where $l$ is the maximum number of parameters for the operations in the operation pool. If all the operations in the pool are just the $U3$ gate \cite{nielsen00}:
+  \begin{equation}
+  U 3(\theta, \phi, \lambda)=\left[\begin{array}{cc}
+  \cos \left(\frac{\theta}{2}\right) & -e^{i \lambda} \sin \left(\frac{\theta}{2}\right) \\
+  e^{i \phi} \sin \left(\frac{\theta}{2}\right) & e^{i(\phi+\lambda)} \cos \left(\frac{\theta}{2}\right)
+  \end{array}\right]
+  \end{equation}
+  as well as its controlled version $CU3$ gate on different (pairs of) qubits, then in this case $l=3$.
+  
+  To reduce the space required to store the parameters of all possible quantum circuits, for a quantum circuit with operation $k$ at layer $i$, the parameter is the same at that layer for that specific operation is the same for all other circuits with the same operation at the same location, which means we are sharing the parameters of the unitaries in the operation pool with other circuits. For example, in Fig.\ref{fig:treeexample}, besides the blue-node arc $\mathcal{P}=[U_0, U_1, U_2, U_1]$, there are also other paths, such $\mathcal{P}^{'} = [U_0, U_1, U_1, \cdots]$, and since the first two operations in $\mathcal{P}$ and $\mathcal{P}^{'}$ are the same, then we will share the parameters of $U_0$ and $U_1$ between these two circuits by setting the parameters to be the same for the $U_0$ and $U_1$ in both circuits, respectively.
+  %\textcolor{red}{I'm not sure what you're trying to say here... Or whether it is important. This needs to be clarified} 
+  Such a strategy is often called ``parameter-sharing'' or ``weight-sharing'' in the neural architecture search literature.
+  
+  As shown in Fig~\ref{fig:treeexample} and mentioned earlier, the process of composing or searching a circuit can be formulated in the form of the tree structure. For example, if we start from an empty list $P = [\;]$ with maximal length four and an operation pool with three elements $C = \{U_0, U_1, U_2\}$, 
+  %\textcolor{red}{why did you choose 4 and 3? Is this arbitrary, or was this what was used for this work throughout the paper? Or is is a way of easing the reader into the technique and notation?}.
+  then the state of the root node of our search tree will be the empty list $s_0^0 = [\;]$. The root node will have three possible actions (if there are no restrictions on what kind of operations can be chosen), which will lead us to three children nodes with states $s_1^0 = [U_0]=[0], s_1^1 = [U_1]=[1], s_1^2=[U_2] = [2]$. For each of these nodes, there will be a certain number of different operations that can be chosen to append the end of the list, depending on the specific restrictions. There will always be a ``placeholder'' operation that can be chosen if all other operations fail to meet the restrictions. The penalty resulting from the number of ``placeholder'' operations will only be reflected in the loss (or reward) of the circuit. The nodes can always be expanded with different actions, leading to different children, until the maximum length of the quantum circuit has been reached, which will give us the leaf node of the search tree. 
+  %\textcolor{red}{Can we put a really simply tree figure here, with maybe three levels to help explain this? Maybe just one of the trees from Fig. (1)?}
+  
+  The process of choosing operations at each layer can be viewed as a both a \textit{local} and \textit{global} multi-armed bandit (MAB). A multi-armed bandit, just as its name indicates, is similar to a bandit, or slot machine (in the casino), but has multiple levers, or arms, that can be pulled. Or equivalently, it can be viewed as someone who has multiple arms (maybe Squidward) that can pull the levers on different slot machines. In both cases, the rewards obtained from pulling different arms follow different (often unknown) distributions. The person pulling these arms needs to develop a strategy that can maximise his rewards from the machine(s). If we consider the whole circuit search problem as an MAB (the global MAB, $MAB_g$), then the "arms" are different circuit configurations. Although the rewards of these circuits are relatively easy to obtain based on the value of their cost functions after training of the circuits is finished (which still requires a fair amount of time for training), the exploding number of possible circuit configurations when the size of operation pool and number of layers increase makes it impossible to perform an informed search for suitable solutions while training every circuit we encountered during the search process. Since our circuit is basically a combination of different choice of layer unitaries, we can decompose the whole problem into the choices of unitaries at each layer, which is the local MAB, $MAB_i$, $i$ denoting the MAB problem from choosing the suitable unitary at layer $i$. In the local MAB for a single layer, the "arms" of the MAB are no longer the circuit configuration, instead the (permitted) unitary operations from the operation pool $\mathcal{C}$. Although the number of choices for the local MABs is considerably smaller than the global MAB, the reward for each arm is not directly observable. In next section, we will introduce the na\"ive assumption \cite{CMAB_RTS} to approximate the rewards of the local MABs from the global MAB, which will help us determine the rewards of the actions on each node (state) on the search tree for MCTS.
+  
+  
+  
+  \begin{itemize}
+      \item \textit{Local MAB}: The choice of unitary operations at each layer can be considered a \textit{local} MAB. That is, different unitary operations can be treated as different ``arms'' of the bandit;
+      \item \textit{Global MAB}: We can also treat the composition of the entire quantum circuit as a \textit{global} MAB. That is, different quantum circuits can be viewed as different ``arms'' of the global bandit.
+  \end{itemize}
+  
+  
+
+
+  \subsection{Monte Carlo tree search (MCTS), nested MCTS and the na\"ive assumption}
+  Monte Carlo tree search (MCTS) is a heuristic search algorithm for a sequence decision process. It has achieved great success in other areas, including defeating the 18-time world champion Lee Sedol in the game of Go \cite{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16, AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}. Generally, there are four stages in a single iteration of MCTS (see Fig.~\ref{fig:mcts}) \cite{MCTS_for_game10.5555/3022539.3022579}:
+  \begin{figure}[]
+    \centering
+    \includegraphics[width=0.8\linewidth]{peiyong_fig_3.png}
+    \caption{Four stages of Monte Carlo tree search. From left to right, up to down: Selection: Go down from the root node to a non fully expanded leaf node; Expansion: Expand the selected node by taking an action; Simulation: Simulate the game, which in our case is the quantum circuit, to obtain reward information \textbf{R}; Backpropagation: Back-propagation of the reward information along the path (arc) taken.}
+    \label{fig:mcts}
+  \end{figure}
+  
+  \begin{itemize}
+      \item \textsc{Selection:}(Fig.\ref{fig:mcts}(a)) In the selection stage, the algorithm will, starting from the root of the tree, find a node at the end of an arc (a path from the root of the tree to the leaf node, the path marked by bold arrows and blue circles in Fig.\ref{fig:mcts}). The nodes along the arc are selected according to some policy, often referred as the ``selection policy'', until a non fully expanded node or a leaf node is reached. If the node is a leaf node, i.e after selecting the operation for the last layer of the quantum circuit, we can directly jump to the simulation stage to get the reward of the corresponding arc. If the node is not a leaf node, i.e the node is not fully expanded, then we can progress to the next stage;
+      \item \textsc{Expansion:}(Fig.\ref{fig:mcts}(b)) In the expansion stage, at the node selected in the previous stage, we choose a previously unvisited child by choosing a previously unperformed action. We can see from the upper right tree in Fig.\ref{fig:mcts} that a new node has been expanded at the end of the arc; %\textcolor{red}{I don't understand how to corresponds to the second part of Fig. (1)?}
+      \item \textsc{Simulation:}(Fig.\ref{fig:mcts}(c)) In the simulation stage, if the node obtained from the previous stages is not a leaf node, we continue down the tree until we have reached a leaf node, i.e finish choosing the operation for the last layer. After we have the leaf node, we simulate the circuit and obtain the loss $\mathcal{L}$ (or reward $\mathcal{R}$). Usually, the loss $\mathcal{L}$ is required to update the parameters in the circuit;
+      \item \textsc{Backpropagation:}(Fig.\ref{fig:mcts}(d)) In this stage, the reward information obtained from the simulation stage is back-propagated through the arc leading from the root of the tree to the leaf node, and the number of visits as well as the (average) reward for each node along the arc is be updated.
+  \end{itemize}
+  
+  The nested MCTS algorithm \cite{nestedmontecarlosearch} is based on the vanilla MCTS algorithm. However, before selecting the best child according to the selection policy, a nested MCTS will be performed on the sub-trees with each child as the root node. Then the best child will be selected according to the selection policy with updated reward information, see Fig.~\ref{fig:nestedmcts}.
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{peiyong_fig_4.png}
+    \caption{Nested Monte Carlo tree search. Left: The root node has three possible actions, which in this case are unselected initially. We perform MCTS on all three children nodes (generated by the three possible actions) to update their reward information. After one iteration of MCTS with each child as root node for the search tree that MCTS performed on, the rewards of these three actions leading to the three child nodes are 10, 10, 20, respectively. In this case, the right child has the highest reward. Middle: After selecting the right side child node, we perform the same MCTS on all three possible children nodes as before, which gives updated reward information. In this case the middle child node has the highest reward, meaning that at this level we expand the middle child node. Right: Similar operations as before. If we only perform nested MCTS at the root node level, then it will be a level-1 nested MCTS.}
+    \label{fig:nestedmcts}
+  \end{figure}
+  
+  
+  
+  We denote a quantum circuit with $p$ layers $\mathcal{P} = [k_1,\cdots, k_p]$, with each layer $k_i$ having a search space no greater than $\vert \mathcal{C} \vert = c$ (where $c$ is the number of possible unitary operations, as defined earlier). Then each choice for layer $k_i$ is a \textit{local arm} for the \textit{local MAB}, $MAB_i$. The set of these choices is also denoted as $k_i$. The combination of all $p$ layers in $\mathcal{P}$ forms a valid quantum circuit, which is called a \textit{global arm} of the \textit{global MAB, $MAB_g$}. 
+  
+  Since the global arm can be formed from the combination of the local arms, if we use the na\"ive assumption \cite{CMAB_RTS}, the global reward $R_{\rm global}$ for $MAB_g$ can be approximated by the sum of the reward of local MABs, and each local reward only depends on the choice made in each local MAB. This also means that, if the global reward is more easily accessed than the local rewards, then the local rewards can be approximated from the global reward. With the na\"ive assumption, we can have a linear relationship between the global reward and local rewards:
+  \begin{equation}
+      R_{\rm global} = \frac{1}{p}\sum_{i=1}^p R_i
+  \end{equation}
+  When searching for quantum circuits, we have no access to the reward distribution of individual unitary operations, however, we can apply the na\"ive assumption to approximate those rewards (``local reward'') with the global reward: 
+  \begin{equation}
+      R_{i} \approx R_{\rm global}
+  \end{equation}
+  where $R_{i}$ is the reward for pulling an arm at \textit{local $MAB_i$} and $R_{\rm global}$ is the reward for the global arm.
+  %\textcolor{red}{but how, by just a simple division of the global reward, or is there some weighting that needs to be taken into account?} 
+  Also, if we use the na\"ive assumption, we will not need to directly optimise on the large space of global arms as in  traditional MABs. Instead, we can apply MCTS on the local MABs to find the best combination of local arms.
+  
+  In the original work on nested MCTS~\cite{nestedmontecarlosearch}, a random policy was adopted for sampling. In this paper we will instead change it to the famous UCB policy~\cite{UCB_paper_10.5555/944919.944941}. Given a local $MAB_i$, with the set of all the possible choices $k_i$, the UCB policy can be defined as:
+  \begin{equation}
+      UCB: \argmax_{arm_j\in k_i} \Bar{R}(k_i, arm_j) + \alpha \sqrt{\frac{2\ln n_i}{n_j}}
+  \end{equation}
+  where $\Bar{R}(k_i, arm_j)$ is the average reward for $arm_j$ (i.e the reward for operation choice $U_j$  for layer $k_i$) in local $MAB_i$, $n_i$ is the number of times that $MAB_i$ has been used and $n_j$ is the number of times that $arm_j$ has been pulled. The parameter $\alpha$ provides a balance between exploration ($\sqrt{\frac{2\ln n_i}{n_j}}$) and exploitation ($\Bar{R}(k_i, arm_j$)). The UCB policy modifies the reward which the selection of action will be based on. 
+  
+  
+  
+  For small $\alpha$, the actual reward from the bandit will play a more important role in the UCB modified rewards, which will lead to selecting actions with previously observed high rewards. When $\alpha$ is large enough, the second term, which will be relatively large if $MAB_i$ has been visited many times but $arm_j$ of $MAB_i$ has only been pulled a small number of times, will have more impact on the modified reward, leading to a selection favoring previously less visited actions.
+
+  \subsection{QAS with Nested Na\"ive MCTS}
+
+Generally, a single iteration for the search algorithm will include two steps for non-parameterised circuits, and two more parameter-related steps for parameterised quantum circuits. The set of parameters, which will be referred to as the parameters of the super circuit, or just parameters, in the following algorithms, follow the same parameter sharing strategy as described in Section 2.1. That is, if the same unitary operation (say, $U_2$) appears in the same location (say, layer \#5) across different quantum circuits, then the parameters are the same, even for different circuits. Also, with parameterised quantum circuits (PQC), it is common practice to ``warm-up'' the parameters by randomly sampling a batch of quantum circuits, calculating the averaged gradient, and update the parameters according to the averaged gradient, to get a better start for the parameters during the search process. During one iteration of the search algorithm, we have:
+\begin{enumerate}
+    \item Sample a batch of quantum circuits from the super circuit with Algorithm \ref{alg:sampleArc};
+    \item (For PQCs) Calculate the averaged gradients of the sampled batch, add noise to the gradient to guide the optimiser to a more ``flat'' minimum if needed;
+    \item (For PQCs) Update the super circuit parameters according to the averaged gradients;
+    \item Find the best circuit with Algorithm \ref{alg:exploitArc}.
+\end{enumerate}
+
+We could also set up an early-stopping criteria for the search. That is, when the reward of the circuit obtained with Algorithm \ref{alg:exploitArc} meets a pre-set standard, we will stop the search algorithm and return the circuit that meet such standard (and further fine-tune the circuit parameters if there are any).
+
+With the na\"ive assumption, which means the reward is evenly distributed on the local arms pulled for a global MAB, we can impose a prune ratio during the search. That is, given a node that has child nodes, if the average reward of a child node is smaller than a ratio, or percentage, of the average reward of the said node, then this child node will be removed from the set of all children, unless the number of children reached the minimum requirement.
+
+\begin{algorithm}
+\caption{SampleArc}\label{alg:sampleArc}
+\begin{algorithmic}
+\Require sample policy $Policy$, parameters of the super circuit $param$, number of rounds in sampling $N$
+\Ensure list representation $\mathcal{P}$ of quantum circuit
+\State $curr \gets GetRoot(Tr)$ \Comment{Starting from the root node of the tree $Tr$}
+\State $i\gets0$ \Comment{Counter}
+\While{$i<N$}
+\State $ExecuteSingleRound(curr, Policy, param)$
+\State $i\gets i+1$
+\EndWhile
+\While{$curr$ is not leaf node}
+\State $curr\gets SelectNode(curr, Policy)$
+\EndWhile
+\State $\mathcal{P}\gets GetListRepresentation(curr)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{ExploitArc}\label{alg:exploitArc}
+\begin{algorithmic}
+\Require exploit policy $Policy$, parameters of the super circuit $param$, number of rounds in exploitation $N$
+\Ensure list representation $\mathcal{P}$ of quantum circuit
+\State $curr \gets GetRoot(Tr)$ \Comment{Starting from the root node of the tree $Tr$}
+\While{$curr$ is not leaf node}
+\State $i\gets0$ \Comment{Counter}
+\While{$i<N$}
+\State $ExecuteSingleRound(curr, Policy, param)$
+\State $i\gets i+1$
+\EndWhile
+\State $curr\gets SelectNode(curr, Policy)$
+\EndWhile
+\State $\mathcal{P}\gets GetListRepresentation(curr)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{SelectNode}\label{alg:selectChild}
+\begin{algorithmic}
+\Require current node $n$, selection policy $Policy$
+\Ensure selected node $n'$
+
+\If{$n$ is fully expanded}
+    \State $PruneChild(n)$ \Comment{Prune children nodes according to certain threshold}
+    \State $n' \gets GetBestChild(n, Policy)$  \Comment{Select the best child}
+\Else
+    \State $n' \gets ExpandChild(n)$ \Comment{Expand the node}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{ExecuteSingleRound}\label{alg:executeSingleRound}
+\begin{algorithmic}
+\Require current node $n$, selection policy $Policy$, parameters of the super circuit $param$
+\Ensure leaf node $n'$
+\State $n'\gets n$
+\While{$n'$ is not leaf node}
+\State $n'\gets SelectNode(n', Policy)$
+\EndWhile
+\State $R \gets Simulation(n', param)$  \Comment{Obtain reward from simulation}
+\State $Backpropagate(n', R)$ \Comment{Back-propagate the reward information along the arc}
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

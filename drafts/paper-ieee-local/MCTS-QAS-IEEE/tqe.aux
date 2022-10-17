@@ -1,0 +1,116 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{peruzzo2014variational}
+\citation{schuldpetruccione2021}
+\citation{RevModPhys.92.015003}
+\citation{2020optionpricing}
+\citation{johnson2017qvector,Xu2021-dt}
+\citation{2017hardwareefficientvqe}
+\citation{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}
+\citation{Xu2021-dt}
+\citation{alphafold2Jumper2021-lw}
+\citation{Davies2021-xh}
+\citation{DARTS_DBLP:conf/iclr/LiuSY19}
+\citation{PNAS10.1007/978-3-030-01246-5_2}
+\citation{AlphaXDBLP:conf/aaai/WangZJTF20}
+\citation{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}
+\citation{huang2021neural}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\citation{zhang2021differentiable}
+\citation{DARTS_DBLP:conf/iclr/LiuSY19}
+\citation{Shu2019-jf,Zhou2020-dg}
+\citation{zhang2021neural}
+\citation{kuo2021quantum}
+\citation{ENASpmlr-v80-pham18a,Sutton1999-nj}
+\citation{chen2021quantum}
+\citation{du2020quantum}
+\citation{Linghu2022-yy}
+\citation{9566740mctsqas}
+\citation{CMAB_RTS}
+\citation{zhang2021differentiable,chen2021quantum,kuo2021quantum,zhang2021differentiable,du2020quantum,zhang2021neural}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Methods}{2}{section.2}\protected@file@percent }
+\newlabel{methods}{{II}{2}{Methods}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Problem Formulation}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An overview of the algorithmic framework proposed in this paper. The operation pool (c) is obtained by tailoring the basic operations (a) with respect to the device topology (b). After that, we formulate the combinations of different choices of operations at different layer position in the circuit (d) as a search tree (e). In (f), we evaluate our circuit on a quantum processor or quantum simulator to get value of the loss or reward function, and according to the value of the loss/reward function we update the parameters on a classical computer, then use MCTS to search for the current best circuit. We then send the updated circuit structure together with the updated parameters to the quantum processor/simulator to obtain a new set of loss/reward values. The process depicted in (f) will repeat until a circuit that meets the stopping criteria is found. Then, as shown in (g), we will follow the usual process to optimize the parameters in the searched variational quantum circuit by classical-quantum hybrid computing..\relax }}{3}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:overview}{{1}{3}{An overview of the algorithmic framework proposed in this paper. The operation pool (c) is obtained by tailoring the basic operations (a) with respect to the device topology (b). After that, we formulate the combinations of different choices of operations at different layer position in the circuit (d) as a search tree (e). In (f), we evaluate our circuit on a quantum processor or quantum simulator to get value of the loss or reward function, and according to the value of the loss/reward function we update the parameters on a classical computer, then use MCTS to search for the current best circuit. We then send the updated circuit structure together with the updated parameters to the quantum processor/simulator to obtain a new set of loss/reward values. The process depicted in (f) will repeat until a circuit that meets the stopping criteria is found. Then, as shown in (g), we will follow the usual process to optimize the parameters in the searched variational quantum circuit by classical-quantum hybrid computing..\relax }{figure.caption.1}{}}
+\newlabel{eq:U1U3U1U2}{{3}{3}{Problem Formulation}{equation.2.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces An example of the circuit corresponding to the series of unitaries applied to $\vert \varphi _{\fontencoding  {T1}\selectfont  init}\rangle $ in Eqn.\ref  {eq:U1U3U1U2}.\relax }}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:U1U3U1U2_circ}{{2}{3}{An example of the circuit corresponding to the series of unitaries applied to $\vert \varphi _{\rm init}\rangle $ in Eqn.\ref {eq:U1U3U1U2}.\relax }{figure.caption.2}{}}
+\citation{nielsen00}
+\citation{CMAB_RTS}
+\newlabel{eq:U1U3U1U2_list}{{4}{4}{Problem Formulation}{equation.2.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The tree representation (along the arc with blue-shaded circles) of the unitary described in Eqns. \ref  {eq:U1U3U1U2} and \ref  {eq:U1U3U1U2_list} as well as Fig.\nobreakspace  {}\ref  {fig:U1U3U1U2_circ}. The circle with $s_0$ is the root of the tree, which represents an empty circuit. Other circles with $s_i^j$ in it denote the $j^{th}$ node at the $i^{th}$ level of the tree. $i$ can also indicate the number of layers currently in the circuit at state $s_i^j$. For example, on the leftmost branch of the tree, there is a node labelled $s_2^0$, indicating that it is the $0^{th}$ node at level $2$. At $s_2^0$, the circuit would be $\mathcal  {P}_{s_2^0}=[U_0, U_0]$, which clearly only has 2 layers. We can also see that some of the possible branches along the blue-node path are pruned, leading to the size of operation pool at some node smaller than the total number of possible choices $c = \vert \mathcal  {C}\vert $.\relax }}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:treeexample}{{3}{4}{The tree representation (along the arc with blue-shaded circles) of the unitary described in Eqns. \ref {eq:U1U3U1U2} and \ref {eq:U1U3U1U2_list} as well as Fig.~\ref {fig:U1U3U1U2_circ}. The circle with $s_0$ is the root of the tree, which represents an empty circuit. Other circles with $s_i^j$ in it denote the $j^{th}$ node at the $i^{th}$ level of the tree. $i$ can also indicate the number of layers currently in the circuit at state $s_i^j$. For example, on the leftmost branch of the tree, there is a node labelled $s_2^0$, indicating that it is the $0^{th}$ node at level $2$. At $s_2^0$, the circuit would be $\mathcal {P}_{s_2^0}=[U_0, U_0]$, which clearly only has 2 layers. We can also see that some of the possible branches along the blue-node path are pruned, leading to the size of operation pool at some node smaller than the total number of possible choices $c = \vert \mathcal {C}\vert $.\relax }{figure.caption.3}{}}
+\citation{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16,AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}
+\citation{MCTS_for_game10.5555/3022539.3022579}
+\citation{nestedmontecarlosearch}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Monte Carlo tree search (MCTS), nested MCTS and the na\"ive assumption}{5}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Four stages of Monte Carlo tree search. From left to right, up to down: Selection: Go down from the root node to a non fully expanded leaf node; Expansion: Expand the selected node by taking an action; Simulation: Simulate the game, which in our case is the quantum circuit, to obtain reward information {\fontencoding  {T1}\fontseries  {b}\selectfont  R}; Backpropagation: Back-propagation of the reward information along the path (arc) taken.\relax }}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:mcts}{{4}{5}{Four stages of Monte Carlo tree search. From left to right, up to down: Selection: Go down from the root node to a non fully expanded leaf node; Expansion: Expand the selected node by taking an action; Simulation: Simulate the game, which in our case is the quantum circuit, to obtain reward information \textbf {R}; Backpropagation: Back-propagation of the reward information along the path (arc) taken.\relax }{figure.caption.4}{}}
+\citation{CMAB_RTS}
+\citation{nestedmontecarlosearch}
+\citation{UCB_paper_10.5555/944919.944941}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Nested Monte Carlo tree search. Left: The root node has three possible actions, which in this case are unselected initially. We perform MCTS on all three children nodes (generated by the three possible actions) to update their reward information. After one iteration of MCTS with each child as root node for the search tree that MCTS performed on, the rewards of these three actions leading to the three child nodes are 10, 10, 20, respectively. In this case, the right child has the highest reward. Middle: After selecting the right side child node, we perform the same MCTS on all three possible children nodes as before, which gives updated reward information. In this case the middle child node has the highest reward, meaning that at this level we expand the middle child node. Right: Similar operations as before. If we only perform nested MCTS at the root node level, then it will be a level-1 nested MCTS.\relax }}{6}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:nestedmcts}{{5}{6}{Nested Monte Carlo tree search. Left: The root node has three possible actions, which in this case are unselected initially. We perform MCTS on all three children nodes (generated by the three possible actions) to update their reward information. After one iteration of MCTS with each child as root node for the search tree that MCTS performed on, the rewards of these three actions leading to the three child nodes are 10, 10, 20, respectively. In this case, the right child has the highest reward. Middle: After selecting the right side child node, we perform the same MCTS on all three possible children nodes as before, which gives updated reward information. In this case the middle child node has the highest reward, meaning that at this level we expand the middle child node. Right: Similar operations as before. If we only perform nested MCTS at the root node level, then it will be a level-1 nested MCTS.\relax }{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}QAS with Nested Na\"ive MCTS}{6}{subsection.2.3}\protected@file@percent }
+\bibstyle{unsrt}
+\bibdata{reference}
+\bibcite{peruzzo2014variational}{1}
+\bibcite{schuldpetruccione2021}{2}
+\bibcite{RevModPhys.92.015003}{3}
+\bibcite{2020optionpricing}{4}
+\bibcite{johnson2017qvector}{5}
+\bibcite{Xu2021-dt}{6}
+\bibcite{2017hardwareefficientvqe}{7}
+\bibcite{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}{8}
+\bibcite{alphafold2Jumper2021-lw}{9}
+\bibcite{Davies2021-xh}{10}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces SampleArc\relax }}{7}{algorithm.1}\protected@file@percent }
+\newlabel{alg:sampleArc}{{1}{7}{SampleArc\relax }{algorithm.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces ExploitArc\relax }}{7}{algorithm.2}\protected@file@percent }
+\newlabel{alg:exploitArc}{{2}{7}{ExploitArc\relax }{algorithm.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces SelectNode\relax }}{7}{algorithm.3}\protected@file@percent }
+\newlabel{alg:selectChild}{{3}{7}{SelectNode\relax }{algorithm.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces ExecuteSingleRound\relax }}{7}{algorithm.4}\protected@file@percent }
+\newlabel{alg:executeSingleRound}{{4}{7}{ExecuteSingleRound\relax }{algorithm.4}{}}
+\@writefile{toc}{\contentsline {section}{REFERENCES}{7}{section*.6}\protected@file@percent }
+\bibcite{DARTS_DBLP:conf/iclr/LiuSY19}{11}
+\bibcite{PNAS10.1007/978-3-030-01246-5_2}{12}
+\bibcite{AlphaXDBLP:conf/aaai/WangZJTF20}{13}
+\bibcite{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}{14}
+\bibcite{huang2021neural}{15}
+\bibcite{zhang2021differentiable}{16}
+\bibcite{Shu2019-jf}{17}
+\bibcite{Zhou2020-dg}{18}
+\bibcite{zhang2021neural}{19}
+\bibcite{kuo2021quantum}{20}
+\bibcite{ENASpmlr-v80-pham18a}{21}
+\bibcite{Sutton1999-nj}{22}
+\bibcite{chen2021quantum}{23}
+\bibcite{du2020quantum}{24}
+\bibcite{Linghu2022-yy}{25}
+\bibcite{9566740mctsqas}{26}
+\bibcite{CMAB_RTS}{27}
+\bibcite{nielsen00}{28}
+\bibcite{AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}{29}
+\bibcite{MCTS_for_game10.5555/3022539.3022579}{30}
+\bibcite{nestedmontecarlosearch}{31}
+\bibcite{UCB_paper_10.5555/944919.944941}{32}
+\gdef \@abspage@last{8}
