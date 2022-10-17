@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.11)  17 OCT 2022 13:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.11)  17 OCT 2022 14:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -795,7 +795,7 @@ LaTeX Info: Redefining \nameref on input line 31.
 
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-<bullet.png, id=75, 12.045pt x 35.38219pt>
+<bullet.png, id=91, 12.045pt x 35.38219pt>
 File: bullet.png Graphic file (type png)
 <use bullet.png>
 Package pdftex.def Info: bullet.png  used on input line 71.
@@ -840,7 +840,7 @@ Underfull \vbox (badness 1472) has occurred while \output is active []
 
 Underfull \vbox (badness 1472) has occurred while \output is active []
 
-<Logo.png, id=92, 37.0986pt x 7.7088pt>
+<Logo.png, id=108, 37.0986pt x 7.7088pt>
 File: Logo.png Graphic file (type png)
 <use Logo.png>
 Package pdftex.def Info: Logo.png  used on input line 93.
@@ -869,7 +869,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 
 
  <./Logo.png> <./bullet.png>]
-<peiyong_fig_1.png, id=132, 885.90974pt x 518.77815pt>
+<peiyong_fig_1.png, id=148, 885.90974pt x 518.77815pt>
 File: peiyong_fig_1.png Graphic file (type png)
 <use peiyong_fig_1.png>
 Package pdftex.def Info: peiyong_fig_1.png  used on input line 100.
@@ -878,11 +878,7 @@ File: peiyong_fig_1.png Graphic file (type png)
 <use peiyong_fig_1.png>
 Package pdftex.def Info: peiyong_fig_1.png  used on input line 100.
 (pdftex.def)             Requested size: 505.12177pt x 295.79369pt.
-
-
-LaTeX Warning: Reference `discussion' on page 2 undefined on input line 102.
-
-<notaglineLogo.png, id=135, 154.5775pt x 32.12pt>
+<notaglineLogo.png, id=152, 154.5775pt x 32.12pt>
 File: notaglineLogo.png Graphic file (type png)
 <use notaglineLogo.png>
 Package pdftex.def Info: notaglineLogo.png  used on input line 107.
@@ -925,7 +921,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [3 <./peiyong_fig_1.png (PNG copy)>]
-<peiyong_fig_2.png, id=181, 364.36125pt x 369.38pt>
+<peiyong_fig_2.png, id=198, 364.36125pt x 369.38pt>
 File: peiyong_fig_2.png Graphic file (type png)
 <use peiyong_fig_2.png>
 Package pdftex.def Info: peiyong_fig_2.png  used on input line 145.
@@ -954,7 +950,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 LaTeX Warning: No positions in optional float specifier.
                Default added (so using `tbp') on input line 192.
 
-<peiyong_fig_3.png, id=212, 1896.08376pt x 2009.5075pt>
+<peiyong_fig_3.png, id=228, 1896.08376pt x 2009.5075pt>
 File: peiyong_fig_3.png Graphic file (type png)
 <use peiyong_fig_3.png>
 Package pdftex.def Info: peiyong_fig_3.png  used on input line 194.
@@ -963,7 +959,7 @@ Package pdftex.def Info: peiyong_fig_3.png  used on input line 194.
 LaTeX Font Warning: Font shape `T1/ptm/n/sc' undefined
 (Font)              using `T1/ptm/n/n' instead on input line 200.
 
-<peiyong_fig_4.png, id=221, 734.745pt x 353.32pt>
+<peiyong_fig_4.png, id=237, 734.745pt x 353.32pt>
 File: peiyong_fig_4.png Graphic file (type png)
 <use peiyong_fig_4.png>
 Package pdftex.def Info: peiyong_fig_4.png  used on input line 210.
@@ -1056,4 +1052,755 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 File: notaglineLogo.png Graphic file (type png)
 <use notaglineLogo.png>
 Package pdftex.def Info: notaglineLogo.png  used on input line 350.
-(pdfte
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[7]
+Underfull \hbox (badness 1755) in paragraph at lines 368--369
+[]\T1/ptm/n/sc/10 We de-note the uni-tary on all four qubits shown in
+ []
+
+<peiyong_fig_5.pdf, id=294, 238.49101pt x 180.675pt>
+File: peiyong_fig_5.pdf Graphic file (type pdf)
+<use peiyong_fig_5.pdf>
+Package pdftex.def Info: peiyong_fig_5.pdf  used on input line 390.
+(pdftex.def)             Requested size: 194.13957pt x 147.0765pt.
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-3''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-3''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-4''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-4''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-7''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-1-7''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-2-5''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-2-5''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-2-6''? on input line 404.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@3-2-6''? on input line 404.
+
+
+Overfull \hbox (12.98535pt too wide) in paragraph at lines 404--405
+ [][] 
+ []
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-2''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-2''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-5''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-5''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-6''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-1-6''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-2-3''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-2-3''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-2-4''? on input line 418.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@4-2-4''? on input line 418.
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 430.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[8 <./peiyong_fig_5.pdf>]
+<peiyong_fig_6.pdf, id=354, 238.49101pt x 180.675pt>
+File: peiyong_fig_6.pdf Graphic file (type pdf)
+<use peiyong_fig_6.pdf>
+Package pdftex.def Info: peiyong_fig_6.pdf  used on input line 475.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+<peiyong_fig_7.pdf, id=355, 238.49101pt x 180.675pt>
+File: peiyong_fig_7.pdf Graphic file (type pdf)
+<use peiyong_fig_7.pdf>
+Package pdftex.def Info: peiyong_fig_7.pdf  used on input line 482.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+
+Underfull \hbox (badness 2351) in paragraph at lines 483--483
+[]\T1/ptm/m/n/9 (b) |Fine-tune loss for the VQLS cir-cuit.After the
+ []
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-1-4''? on input line 501.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-1-4''? on input line 501.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-1-6''? on input line 501.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-1-6''? on input line 501.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-3-4''? on input line 501.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@5-3-4''? on input line 501.
+
+<peiyong_fig_8.pdf, id=362, 794.97pt x 289.08pt>
+File: peiyong_fig_8.pdf Graphic file (type pdf)
+<use peiyong_fig_8.pdf>
+Package pdftex.def Info: peiyong_fig_8.pdf  used on input line 508.
+(pdftex.def)             Requested size: 505.12177pt x 183.68726pt.
+
+LaTeX Font Warning: Font shape `T1/phv/n/sl' undefined
+(Font)              using `T1/phv/n/n' instead on input line 531.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 533--533
+[][][][]\T1/ptm/m/n/8 see []$https : / / pennylane . readthedocs . io / en / latest / code / api / pennylane .
+ []
+
+
+Underfull \vbox (badness 2173) has occurred while \output is active []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 541.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 542--542
+[][][][]\T1/ptm/m/n/8 see []$https : / / pennylane . readthedocs . io / en / latest / code / api / pennylane .
+ []
+
+
+Overfull \hbox (1.56989pt too wide) detected at line 553
+[][][]\OML/cmm/m/it/10 L[] \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 h\OML/cmm/m/it/10  []\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 U[]H[]U[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10  []\OMS/cmsy/m/n/10 i
+ []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 570.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[10 <./peiyong_fig_6.pdf> <./peiyong_fig_7.pdf>]
+<peiyong_fig_9.pdf, id=503, 238.49101pt x 180.675pt>
+File: peiyong_fig_9.pdf Graphic file (type pdf)
+<use peiyong_fig_9.pdf>
+Package pdftex.def Info: peiyong_fig_9.pdf  used on input line 613.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+<peiyong_fig_10.pdf, id=504, 238.49101pt x 180.675pt>
+File: peiyong_fig_10.pdf Graphic file (type pdf)
+<use peiyong_fig_10.pdf>
+Package pdftex.def Info: peiyong_fig_10.pdf  used on input line 620.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-6''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-6''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-8''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-8''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-9''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-9''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-10''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-10''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-14''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-1-14''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-5''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-5''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-11''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-11''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-13''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-2-13''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-3''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-3''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-6''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-6''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-8''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-8''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-10''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-10''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-14''? on input line 635.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@6-3-14''? on input line 635.
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 640.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[11 <./peiyong_fig_8.pdf>]
+<peiyong_fig_11.pdf, id=562, 238.49101pt x 180.675pt>
+File: peiyong_fig_11.pdf Graphic file (type pdf)
+<use peiyong_fig_11.pdf>
+Package pdftex.def Info: peiyong_fig_11.pdf  used on input line 646.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+<peiyong_fig_12.pdf, id=563, 238.49101pt x 180.675pt>
+File: peiyong_fig_12.pdf Graphic file (type pdf)
+<use peiyong_fig_12.pdf>
+Package pdftex.def Info: peiyong_fig_12.pdf  used on input line 653.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-2-6''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-2-6''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-4''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-4''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-5''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-5''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-7''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-3-7''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-4-3''? on input line 674.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@7-4-3''? on input line 674.
+
+<peiyong_fig_13.pdf, id=573, 238.49101pt x 180.675pt>
+File: peiyong_fig_13.pdf Graphic file (type pdf)
+<use peiyong_fig_13.pdf>
+Package pdftex.def Info: peiyong_fig_13.pdf  used on input line 685.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+<peiyong_fig_14.pdf, id=574, 238.49101pt x 180.675pt>
+File: peiyong_fig_14.pdf Graphic file (type pdf)
+<use peiyong_fig_14.pdf>
+Package pdftex.def Info: peiyong_fig_14.pdf  used on input line 692.
+(pdftex.def)             Requested size: 202.04561pt x 153.0672pt.
+<peiyong_fig_15.png, id=579, 3751.01375pt x 1255.69125pt>
+File: peiyong_fig_15.png Graphic file (type png)
+<use peiyong_fig_15.png>
+Package pdftex.def Info: peiyong_fig_15.png  used on input line 701.
+(pdftex.def)             Requested size: 454.60649pt x 152.17094pt.
+
+LaTeX Font Warning: Font shape `T1/phv/b/scsl' undefined
+(Font)              using `T1/phv/b/sc' instead on input line 706.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 716.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[12 <./peiyong_fig_9.pdf> <./peiyong_fig_10.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+LaTeX Font Warning: Font shape `T1/phv/n/scsl' undefined
+(Font)              using `T1/phv/n/sc' instead on input line 720.
+
+
+LaTeX Font Warning: Font shape `T1/phv/n/sc' undefined
+(Font)              using `T1/phv/n/n' instead on input line 720.
+
+<peiyong_fig_16.pdf, id=668, 462.52798pt x 346.89601pt>
+File: peiyong_fig_16.pdf Graphic file (type pdf)
+<use peiyong_fig_16.pdf>
+Package pdftex.def Info: peiyong_fig_16.pdf  used on input line 723.
+(pdftex.def)             Requested size: 194.13957pt x 145.60533pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 727.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[13 <./peiyong_fig_11.pdf> <./peiyong_fig_12.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (16.04851pt too wide) detected at line 731
+[][][]\OML/cmm/m/it/10 L[] \OT1/cmr/m/n/10 = ([])[]\OML/cmm/m/it/10 U[]H[]U[]\OT1/cmr/m/n/10 ([])[]
+ []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 745.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[14 <./peiyong_fig_13.pdf> <./peiyong_fig_14.pdf> <./peiyong_fig_15.png> <./peiyong_fig_16.pdf>]
+
+LaTeX Font Warning: Font shape `T1/phv/n/scsl' undefined
+(Font)              using `T1/phv/n/sc' instead on input line 748.
+
+<peiyong_fig_17.pdf, id=854, 462.52798pt x 346.89601pt>
+File: peiyong_fig_17.pdf Graphic file (type pdf)
+<use peiyong_fig_17.pdf>
+Package pdftex.def Info: peiyong_fig_17.pdf  used on input line 753.
+(pdftex.def)             Requested size: 194.13957pt x 145.60533pt.
+
+LaTeX Font Warning: Font shape `T1/phv/n/scsl' undefined
+(Font)              using `T1/phv/n/sc' instead on input line 759.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-4''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-4''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-6''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-6''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-7''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@8-3-7''? on input line 777.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-1-4''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-1-4''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-5-6''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-5-6''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-5-7''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-5-7''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-6-8''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-6-8''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-6-9''? on input line 794.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@9-6-9''? on input line 794.
+
+<peiyong_fig_18.pdf, id=868, 462.52798pt x 346.89601pt>
+File: peiyong_fig_18.pdf Graphic file (type pdf)
+<use peiyong_fig_18.pdf>
+Package pdftex.def Info: peiyong_fig_18.pdf  used on input line 806.
+(pdftex.def)             Requested size: 242.45628pt x 181.84259pt.
+<peiyong_fig_19.pdf, id=869, 462.52798pt x 346.89601pt>
+File: peiyong_fig_19.pdf Graphic file (type pdf)
+<use peiyong_fig_19.pdf>
+Package pdftex.def Info: peiyong_fig_19.pdf  used on input line 813.
+(pdftex.def)             Requested size: 242.45628pt x 181.84259pt.
+<peiyong_fig_20.pdf, id=874, 238.49101pt x 180.675pt>
+File: peiyong_fig_20.pdf Graphic file (type pdf)
+<use peiyong_fig_20.pdf>
+Package pdftex.def Info: peiyong_fig_20.pdf  used on input line 825.
+(pdftex.def)             Requested size: 230.33272pt x 174.49638pt.
+<peiyong_fig_21.pdf, id=879, 238.49101pt x 180.675pt>
+File: peiyong_fig_21.pdf Graphic file (type pdf)
+<use peiyong_fig_21.pdf>
+Package pdftex.def Info: peiyong_fig_21.pdf  used on input line 831.
+(pdftex.def)             Requested size: 242.45628pt x 183.68228pt.
+<peiyong_fig_22.pdf, id=884, 238.49101pt x 180.675pt>
+File: peiyong_fig_22.pdf Graphic file (type pdf)
+<use peiyong_fig_22.pdf>
+Package pdftex.def Info: peiyong_fig_22.pdf  used on input line 837.
+(pdftex.def)             Requested size: 240.03305pt x 181.8462pt.
+<peiyong_fig_23.pdf, id=889, 238.49101pt x 180.675pt>
+File: peiyong_fig_23.pdf Graphic file (type pdf)
+<use peiyong_fig_23.pdf>
+Package pdftex.def Info: peiyong_fig_23.pdf  used on input line 843.
+(pdftex.def)             Requested size: 242.45628pt x 183.68228pt.
+
+LaTeX Font Warning: Font shape `T1/phv/n/scsl' undefined
+(Font)              using `T1/phv/n/sc' instead on input line 850.
+
+<peiyong_fig_24.pdf, id=899, 238.49101pt x 180.675pt>
+File: peiyong_fig_24.pdf Graphic file (type pdf)
+<use peiyong_fig_24.pdf>
+Package pdftex.def Info: peiyong_fig_24.pdf  used on input line 856.
+(pdftex.def)             Requested size: 232.35939pt x 176.03197pt.
+<peiyong_fig_25.pdf, id=900, 238.49101pt x 180.675pt>
+File: peiyong_fig_25.pdf Graphic file (type pdf)
+<use peiyong_fig_25.pdf>
+Package pdftex.def Info: peiyong_fig_25.pdf  used on input line 863.
+(pdftex.def)             Requested size: 242.45628pt x 183.68228pt.
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-1-4''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-1-4''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-1-6''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-1-6''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-2-7''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-2-7''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-3-9''? on input line 880.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. Did you specify a point identical to the center of node ``tikz@f@10-3-9''? on input line 880.
+
+
+Overfull \hbox (33.74332pt too wide) in paragraph at lines 880--881
+[][] 
+ []
+
+<peiyong_fig_26.pdf, id=901, 462.52798pt x 346.89601pt>
+File: peiyong_fig_26.pdf Graphic file (type pdf)
+<use peiyong_fig_26.pdf>
+Package pdftex.def Info: peiyong_fig_26.pdf  used on input line 887.
+(pdftex.def)             Requested size: 232.35939pt x 174.27332pt.
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 898.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[15 <./peiyong_fig_17.pdf>]
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 922.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[16 <./peiyong_fig_18.pdf> <./peiyong_fig_19.pdf>]
+
+(./tqe.bbl
+
+LaTeX Font Warning: Font shape `T1/ptm/n/it' undefined
+(Font)              using `T1/ptm/n/n' instead on input line 7.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 63.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[17 <./peiyong_fig_20.pdf> <./peiyong_fig_21.pdf> <./peiyong_fig_22.pdf> <./peiyong_fig_23.pdf>]
+Underfull \vbox (badness 6493) has occurred while \output is active []
+
+
+Underfull \vbox (badness 3323) has occurred while \output is active []
+
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 128.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[18 <./peiyong_fig_24.pdf> <./peiyong_fig_25.pdf> <./peiyong_fig_26.pdf>]
+LaTeX Font Info:    Calculating math sizes for size <7.61> on input line 241.
+)
+File: bullet.png Graphic file (type png)
+<use bullet.png>
+Package pdftex.def Info: bullet.png  used on input line 929.
+(pdftex.def)             Requested size: 5.0pt x 14.6871pt.
+File: notaglineLogo.png Graphic file (type png)
+<use notaglineLogo.png>
+Package pdftex.def Info: notaglineLogo.png  used on input line 931.
+(pdftex.def)             Requested size: 91.32pt x 18.9761pt.
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Overfull \hbox (505.12177pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[]
+ []
+
+[19] (./tqe.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package rerunfilecheck Info: File `tqe.out' has not changed.
+(rerunfilecheck)             Checksum: 4BA925F7FA8667946AA3134FDDF7ED81;3556.
+ ) 
+Here is how much of TeX's memory you used:
+ 35493 strings out of 478268
+ 727046 string characters out of 5846346
+ 1179579 words of memory out of 5000000
+ 52923 multiletter control sequences out of 15000+600000
+ 587302 words of font info for 187 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 84i,24n,131p,2231b,1588s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+pdfTeX warning (dest): name{section*.25} has been referenced but does not exist, replaced by a fixed one
+
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on tqe.pdf (19 pages, 2105902 bytes).
+PDF statistics:
+ 1385 PDF objects out of 1440 (max. 8388607)
+ 675 compressed objects within 7 object streams
+ 178 named destinations out of 1000 (max. 500000)
+ 334 words of extra memory for PDF output out of 10000 (max. 10000000)
+

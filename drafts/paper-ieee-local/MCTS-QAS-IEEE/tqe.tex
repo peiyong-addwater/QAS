@@ -490,7 +490,7 @@ The search rewards as well as fine-tune losses are shown in Fig~\ref{fig:vqls_se
 
 
 
-\begin{figure*}[t!]
+\begin{figure*}[ht!]
     \centering
     %\includegraphics[width=0.75\linewidth]{Figures/fig_vqls_circ.pdf}
     \begin{quantikz}[transparent, row sep={0.8cm,between origins},column sep=0.8cm]
@@ -503,7 +503,7 @@ The search rewards as well as fine-tune losses are shown in Fig~\ref{fig:vqls_se
     \label{fig:vqls_circ}
   \end{figure*}
 
-  \begin{figure*}[t!]
+  \begin{figure*}[ht!]
     \centering
     \includegraphics[width=\linewidth]{peiyong_fig_8.pdf}
     \caption{Comparison between classical probabilities, which obtained from solving the matrix equation with the classical method, i.e. $x = A^{-1}b$, of the normalised solution vector $\frac{x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket{x}$ produced by the trained circuit in Fig~\ref{fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, showing that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.}
@@ -607,7 +607,7 @@ e^{-i \frac{\theta}{2}} & 0 & 0 & 0 \\
 \end{equation}
 Where $CNOT_{1,2}$ is the CNOT gate controlled by the first qubit and target on the second qubit, and $RZ_{2}(\theta)$ is a Z-rotation gate on the second qubit.
 However, other parts of the circuit are not familiar, which indicates that the search algorithm can go beyond human intuition. The total number of gates in the circuit is 22, including 13 local CNOT gates.
-\begin{figure*}[t!]
+\begin{figure*}[ht!]
     \centering
     \begin{subfigure}[t]{0.4\linewidth}
         \includegraphics[width=\linewidth]{peiyong_fig_9.pdf}
@@ -624,7 +624,7 @@ However, other parts of the circuit are not familiar, which indicates that the s
     \caption{The search rewards and fine-tune loss for $\text{H}_2$ circuit. experiment.}\label{fig:h2_search_finetune}
 \end{figure*}
 
-\begin{figure*}[t!]
+\begin{figure*}[ht!]
   \centering
   %\includegraphics[width=0.95\linewidth]{Figures/fig_h2_vac_init_circ.pdf}
   \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
@@ -640,7 +640,7 @@ However, other parts of the circuit are not familiar, which indicates that the s
 \paragraph{$\text{LiH}$ Results} The search reward when finding the suitable circuit structure for LiH is shown in Fig~\ref{fig:lih_search} and the training process for the circuit produced by the search algorithm is shown in Fig~\ref{fig:lih_finetune}. The ans\"atz is presented in Fig~\ref{fig:lih_circ}. The circuit produced by the search algorithm is simpler compared to the $\text{H}_2$ ans\"atz in Fig~\ref{fig:h2_circ}, indicating that the initial state may be very close to the ground energy state.
 
 
-\begin{figure*}[t!]
+\begin{figure*}[ht!]
     \centering
     \begin{subfigure}[t]{0.4\linewidth}
         \includegraphics[width=\linewidth]{peiyong_fig_11.pdf}
@@ -657,7 +657,7 @@ However, other parts of the circuit are not familiar, which indicates that the s
     \caption{The search rewards and fine-tune loss for $\text{LiH}$ circuit. experiment.}\label{fig:lih_search_finetune}
 \end{figure*}
 
-\begin{figure*}[t!]
+\begin{figure*}[ht!]
     \centering
     %\includegraphics[width=0.6\linewidth]{Figures/fig_lih_circ.pdf}
     \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
@@ -679,16 +679,16 @@ However, other parts of the circuit are not familiar, which indicates that the s
 
   \paragraph{$\text{H}_2\text{O}$ Results} The search reward when finding the suitable circuit structure for $\text{H}_2\text{O}$ is shown in Fig~\ref{fig:h2_search} and the training process for the circuit produced by the search algorithm is shown in Fig~\ref{fig:h2o_finetune}. The ans\"atz is presented in Fig~\ref{fig:h2o_circ}, which has 38 gates in total, including 10 local CNOT gates. Although there are still some familiar structures, such as the Ising coupling in the circuit, the heuristics behind most parts of the circuit are already unintuitive for human researchers.
 
-  \begin{figure*}[t!]
+  \begin{figure*}[ht!]
     \centering
-    \begin{subfigure}[t]{0.48\linewidth}
+    \begin{subfigure}[t]{0.4\linewidth}
         \includegraphics[width=\linewidth]{peiyong_fig_13.pdf}
         \caption{Search rewards for the $\text{H}_2\text{O}$ ans\"atz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 74.9.}
         \label{fig:h2o_search}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[t]{0.48\linewidth}
+    \begin{subfigure}[t]{0.4\linewidth}
         \includegraphics[width=\linewidth]{peiyong_fig_14.pdf}
         \caption{Fine-tune loss for the searched $\text{H}_2\text{O}$ circuit. At the last iteration of optimisation, the energy is around -75.4220  Ha,  close to the chemical accuracy compared to classically computed full configuration interaction energy with PySCF \cite{Sun2018-nq, Sun2020-ej}, which is around -75.4917  Ha}
         \label{fig:h2o_finetune}
@@ -696,6 +696,212 @@ However, other parts of the circuit are not familiar, which indicates that the s
     \caption{The search rewards and fine-tune loss for $\text{H}_2\text{O}$ circuit.}\label{fig:h2o_search_finetune}
 \end{figure*}
 
+\begin{figure*}[ht!]
+    \centering
+   \includegraphics[width=0.9\linewidth]{peiyong_fig_15.png}
+    \caption{Circuit for $\text{H}_2\text{O}$ produced by the search algorithm.}
+    \label{fig:h2o_circ}
+  \end{figure*}
+
+\subsection{Solving the \textsc{MaxCut} problem}
+  As a classic and well-known optimisation problem, the \textsc{MaxCut} problem plays an important role in network science, circuit design, as well as physics \cite{Bharti2022-sw}. The objective of the \textsc{MaxCut} problem is to find a partition $z$ of vertices in a graph $G = (V, E)$ which maximises the number of edges connecting the vertices in two disjoint sets $A$ and $B$:
+  \begin{equation}
+      C(z) =\sum_{a=1}^m C_a(z)
+  \end{equation}
+  where $C_a(z) = 1$ if the $a^{th}$ edge connects one vortex in set $A$ and one vortex in set $B$, and $C_a(z) = 0$ otherwise. To perform the optimisation on a quantum computer, we will need to transform the cost function into Ising formulation:
+  \begin{equation}
+      H_C = -\sum_{(i, j)\in E} \frac{1}{2} (I - Z_i Z_j)w_{ij}
+  \end{equation}\label{qaoa_ham}
+  where $Z_i$ is the Pauli $Z$ operator on the $i^{th}$ qubit and $w_{ij}$ is the weight of edge $(i, j)\in E$ for weighted \textsc{MaxCut} problem. For unweighted problems, $w_{ij} = 1$. In this formulation, vertices are represented by qubits in computational bases. By finding the wave-function that minimises the cost Hamiltonian $H_C$, we can find the solution that maximises $C(z)$. Previously, the major components of the QAOA (quantum approximate optimisation algorithm) ans\"atz are the cost Hamiltonian encoded by the cost unitary and the mixing Hamiltonians encoded by the mixing unitaries \cite{Farhi2014-ug}. Although this ans\"atz can find all the solutions in a equal superposition form, it is not always effective when the number of layers is small. Also, when the number of qubits (vertices) grows, the required number of layers and the number of shots during measurement to extract all of the solutions will also grow.
+  
+  Since we have already had a Hamiltonian as our cost function in Sec.~\ref{h2}, we follow similar approach as quantum chemistry to find one of the solutions when the number of vertices is large.
+  
+\subsubsection{Experiment Settings}
+\paragraph{Unweighted \textsc{MaxCut}}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{peiyong_fig_16.pdf}
+    \caption{Problem graph for the unweighted \textsc{MaxCut} experiment}
+    \label{fig:max_cut_prob}
+  \end{figure}
+
+  The problem graph for the unweighted \textsc{MaxCut} experiment is shown in Fig. \ref{fig:max_cut_prob}. This problem has six equally optimal solutions: 1001100, 0110010, 0111010, 1000101, 1001101 and 0110011, all have $C(z)=7$. The loss function is based on the expectation of the cost Hamiltonian $H_C$:
+  \begin{equation}
+      L_{\textsc{MaxCut}} = (\bra{+})^{\otimes 7}U_{\rm SearchedAnsatz}^{\dagger} H_C U_{\rm SearchedAnsatz}   (\ket{+})^{\otimes 7}
+  \end{equation}
+  The reward function is simply the negative of the loss function:
+  \begin{equation}
+      \mathcal{R}_{\textsc{MaxCut}} = -L_{\textsc{MaxCut}}
+  \end{equation}
+  We ran the search algorithm twice with the same basic settings, including the operation pool and the maximum number of layers. Since there is a random sampling process during the warm-up stage, the final solutions found by the algorithm are expected to be different. The operation pool consists of CNOT gates between every two qubits, the Placeholder and the single qubit rotation gate \cite{nielsen00}:
+  \begin{equation}
+    \begin{split}
+  &Rot(\phi, \theta, \omega)=R_Z(\omega) R_Y(\theta) R_Z(\phi)\\
+  & =\left[\begin{array}{cc}
+  e^{-i(\phi+\omega) / 2} \cos (\theta / 2) & -e^{i(\phi-\omega) / 2} \sin (\theta / 2) \\
+  e^{-i(\phi-\omega) / 2} \sin (\theta / 2) & e^{i(\phi+\omega) / 2} \cos (\theta / 2)
+  \end{array}\right]
+    \end{split}
+  \end{equation}
+  The size of the operation pool $c = \vert \mathcal{C} \vert = 28$, and the number of layers $p = 15$, leading to a search space of size $\vert \mathcal{S} \vert = 28^{15} \approx 5 \times10^{21}$. The `hard' restrictions on the maximum number of CNOT gates in a circuit, which is 7,  can help reduce the size of the search space.
+  
+  \paragraph{Weighted \textsc{MaxCut}} For weighted \textsc{MaxCut}, we have a five-node graph, which is shown in Fig~\ref{fig:max_cut_weighted_prob}. The solution for this problem, 00011 (11100) is simpler than the unweighted version. The reward and loss function follow the same principle of the unweighted problem. The size of the operation pool $c = \mathcal{C} = 20$, and the number of layers $p = 10$, leading to a search space of size $\vert \mathcal{S} \vert = 20^{10} \approx 1.02\times 10^{13}$. The `hard' restriction on the maximum number of CNOTs in the circuit is 5.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{peiyong_fig_17.pdf}
+  \caption{Problem graph for the weighted \textsc{MaxCut} experiment. The weights on edges (0,2), (0,4), (0,1), (2,4), (4,1) and (2,3) are 2, 6, 1, 5, 4 and 3, respectively.}
+  \label{fig:max_cut_weighted_prob}
+\end{figure}
+
+\subsubsection{Results}
+\paragraph{Unweighted \textsc{MaxCut}}
+The two runs of the search algorithms gave us two circuits (Fig. \ref{fig:qaoa_7q_circ}), leading to two of the six optimal solutions (Fig. \ref{fig:qaoa_7q_solution}). The search rewards and fine-tune losses for both circuits are shown in Figure~\ref{fig:qaoa_7q_search_finetune_both}. During the search stage, since we already know the maximum reward it could reach is 7, and the reward can only be integers, we set the early-stopping limit to 6.5 to reduce the amount of time spent on searching, which means the algorithm will stop searching and proceed to fine-tuning the parameters in the circuit after the reward exceeds 6.5. In a real-world application, we could let the search algorithm run through all of the pre-set number of iterations and record the best circuit structure as well as the corresponding rewards at each iteration at the same time. Then after the search stage finishes, we can choose the best circuit (or top-k circuits) in the search history to fine-tune, increasing our chance to find the optimal solution.
+
+
+
+\begin{figure*}[ht!]
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+    \centering
+        %\includegraphics[width=0.75\linewidth]{Figures/fig_qaoa_circ_7q_1.pdf}
+        \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \gate{Rot} & \ctrl{0} & \gate{Rot} & \targ{}\vqw{0} & \ctrl{0} & \qw\\
+\qw & \gate{H} & \qw & \targ{}\vqw{-1} & \gate{Rot} & \ctrl{-1} & \targ{}\vqw{-1} & \qw\\
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw
+\end{quantikz}
+        \caption{}
+        \label{fig:qaoa_7q_first_circ}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.48\linewidth}
+    \centering
+        %\includegraphics[width=\linewidth]{Figures/fig_qaoa_circ_7q_2.pdf}
+       \begin{quantikz}[transparent, row sep={0.8cm,between origins}, column sep = 0.2cm]
+\qw & \gate{H} & \qw & \targ{}\vqw{0} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \gate{Rot} & \qw & \qw & \qw & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \gate{Rot} & \qw & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \gate{Rot} & \qw & \qw & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \gate{Rot} & \ctrl{0} & \targ{}\vqw{0} & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \gate{Rot} & \targ{}\vqw{-1} & \ctrl{-1} & \targ{}\vqw{0} & \ctrl{0} & \gate{Rot} & \qw\\
+\qw & \gate{H} & \gate{Rot} & \ctrl{-6} & \qw & \qw & \qw & \ctrl{-1} & \targ{}\vqw{-1} & \qw & \qw
+\end{quantikz}
+        \caption{}
+        \label{fig:qaoa_7q_second_circ}
+    \end{subfigure}
+    \caption{Two different circuits finding two different solutions of the \textsc{MaxCut} problem shown in Fig. \ref{fig:max_cut_prob}. Fig. \ref{fig:qaoa_7q_first_circ} gives the solution 0110010 (see Fig. \ref{fig:qaoa_7q_first_solution}) and Fig. \ref{fig:qaoa_7q_second_circ} gives the solution 0111010 (see Fig. \ref{fig:qaoa_7q_second_solution}).}\label{fig:qaoa_7q_circ}
+\end{figure*}
+
+
+
+\begin{figure*}[ht!]
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_18.pdf}
+        \caption{}
+        \label{fig:qaoa_7q_first_solution}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_19.pdf}
+        \caption{}
+        \label{fig:qaoa_7q_second_solution}
+    \end{subfigure}
+    \caption{Two different optimal solutions found by the circuits in Fig. \ref{fig:qaoa_7q_first_circ} and Fig. \ref{fig:qaoa_7q_second_circ}, respectively.}\label{fig:qaoa_7q_solution}
+\end{figure*}
+
+
+
+\begin{figure*}[ht!]
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=0.95\linewidth]{peiyong_fig_20.pdf}
+        \caption{The change of rewards w.r.t. search iteration during the search for the ans\"atz (in Fig.\ref{fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref{fig:qaoa_7q_first_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.}
+        \label{fig:qaoa_search_reward_1}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_21.pdf}
+        \caption{The change of loss w.r.t. optimisation iteration during the fine-tune for the ans\"atz (in Fig.\ref{fig:qaoa_7q_first_circ}) that gives the solution 0110010 (Fig. \ref{fig:qaoa_7q_first_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.}
+        \label{fig:qaoa_finetune_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\linewidth}
+        \includegraphics[width=0.99\linewidth]{peiyong_fig_22.pdf}
+        \caption{The change of rewards w.r.t. search iteration during the search for the ans\"atz (in Fig.\ref{fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref{fig:qaoa_7q_second_solution}). To reduce the amount of time for searching, we stopped the algorithm after the search reward exceeded 6.5.}
+        \label{fig:qaoa_search_reward_2}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_23.pdf}
+        \caption{The change of loss w.r.t. optimisation iteration during the fine-tune for the ans\"atz (in Fig.\ref{fig:qaoa_7q_second_circ}) that gives the solution 0111010 (Fig. \ref{fig:qaoa_7q_second_solution}). We can see that the final loss is very close to -7, indicating that the circuit we found can produce an optimal solution.}
+        \label{fig:qaoa_finetune_2}
+    \end{subfigure}
+    \caption{Search and fine-tune rewards for the circuits in Fig~\ref{fig:qaoa_7q_circ}. }\label{fig:qaoa_7q_search_finetune_both}
+\end{figure*}
+
+\paragraph{Weighted \textsc{MaxCut}}
+The search rewards and fine-tune losses for the weighted \textsc{MaxCut} problem are shown in Fig~\ref{fig:qaoa_5q_search_and_finetune}. We can see that the search converged quickly and the fine-tune loss is very close to -18, indicating that the circuit (see Fig~\ref{fig:qaoa_5q_circ}) produced by our search algorithm can indeed find an optimal solution (see Fig~\ref{fig:qaoa_5q_solution}).
+
+\begin{figure*}[ht!]
+    \centering
+    \begin{subfigure}[b]{0.46\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_24.pdf}
+        \caption{Search rewards for the five-node weighted \textsc{MaxCut} problem}
+        \label{fig:qaoa_5q_search}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.48\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_25.pdf}
+        \caption{Fine-tune loss for the five-node weighted \textsc{MaxCut} problem}
+        \label{fig:qaoa_5q_finetune}
+    \end{subfigure}
+    \caption{The search rewards and fine-tune losses of for the five-node \textsc{MaxCut} problem.}\label{fig:qaoa_5q_search_and_finetune}
+\end{figure*}
+
+\begin{figure*}[ht!]
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+        %\includegraphics[width=\linewidth]{Figures/fig_qaoa_5q_circ.pdf}
+        \begin{quantikz}[transparent, row sep={0.8cm,between origins}]
+\qw & \gate{H} & \qw & \targ{}\vqw{0} & \gate{Rot} & \targ{}\vqw{0} & \qw & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \gate{Rot} & \qw & \ctrl{0} & \qw & \qw & \qw\\
+\qw & \gate{H} & \qw & \qw & \qw & \qw & \targ{}\vqw{-1} & \gate{Rot} & \ctrl{0} & \qw\\
+\qw & \gate{H} & \qw & \qw & \qw & \qw & \gate{Rot} & \qw & \targ{}\vqw{-1} & \qw\\
+\qw & \gate{H} & \gate{Rot} & \ctrl{-4} & \gate{Rot} & \ctrl{-4} & \qw & \qw & \qw & \qw
+\end{quantikz}
+        \caption{The searched circuit for the five-node weighted \textsc{MaxCut} problem}
+        \label{fig:qaoa_5q_circ}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.46\linewidth}
+        \includegraphics[width=\linewidth]{peiyong_fig_26.pdf}
+        \caption{The solution sampled, which is 00011, from the circuit shown left.}
+        \label{fig:qaoa_5q_solution}
+    \end{subfigure}
+    \caption{The searched circuit and sampled solution for the five-node \textsc{MaxCut} problem.}\label{fig:qaoa_5q_circ_and_solution}
+\end{figure*}
+
+\section{Discussion}\label{discussion}
+In this paper, we first formulated the circuit search problem as the tree structure. The sampled circuit can be represented as an arc (path from the root to a leaf) on the tree. We also introduced combinatorial multi-armed bandit and na\"ive assumption to model the selection of unitary operators for each layer in the circuit, and approximate the rewards of different unitaries with the reward of a fully constructed circuit. The search process is solved with Monte Carlo tree search (MCTS) algorithm. We demonstrated the effectiveness of our algorithmic framework with various examples, including finding the encoding circuit of the [[4,2,2]] quantum error detection code, developing the ans\"atz for variationally solving system of linear equations, searching the circuit for solving the ground state energy problem of different molecules, as well as circuits for solving optimisation problems on a graph. To our understanding, we are the first to propose such a versatile framework for the automated discovery of quantum circuits with MCTS and combinatorial multi-armed bandits. Results showed that our framework can be applied to many different areas, especially those with problems that can be formulated as finding the ground state energy of a certain Hamiltonian.
+
+From the experiments and results shown in the previous sections, we can see that, by formulating quantum ans\"atz search as a tree-based search problem, one can easily impose various kinds of restrictions (`hard limits') on the circuit structure, leading to the pruning of the search tree and the search space. Also, by introducing Placeholders, one can explore smaller circuit sizes. Since current deep reinforcement learning algorithms struggle when the state space is large but the number of reward states is small. Compared to other research work in quantum ans\"atz search, including the differentiable quantum ans\"atz algorithm proposed in \cite{zhang2021differentiable}, and other QAS algorithms based on meta-learning \cite{chen2021quantum} or reinforcement learning \cite{kuo2021quantum}, which only investigate small-scale problems, like 3- or 4-qubit quantum Fourier transform in \cite{zhang2021differentiable}, 3-qubit classification task and 4-qubit $\text{H}_2$ ground state energy problem in \cite{du2020quantum}. A larger example can be seen in \cite{zhang2021neural}, which is a 6-qubit transversal Ising field model. In our research, we not only looked into 4-qubit systems like the $\text{H}_2$ molecule, but also larger systems like the $\text{LiH}$ and $\text{H}_2\text{O}$ molecule as well as \textsc{MaxCut} on 7-node graphs. Our circuit depth is also often larger than the previous mentioned research. Since our operation pool consist of single-qubit gates on each qubit and CNOT gates either on neighbouring qubits or between every two qubits in the system, resulting a much larger size of operation pool compared to other research. With these two factors combined, our search space size is generally larger than other QAS research.
+
+
+However, there are still several hyper-parameters that need to be tuned before the search algorithm can produce satisfying results, which leaves us space for improvement for the automation level of the algorithm. In the future, we would like to investigate the performance of our algorithm under noises, as well as improve the scalability of our algorithm by introducing parallelization to the tree search algorithm when using a quantum simulator. We would also like to introduce more flexible value and/or policy functions into the algorithm.
+
+Overall, our research has shown that MCTS enhanced with combinatorial multi-armed bandit is a very efficient approach to search for quantum circuits for a variety of problems, even when the search space is large. Therefore, it took an important leap towards the widespread applications of variational quantum algorithms on many problems.
+
+\paragraph{Acknowledgement} This research was supported in part by the Defence Science Institute, an initiative of the State Government of Victoria. We thank useful discussions and advice from Hanxun (Curtis) Huang. The computational resources were provided by the National Computing Infrastructure (NCI) and Pawsey Supercomputing Center through National Computational Merit Allocation Scheme (NCMAS).
 
 
 
@@ -713,7 +919,7 @@ However, other parts of the circuit are not familiar, which indicates that the s
 
 
 
-
+\newpage
 \bibliographystyle{unsrt}
 \typeout{} 
 \bibliography{reference}

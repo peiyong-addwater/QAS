@@ -325,4 +325,17 @@ Qiming Sun, Xing Zhang, Samragni Banerjee, Peng Bao, Marc Barbry, Nick~S Blunt,
 \newblock Recent developments in the {PySCF} program package.
 \newblock {\em J. Chem. Phys.}, 153(2):024109, July 2020.
 
+\bibitem{Bharti2022-sw}
+Kishor Bharti, Alba Cervera-Lierta, Thi~Ha Kyaw, Tobias Haug, Sumner
+  Alperin-Lea, Abhinav Anand, Matthias Degroote, Hermanni Heimonen, Jakob~S
+  Kottmann, Tim Menke, Wai-Keong Mok, Sukin Sim, Leong-Chuan Kwek, and Al{\'a}n
+  Aspuru-Guzik.
+\newblock Noisy intermediate-scale quantum algorithms.
+\newblock {\em Rev. Mod. Phys.}, 94(1):015004, February 2022.
+
+\bibitem{Farhi2014-ug}
+Edward Farhi, Jeffrey Goldstone, and Sam Gutmann.
+\newblock A quantum approximate optimization algorithm.
+\newblock {\em arXiv preprint arXiv:1411.4028}, 2014.
+
 \end{thebibliography}
