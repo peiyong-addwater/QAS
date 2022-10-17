@@ -105,38 +105,61 @@
 \citation{Bravo-Prieto_undated-oq}
 \citation{pennylane_vqls}
 \citation{nielsen00}
-\newlabel{eqn:vqls_local_loss}{{19}{9}{Solving linear equations}{equation.3.19}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}1}Experiment Settings}{9}{subsubsection.3.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}2}Results}{9}{subsubsection.3.2.2}\protected@file@percent }
-\newlabel{fig:vqls_4q_search}{{9a}{9}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.9}{}}
-\newlabel{sub@fig:vqls_4q_search}{{a}{9}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.9}{}}
-\newlabel{fig:vqls_4q_finetune}{{9b}{9}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimised to achieve smaller losses. The final loss of the optimised parameters is very close to 0.\relax }{figure.caption.9}{}}
-\newlabel{sub@fig:vqls_4q_finetune}{{b}{9}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimised to achieve smaller losses. The final loss of the optimised parameters is very close to 0.\relax }{figure.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The search rewards and fine-tune loss for VQLS experiment. \relax }}{9}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:vqls_search_finetune}{{9}{9}{The search rewards and fine-tune loss for VQLS experiment. \relax }{figure.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Circuit searched for the VQLS problem. $Rot(\phi , \theta , \omega )=R_Z(\omega ) R_Y(\theta ) R_Z(\phi )$. The four Hadamard gates at the beginning of the circuit are to put everything in an equal superposition, and not included when constructing the search tree, i.e. the composed circuits will always start with four Hadamard gates placed on the four qubits. When drawing the circuit, the Placeholder gates, which are just identity gates, are removed from searched $\mathcal  {P}$, although they were considered when constructing the search tree.\relax }}{9}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:vqls_circ}{{10}{9}{Circuit searched for the VQLS problem. $Rot(\phi , \theta , \omega )=R_Z(\omega ) R_Y(\theta ) R_Z(\phi )$. The four Hadamard gates at the beginning of the circuit are to put everything in an equal superposition, and not included when constructing the search tree, i.e. the composed circuits will always start with four Hadamard gates placed on the four qubits. When drawing the circuit, the Placeholder gates, which are just identity gates, are removed from searched $\mathcal {P}$, although they were considered when constructing the search tree.\relax }{figure.caption.10}{}}
 \citation{li2017efficient,mcclean2016theory,wecker2015progress}
 \citation{peruzzo2014variational,o2016scalable,colless2017implementing,kandala2017hardware,colless2018computation,dumitrescu2018cloud}
 \citation{sakurai_napolitano_2017}
 \citation{sakurai_napolitano_2017}
+\newlabel{eqn:vqls_local_loss}{{19}{9}{Solving linear equations}{equation.3.19}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}1}Experiment Settings}{9}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}2}Results}{9}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Circuit searched for the VQLS problem. $Rot(\phi , \theta , \omega )=R_Z(\omega ) R_Y(\theta ) R_Z(\phi )$. The four Hadamard gates at the beginning of the circuit are to put everything in an equal superposition, and not included when constructing the search tree, i.e. the composed circuits will always start with four Hadamard gates placed on the four qubits. When drawing the circuit, the Placeholder gates, which are just identity gates, are removed from searched $\mathcal  {P}$, although they were considered when constructing the search tree.\relax }}{9}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:vqls_circ}{{10}{9}{Circuit searched for the VQLS problem. $Rot(\phi , \theta , \omega )=R_Z(\omega ) R_Y(\theta ) R_Z(\phi )$. The four Hadamard gates at the beginning of the circuit are to put everything in an equal superposition, and not included when constructing the search tree, i.e. the composed circuits will always start with four Hadamard gates placed on the four qubits. When drawing the circuit, the Placeholder gates, which are just identity gates, are removed from searched $\mathcal {P}$, although they were considered when constructing the search tree.\relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Search for quantum chemistry ans\"atze}{9}{subsection.3.3}\protected@file@percent }
+\newlabel{h2}{{\mbox  {III-C}}{9}{Search for quantum chemistry ans\"atze}{subsection.3.3}{}}
+\newlabel{eq:variational}{{24}{9}{Search for quantum chemistry ans\"atze}{equation.3.24}{}}
 \citation{bergholm2020pennylane}
-\citation{pennylane_dev_team_2021}
+\newlabel{fig:vqls_4q_search}{{9a}{10}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:vqls_4q_search}{{a}{10}{Search rewards for VQLS. The change of rewards with respect to the iterations is shown. We can see that the reward quickly reached the early stopping threshold at iteration 10. In the VQLS case, the reward is scaled since the initial reward with random sampled circuit structure and parameters is already at the magnitude of $10^{-2}$.\relax }{figure.caption.9}{}}
+\newlabel{fig:vqls_4q_finetune}{{9b}{10}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimised to achieve smaller losses. The final loss of the optimised parameters is very close to 0.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:vqls_4q_finetune}{{b}{10}{Fine-tune loss for the VQLS circuit.After the searched stopped at iteration 10 as shown in Fig~\ref {fig:vqls_4q_search}, the structure of the circuit is left unchanged and its parameters are optimised to achieve smaller losses. The final loss of the optimised parameters is very close to 0.\relax }{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The search rewards and fine-tune loss for VQLS experiment. \relax }}{10}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:vqls_search_finetune}{{9}{10}{The search rewards and fine-tune loss for VQLS experiment. \relax }{figure.caption.9}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Comparison between classical probabilities, which obtained from solving the matrix equation with the classical method, i.e. $x = A^{-1}b$, of the normalised solution vector $\frac  {x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket {x}$ produced by the trained circuit in Fig\nobreakspace  {}\ref  {fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, showing that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.\relax }}{10}{figure.caption.11}\protected@file@percent }
 \newlabel{fig:vqls_results_compare}{{11}{10}{Comparison between classical probabilities, which obtained from solving the matrix equation with the classical method, i.e. $x = A^{-1}b$, of the normalised solution vector $\frac {x}{||x||}$ for $Ax = b$ (left), and the probabilities obtained by sampling the state $\ket {x}$ produced by the trained circuit in Fig~\ref {fig:vqls_circ} (right). The number of shots for measurement is $10^6$. We can see that the quantum results is very close to the classically obtained ones, showing that our algorithm can be indeed applied to finding variational ans\"atz for VQLS problems.\relax }{figure.caption.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Search for quantum chemistry ans\"atze}{10}{subsection.3.3}\protected@file@percent }
-\newlabel{h2}{{\mbox  {III-C}}{10}{Search for quantum chemistry ans\"atze}{subsection.3.3}{}}
-\newlabel{eq:variational}{{24}{10}{Search for quantum chemistry ans\"atze}{equation.3.24}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}1}Experiment settings}{10}{subsubsection.3.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}1a}Search an ans\"atz for finding the ground energy of $\text  {H}_2$:}{10}{paragraph.3.3.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}1b}Search an ans\"atz for finding the ground energy of $\text  {LiH}$}{10}{paragraph.3.3.1.2}\protected@file@percent }
+\citation{pennylane_dev_team_2021}
+\citation{Sun2018-nq,Sun2020-ej}
+\citation{Sun2018-nq,Sun2020-ej}
+\citation{Sun2018-nq,Sun2020-ej}
+\citation{Sun2018-nq,Sun2020-ej}
 \bibstyle{unsrt}
 \bibdata{reference}
 \bibcite{peruzzo2014variational}{1}
 \bibcite{schuldpetruccione2021}{2}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}1b}Search an ans\"atz for finding the ground energy of $\text  {LiH}$}{11}{paragraph.3.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}1c}Search an ans\"atz for finding the ground energy of $\text  {H}_2\text  {O}$}{11}{paragraph.3.3.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Results}{11}{subsubsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}2a}$\text  {H}_2$ Results}{11}{paragraph.3.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}2b}$\text  {LiH}$ Results}{11}{paragraph.3.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{REFERENCES}{11}{section*.15}\protected@file@percent }
 \bibcite{RevModPhys.92.015003}{3}
 \bibcite{2020optionpricing}{4}
 \bibcite{johnson2017qvector}{5}
+\newlabel{fig:h2_search}{{12a}{12}{Search rewards for the $\text {H}_2$ ans\"atz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 0.7.\relax }{figure.caption.12}{}}
+\newlabel{sub@fig:h2_search}{{a}{12}{Search rewards for the $\text {H}_2$ ans\"atz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 0.7.\relax }{figure.caption.12}{}}
+\newlabel{fig:h2_finetune}{{12b}{12}{Fine-tune loss for the searched $\text {H}_2$ circuit. At the last iteration of optimisation, the energy is around -1.1359 Ha. The classically computed full configuration interaction result with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -1.132 Ha and marked by the red horizontal dashed line. The difference between the energy achieved by the searched circuit and PySCF is close to chemical accuracy.)\relax }{figure.caption.12}{}}
+\newlabel{sub@fig:h2_finetune}{{b}{12}{Fine-tune loss for the searched $\text {H}_2$ circuit. At the last iteration of optimisation, the energy is around -1.1359 Ha. The classically computed full configuration interaction result with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -1.132 Ha and marked by the red horizontal dashed line. The difference between the energy achieved by the searched circuit and PySCF is close to chemical accuracy.)\relax }{figure.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces The search rewards and fine-tune loss for $\text  {H}_2$ circuit. experiment.\relax }}{12}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:h2_search_finetune}{{12}{12}{The search rewards and fine-tune loss for $\text {H}_2$ circuit. experiment.\relax }{figure.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces The circuit for finding the ground energy of the $\text  {H}_2$ molecule produced by the search algorithm. We can see that there are already familiar structures emerging, like the SWAP gate between the first two qubits in the middle and the Ising coupling gate-like structure right under the decomposed SWAP gate.\relax }}{12}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:h2_circ}{{13}{12}{The circuit for finding the ground energy of the $\text {H}_2$ molecule produced by the search algorithm. We can see that there are already familiar structures emerging, like the SWAP gate between the first two qubits in the middle and the Ising coupling gate-like structure right under the decomposed SWAP gate.\relax }{figure.caption.13}{}}
+\newlabel{fig:lih_search}{{14a}{12}{Search rewards for the $\text {LiH}$ ans\"atz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 7.7.\relax }{figure.caption.14}{}}
+\newlabel{sub@fig:lih_search}{{a}{12}{Search rewards for the $\text {LiH}$ ans\"atz. We can see that for most of the 50 iterations, the reward for the best circuit sampled from the search tree stays over 7.7.\relax }{figure.caption.14}{}}
+\newlabel{fig:lih_finetune}{{14b}{12}{Fine-tune loss for the searched $\text {LiH}$ circuit. At the last iteration of optimisation, the energy is around -7.9526 Ha, close to the chemical accuracy compared to classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -7.8885 Ha\relax }{figure.caption.14}{}}
+\newlabel{sub@fig:lih_finetune}{{b}{12}{Fine-tune loss for the searched $\text {LiH}$ circuit. At the last iteration of optimisation, the energy is around -7.9526 Ha, close to the chemical accuracy compared to classically computed full configuration interaction energy with PySCF \cite {Sun2018-nq, Sun2020-ej}, which is around -7.8885 Ha\relax }{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces The search rewards and fine-tune loss for $\text  {LiH}$ circuit. experiment.\relax }}{12}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:lih_search_finetune}{{14}{12}{The search rewards and fine-tune loss for $\text {LiH}$ circuit. experiment.\relax }{figure.caption.14}{}}
 \bibcite{Xu2021-dt}{6}
 \bibcite{2017hardwareefficientvqe}{7}
 \bibcite{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}{8}
@@ -160,9 +183,6 @@
 \bibcite{9566740mctsqas}{26}
 \bibcite{CMAB_RTS}{27}
 \bibcite{nielsen00}{28}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}1c}Search an ans\"atz for finding the ground energy of $\text  {H}_2\text  {O}$}{11}{paragraph.3.3.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Results}{11}{subsubsection.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{REFERENCES}{11}{section*.12}\protected@file@percent }
 \bibcite{AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}{29}
 \bibcite{MCTS_for_game10.5555/3022539.3022579}{30}
 \bibcite{nestedmontecarlosearch}{31}
@@ -182,4 +202,6 @@
 \bibcite{dumitrescu2018cloud}{45}
 \bibcite{sakurai_napolitano_2017}{46}
 \bibcite{pennylane_dev_team_2021}{47}
-\gdef \@abspage@last{12}
+\bibcite{Sun2018-nq}{48}
+\bibcite{Sun2020-ej}{49}
+\gdef \@abspage@last{14}
