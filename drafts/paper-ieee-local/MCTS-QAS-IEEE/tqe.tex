@@ -1,0 +1,105 @@
+\documentclass{ieeeaccess}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{physics}
+\usepackage[normalem]{ulem}
+\usepackage{color,soul}
+\renewcommand{\arraystretch}{1.5}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/TQE.2020.DOI}
+
+\title{Automated Quantum Circuit Design with Nested Monte Carlo Tree Search}
+\author{\uppercase{First A. Author}\authorrefmark{1}, \IEEEmembership{Fellow, IEEE},
+\uppercase{Second B. Author\authorrefmark{2}, and Third C. Author,
+Jr}.\authorrefmark{3},
+\IEEEmembership{Member, IEEE}}
+\address[1]{National Institute of Standards and 
+Technology, Boulder, CO 80305 USA (email: author@boulder.nist.gov)}
+\address[2]{Department of Physics, Colorado State University, Fort Collins, 
+CO 80523 USA (email: author@lamar.colostate.edu)}
+\address[3]{Electrical Engineering Department, University of Colorado, Boulder, CO 
+80309 USA}
+\tfootnote{This paragraph of the first footnote will contain support 
+information, including sponsor and financial support acknowledgment. For 
+example, ``This work was supported in part by the U.S. Department of 
+Commerce under Grant BS123456.''}
+
+\markboth
+{Author \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
+{Author \headeretal: Preparation of Papers for IEEE Transactions on Quantum Engineering}
+
+\corresp{Corresponding author: First A. Author (email: author@ boulder.nist.gov).}
+
+\begin{abstract}
+Quantum algorithms based on variational approaches are one of the most promising methods to construct quantum solutions and have found a myriad of applications in the last few years. Despite the adaptability and simplicity, their scalability and the selection of suitable ans\"atzs remain key challenges. In this work, we report an algorithmic framework based on nested Monte-Carlo Tree Search (MCTS) coupled with the combinatorial multi-armed bandit (CMAB) model  for the automated design of quantum circuits. Through numerical experiments, we demonstrated our algorithm applied to various kinds of problems, including the ground energy problem in quantum chemistry, quantum optimisation on a graph, solving  systems of linear equations, and finding encoding circuit for quantum error detection codes. Compared to the existing approaches, the results indicate that our circuit design algorithm can explore larger search spaces and optimise quantum circuits for larger systems, showing both versatility and scalability.
+\end{abstract}
+
+\begin{keywords}
+Enter key words or phrases in alphabetical 
+order, separated by commas. For a list of suggested keywords, send a blank 
+email to keywords@ieee.org or visit \underline
+{http://www.ieee.org/organizations/pubs/ani\_prod/keywrd98.txt}
+\end{keywords}
+
+\titlepgskip=-15pt
+
+\maketitle
+
+\section{Introduction}
+The variational quantum circuit (VQC, also known as parameterised quantum circuit, PQC) approach, first proposed for solving the ground state energy of molecules \cite{peruzzo2014variational}, have been extended to many open research problems including in the field of quantum machine learning \cite{schuldpetruccione2021}, quantum chemistry \cite{RevModPhys.92.015003}, option pricing \cite{2020optionpricing} and quantum error correction \cite{johnson2017qvector, Xu2021-dt}. The performance of VQC methods largely depend on the choice of a suitable ans\"atze, which is not an easy task because generally the search space is very large and it is not well established whether there is a common principle for designing such ans\"atze. For problems involving physical systems such as in quantum chemistry, we can rely on the well-defined properties of molecular systems for ans\"atz designing, like the  hardware efficient ans\"atze~\cite{2017hardwareefficientvqe} and physical-inspired ans\"atze, such as $k$-UpCCGSD~ \cite{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}. However, this cannot be generalised to other areas such as designing variational error correction circuits or quantum optimisation problems. For example, in \cite{Xu2021-dt}, when developing a variational circuit that can encode logical states for the 5-qubit quantum error correction code, the authors adopted an expensive approach by randomly searching over a large number (order of 10000) of circuits. It is anticipated that, with the increasing number of application areas for VQCs and the need for scalability to tackle large problem sizes without relying on fundamental physical properties, such random search methods or methods based purely on human heuristics will struggle to find suitable ans\"atzes. Therefore, it is important to develop efficient methods for the automated design of variational quantum circuits. Here we focus on the development of algorithms for the automated design of VQCs by leveraging the power of artificial intelligence (AI) which can be deployed for a wide range of applications.
+
+Although modern AI research often focuses on applications of image and natural language processing, the power of AI can also bring new knowledge in many areas, especially scientific discovery. 
+%A famous example is the 37th move in match 2 of DeepMind AlphaGo \cite{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16} versus world Go champion Lee Sedol, which surprised professional Go players as creative and unique, also nearly impossible to be played by human Go players. Besides finding new moves when playing Go, AI algorithms already demonstrated vast potential in making scientific discovery. 
+AlphaFold2 managed to discover new mechanism for the bonding region of the protein and inhibitors \cite{alphafold2Jumper2021-lw} with competitive accuracy on predicting the three-dimensional structure of proteins in the 14th Critical Assessment of protein Structure Prediction (CASP) competition. In 2021, machine learning algorithms helped mathematicians discover new mathematical relationships in two different areas of mathematics \cite{Davies2021-xh}. Like variational quantum circuits, modern deep neural networks (DNN) also face a design problem when composing the network for certain tasks. With the help of AI algorithms, researchers developed techniques to efficiently search suitable network architectures in a large search space. Famous algorithms for neural architecture search (NAS) include the DARTS algorithm \cite{DARTS_DBLP:conf/iclr/LiuSY19}, which models the choice of operations placed in different layers as an independent categorical probabilistic model that can be optimised via gradient descent methods, and the PNAS algorithm \cite{PNAS10.1007/978-3-030-01246-5_2}, which models the search process with sequential model-based optimisation (SMBO) strategy. %, as well as ENAS \cite{ENASpmlr-v80-pham18a}, which is the first and feasible neural architecture search algorithm that requires far less GPU hour than its predecessor and can finish within one day. 
+Tree-based algorithms were also proposed for NAS, such as AlphaX \cite{AlphaXDBLP:conf/aaai/WangZJTF20}, which models the search process similarly as the search stage of AlphaGo \cite{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}. Recently, a new NAS algorithm based on tree search and combinatorial multi-armed bandits, proposed in \cite{huang2021neural}, outperforms other NAS algorithms, including the previously mentioned algorithms.
+
+Based on progress in neural architecture search algorithms, efforts have been made on developing similar approaches for Quantum Ans\"atz (Architecture) Search (QAS) problems. Zhang \textit{et.al}~\cite{zhang2021differentiable} adapted the DARTS algorithm \cite{DARTS_DBLP:conf/iclr/LiuSY19} from NAS for QAS, which models the distribution of different operations within a single layer with the independent category probabilistic model. The search algorithm will update the parameters in the VQC as well as the probabilistic model. However, it has been shown in NAS literature that DARTS tend to assign fast-converge architectures with high probability during sampling \cite{Shu2019-jf, Zhou2020-dg}. Also, the off-the-shelf probabilistic distributions for modelling the architecture space tend to have difficulties when the search space is large. Later, the same group of authors developed a neural network to evaluate the performance of parameterised quantum circuits without actually training the circuits, and incorporated this neural network into quantum architecture search \cite{zhang2021neural}. While NAS algorithms often focus on image related tasks and it has been proved through many experiments that one neural network architecture can act as a backbone feature extractor for many downstream tasks, the structures of variational quantum circuits for different problems often vary a great deal with different problems, casting some doubts on the generalisation abilities of such neural predictor based QAS algorithms. Kuo \textit{et.al} \cite{kuo2021quantum} proposed a deep reinforcement learning based method for tackling QAS. The reinforcement learning agent is optimised by the advantage actor-critic and proximal policy optimisation algorithms. 
+%The authors also developed a customized OpenAI Gym environment \cite{OpenAIGYMDBLP:journals/corr/BrockmanCPSSTZ16} for running their simulations as well as training the DRL agent. 
+However, NAS algorithms based on policy gradient reinforcement learning have been shown to get easily stuck in local minimal, producing less optimal solutions \cite{ENASpmlr-v80-pham18a, Sutton1999-nj}. Also, the data size for training a reinforcement learning agent will explode when the number of actions the agent can choose from is large. He \textit{et.al} \cite{chen2021quantum} applied meta-learning techniques to learn good heuristics of both the architecture and the parameters. Du \textit{et al.}  \cite{du2020quantum} proposed a QAS algorithm based on the one-shot neural architecture search, where all possible quantum circuits are represented by a supernet with a weight-sharing strategy and the circuits are sampled uniformly during the training stage. After finishing the training stage, all circuits in the supernet are ranked and the best performed circuit will be chosen for further optimisation. Later Linghu \textit{et.al}~\cite{Linghu2022-yy} applied similar techniques on search to a classification circuit on a physical quantum processor. Meng \textit{et.al}~\cite{9566740mctsqas} applied Monte-Carlo tree search to ans\"atz optimisation for problems in quantum chemistry and condensed matter physics. However, these studies often restrict their demonstrations within one or two types of problems and small-sized systems.
+
+In order to develop a search technique that can be applied to larger search spaces and different variational quantum problems, we introduce an algorithm for QAS problems based on combinatorial multi-armed bandit (CMAB) model as well as Monte-Carlo Tree Search (MCTS). In order to explore extremely large search spaces compared to previous work in the literature, the working of our strategy is underpinned by a reward scheme which dictates the choices of the quantum operations at each step of the algorithm with the na\"ive assumption \cite{CMAB_RTS}. This enabled our strategy to work on larger systems, more than 7 qubits, whereas the existing examples \cite{zhang2021differentiable, chen2021quantum, kuo2021quantum, zhang2021differentiable, du2020quantum, zhang2021neural} are restricted to typically 3 or 4 qubits, with the largest being 6 qubits. To demonstrate the working of our method, we showed its application to a variety of problems including encoding the logic states for the [[4,2,2]] quantum error detection code, solving the ground energy problem for different molecules as well as linear systems of equations, and searching the ans\"atz for solving optimisations problems. Our work confirms that the automated quantum architecture search based on the MCTS+CMAB approach exhibits great versatility and scalability, and therefore should provide an efficient solution and new insights to the problems of designing variational quantum circuits.
+
+This paper is organised as follows: Section~\ref{methods} introduces the basic notion of Monte-Carlo tree search, as well as other techniques required for our algorithm, including nested MCTS and na\"ive assumptions from the CMAB model. Section \ref{experiments}  reports the results based on the application of our search algorithm to various problems, including searching for encoding circuits for the [[4,2,2]] quantum error detection code, the ans\"atz circuit for finding the ground state energy of different molecules, as well as circuits for solving linear system of equations and optimisation. In Section \ref{discussion} we discuss the results and conclusions.
+
+\section{Methods}\label{methods}
+\subsection{Problem Formulation}
+In this paper, we formulate the quantum ans\"atz search problem, which is aimed to automatically design variational quantum circuits to perform various tasks, as a tree structure. We slice a quantum circuit into layers, and for each layer there is a pool of candidate operations. Starting with an empty circuit, we fill the layers with operations chosen by the search algorithm, from the first to the final layer. 
+
+
+\Figure[t!](topskip=0pt, botskip=0pt, midskip=0pt)[width=\textwidth]{peiyong_fig_1.png}{An overview of the algorithmic framework proposed in this paper. The operation pool (c) is obtained by tailoring the basic operations (a) with respect to the device topology (b). After that, we formulate the combinations of different choices of operations at different layer position in the circuit (d) as a search tree (e). In (f), we evaluate our circuit on a quantum processor or quantum simulator to get value of the loss or reward function, and according to the value of the loss/reward function we update the parameters on a classical computer, then use MCTS to search for the current best circuit. We then send the updated circuit structure together with the updated parameters to the quantum processor/simulator to obtain a new set of loss/reward values. The process depicted in (f) will repeat until a circuit that meets the stopping criteria is found. Then, as shown in (g), we will follow the usual process to optimize the parameters in the searched variational quantum circuit by classical-quantum hybrid computing..\label{fig:overview}}
+
+A quantum circuit is represented as a (ordered) list, $\mathcal{P}$, of operations of length $p$ chosen from the operation list. The length of this list is fixed within the problem.
+The operation pool is a set 
+\begin{equation}
+\mathcal{C} = \{U_0, U_1, \cdots, U_{c-1} \},
+\end{equation}
+with $\vert \mathcal{C} \vert = c$ the number of elements. Each element $U_i$ is a possible choice for a certain layer of the quantum circuit. Such operations can be parameterised (e.g. the $R_Z(\theta)$ gate), or non-parameterised (e.g. the Pauli gates). A quantum circuit with four layers could, for instance, be represented as:
+\begin{equation}
+    \mathcal{P} = [U_0, U_1, U_2, U_1],
+\end{equation}
+where, according to the search algorithm, the operations chosen for the first, second, third and fourth layer are $U_0$, $U_1$, $U_2$, $U_1$. In this case, $p=4$ and the size of the operation pool $\vert \mathcal{C} \vert = c$. The search tree is shown in Fig. \ref{fig:treeexample} In this paper, we will only deal with unitary operations or unitary channels. The output state of such a quantum circuit can then be written as:
+\begin{equation}
+    \vert\varphi_{\rm out}\rangle = U_1 U_2 U_1 U_0 \vert\varphi_{\rm init}\rangle\label{eq:U1U3U1U2},
+\end{equation}
+where $\vert \varphi_{\rm init}\rangle$ is the initial state of the quantum circuit. For simplicity, we will use integers to denote the chosen operations (such operations can be whole-layer unitaries, like the mixing Hamiltonians often seen in typical QAOA circuits, or just single- and two-qubit gates). 
+
+
+
+\bibliographystyle{unsrt}
+\typeout{} 
+\bibliography{reference}
+
+
+
+\EOD
+
+\end{document}
