@@ -46,6 +46,7 @@ with open(os.path.join(cwd, h2_with_all_cnots)) as f:
     all_cnots = json.load(f)
 
 E_fci = -1.136189454088
+E_SCF = -1.1145697422375
 Min_Energy = E_fci
 
 nei_cnots_search_rewards = [s[2] for s in neighbouring_cnots['search_reward_list']]
@@ -64,6 +65,7 @@ plt.close()
 fig = plt.figure()
 plt.plot(list(range(len(neigh_cnots_fine_tune_loss))), neigh_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
 plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088 Ha$")
+plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1145697422375 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -84,6 +86,7 @@ plt.close()
 fig = plt.figure()
 plt.plot(list(range(len(all_cnots_fine_tune_loss))), all_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
 plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088Ha$")
+plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1145697422375 Ha$")
 #plt.title("Fine-tune Loss after Search, No Restrictions on CNOT Locations")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -150,6 +153,7 @@ def h2_vacc_ini_circ():
 H2O Results
 """
 Min_energy_H2O = -75.491788196432
+E_SCF_H2O = -75.1645758157887
 h2o_results_file = '20220504-074905_H2O_QMLStateBasicGates.json'
 with open(os.path.join(cwd, h2o_results_file)) as f:
     h2o_results = json.load(f)
@@ -168,6 +172,7 @@ plt.savefig('fig_H2O_search_rewards.pdf')
 fig = plt.figure()
 plt.plot(list(range(len(h2o_finetuen_rewards))), h2o_finetuen_rewards, label =r"$E_\mathrm{SearchedCirc}$", linestyle ='-', marker ='.')
 plt.axhline(y = Min_energy_H2O, color ='r', linestyle ='--', label =r"$E_\mathrm{FCI}=-75.49 Ha$")
+plt.axhline(y = E_SCF_H2O, color ='b', linestyle ='.', label =r"$E_\mathrm{SCF}=-75.16 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
