@@ -107,7 +107,7 @@ circuit_maxcut_2 = [
                     U("Rot(\\phi_4, \\theta_4, \\omega_4)",4),
                     U("Rot(\\phi_5, \\theta_5, \\omega_5)",5),
                     U("Rot(\\phi_6, \\theta_6, \\omega_6)",6),
-                    CNOT(5,6),CNOT(6,5),CNOT(8,7),CNOT(7,8),
+                    CNOT(5,6),CNOT(6,5),CNOT(7,6),CNOT(6,7),
                     U("Rot(\\phi_7, \\theta_7, \\omega_7)",6)
                    ]
 
