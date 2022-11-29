@@ -64,8 +64,8 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(neigh_cnots_fine_tune_loss))), neigh_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
-plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088 Ha$")
-plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1145697422375 Ha$")
+plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.1362 Ha$")
+plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1146 Ha$")
 #plt.title("Fine-tune Loss after Searching with Only Neighbouring CNOTs")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -85,8 +85,8 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(all_cnots_fine_tune_loss))), all_cnots_fine_tune_loss,label = r"$E_\mathrm{Search}$",linestyle = '-',marker = '.')
-plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.136189454088Ha$")
-plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1145697422375 Ha$")
+plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.1362 Ha$")
+plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1146 Ha$")
 #plt.title("Fine-tune Loss after Search, No Restrictions on CNOT Locations")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
@@ -119,6 +119,8 @@ plt.close()
 fig = plt.figure()
 plt.plot(list(range(len(h2_vac_ini_finetune_loss))), h2_vac_ini_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = '.')
 #plt.axhline(y = E_FCI_H2, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.132 Ha$")
+plt.axhline(y = Min_Energy, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-1.1362 Ha$")
+plt.axhline(y = E_SCF, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-1.1146 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.tight_layout()
@@ -212,6 +214,7 @@ LiH Results
 """
 lih_file = '20220504-141016_LiH_QMLStateBasicGates.json'
 E_FCI_LiH = -7.888567271126
+E_SCF_LiH = -7.80324297491408
 lih_symbols = ["Li", "H"]
 lih_geometry = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527])
 H_LiH, qubits_LiH = qml.qchem.molecular_hamiltonian(
@@ -240,7 +243,8 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(lih_finetune_loss))), lih_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = '.')
-#plt.axhline(y = E_FCI_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.888 Ha$")
+plt.axhline(y = E_FCI_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.888 Ha$")
+plt.axhline(y = E_SCF_LiH, color = 'b', linestyle = '.',label = r"$E_\mathrm{SCF}=-7.803 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.tight_layout()
