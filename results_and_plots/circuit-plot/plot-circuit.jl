@@ -66,4 +66,62 @@ circuit_h2o = [
 
 savecircuit(circuit_h2o, "h2o_circuit.pdf")
 
+circuit_lih = [
+                U("Rot(\\phi_0, \\theta_0, \\omega_0)",1),
+                U("Rot(\\phi_1, \\theta_1, \\omega_1)",2),
+                U("Rot(\\phi_2, \\theta_2, \\omega_2)",3),
+                U("Rot(\\phi_3, \\theta_3, \\omega_3)",5),
+                U("Rot(\\phi_4, \\theta_4, \\omega_4)",6),
+                U("Rot(\\phi_5, \\theta_5, \\omega_5)",8),
+                U("Rot(\\phi_6, \\theta_6, \\omega_6)",10),
+                CNOT(5,4),CNOT(3,4),CNOT(4,3),CNOT(3,2),
+                U("Rot(\\phi_7, \\theta_7, \\omega_7)",4),
+                CNOT(3,4)
+              ]
 
+savecircuit(circuit_lih, "lih_circuit.pdf")
+
+circuit_maxcut_1 = [
+                      H(1),H(2),H(3),H(4),H(5),H(6),H(7),
+                      U("Rot(\\phi_0, \\theta_0, \\omega_0)",1),
+                      U("Rot(\\phi_1, \\theta_1, \\omega_1)",2),
+                      U("Rot(\\phi_2, \\theta_2, \\omega_2)",3),
+                      U("Rot(\\phi_3, \\theta_3, \\omega_3)",5),
+                      U("Rot(\\phi_4, \\theta_4, \\omega_4)",6),
+                      U("Rot(\\phi_5, \\theta_5, \\omega_5)",7),
+                      CNOT(3,4),
+                      U("Rot(\\phi_6, \\theta_6, \\omega_6)",3),
+                      U("Rot(\\phi_7, \\theta_7, \\omega_7)",4),
+                      CNOT(4,3),CNOT(3,4)
+                   ]
+
+savecircuit(circuit_maxcut_1, "maxcut_circuit_1.pdf")
+
+circuit_maxcut_2 = [
+                    H(1),H(2),H(3),H(4),H(5),H(6),H(7),
+                    U("Rot(\\phi_0, \\theta_0, \\omega_0)",2),
+                    U("Rot(\\phi_1, \\theta_1, \\omega_1)",7),
+                    CNOT(7,1),
+                    U("Rot(\\phi_2, \\theta_2, \\omega_2)",1),
+                    U("Rot(\\phi_3, \\theta_3, \\omega_3)",3),
+                    U("Rot(\\phi_4, \\theta_4, \\omega_4)",4),
+                    U("Rot(\\phi_5, \\theta_5, \\omega_5)",5),
+                    U("Rot(\\phi_6, \\theta_6, \\omega_6)",6),
+                    CNOT(5,6),CNOT(6,5),CNOT(8,7),CNOT(7,8),
+                    U("Rot(\\phi_7, \\theta_7, \\omega_7)",6)
+                   ]
+
+savecircuit(circuit_maxcut_2, "maxcut_circuit_2.pdf")
+
+circuit_weighted_maxcut = [
+                           H(1),H(2),H(3),H(4),H(5),
+                           U("Rot(\\phi_0, \\theta_0, \\omega_0)",5),
+                           CNOT(5,1),
+                           U("Rot(\\phi_1, \\theta_1, \\omega_1)",1),
+                           U("Rot(\\phi_2, \\theta_2, \\omega_2)",2),
+                           U("Rot(\\phi_3, \\theta_3, \\omega_3)",5),
+                           CNOT(5,1),CNOT(2,3),
+                           U("Rot(\\phi_4, \\theta_4, \\omega_4)",4),
+                           U("Rot(\\phi_5, \\theta_5, \\omega_5)",3)
+                          ]
+savecircuit(circuit_weighted_maxcut, "weighted_maxcut_circuit.pdf")
