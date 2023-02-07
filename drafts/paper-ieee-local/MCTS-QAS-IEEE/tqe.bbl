@@ -1,0 +1,341 @@
+\begin{thebibliography}{10}
+
+\bibitem{peruzzo2014variational}
+Alberto Peruzzo, Jarrod McClean, Peter Shadbolt, Man-Hong Yung, Xiao-Qi Zhou,
+  Peter~J Love, Al{\'a}n Aspuru-Guzik, and Jeremy~L O’brien.
+\newblock A variational eigenvalue solver on a photonic quantum processor.
+\newblock {\em Nature communications}, 5(1):1--7, 2014.
+
+\bibitem{schuldpetruccione2021}
+Maria Schuld and Francesco Petruccione.
+\newblock {\em Machine learning with Quantum Computers}.
+\newblock Springer, 2021.
+
+\bibitem{RevModPhys.92.015003}
+Sam McArdle, Suguru Endo, Al\'an Aspuru-Guzik, Simon~C. Benjamin, and Xiao
+  Yuan.
+\newblock Quantum computational chemistry.
+\newblock {\em Rev. Mod. Phys.}, 92:015003, Mar 2020.
+
+\bibitem{2020optionpricing}
+Nikitas Stamatopoulos, Daniel~J. Egger, Yue Sun, Christa Zoufal, Raban Iten,
+  Ning Shen, and Stefan Woerner.
+\newblock Option pricing using quantum computers.
+\newblock {\em Quantum}, 4:291, Jul 2020.
+
+\bibitem{johnson2017qvector}
+Peter~D. Johnson, Jonathan Romero, Jonathan Olson, Yudong Cao, and Alán
+  Aspuru-Guzik.
+\newblock Qvector: an algorithm for device-tailored quantum error correction,
+  2017.
+
+\bibitem{Xu2021-dt}
+Xiaosi Xu, Simon~C Benjamin, and Xiao Yuan.
+\newblock Variational circuit compiler for quantum error correction.
+\newblock {\em Physical Review Applied}, 15(3), November 2021.
+
+\bibitem{2017hardwareefficientvqe}
+Abhinav Kandala, Antonio Mezzacapo, Kristan Temme, Maika Takita, Markus Brink,
+  Jerry~M. Chow, and Jay~M. Gambetta.
+\newblock Hardware-efficient variational quantum eigensolver for small
+  molecules and quantum magnets.
+\newblock {\em Nature}, 549(7671):242–246, Sep 2017.
+
+\bibitem{physicalinspiredansatze1doi:10.1021/acs.jctc.8b01004}
+Joonho Lee, William~J. Huggins, Martin Head-Gordon, and K.~Birgitta Whaley.
+\newblock Generalized unitary coupled cluster wave functions for quantum
+  computation.
+\newblock {\em Journal of Chemical Theory and Computation}, 15(1):311--324,
+  2019.
+
+\bibitem{alphafold2Jumper2021-lw}
+John Jumper, Richard Evans, Alexander Pritzel, Tim Green, Michael Figurnov,
+  Olaf Ronneberger, Kathryn Tunyasuvunakool, Russ Bates, Augustin {\v
+  Z}{\'\i}dek, Anna Potapenko, Alex Bridgland, Clemens Meyer, Simon A~A Kohl,
+  Andrew~J Ballard, Andrew Cowie, Bernardino Romera-Paredes, Stanislav Nikolov,
+  Rishub Jain, Jonas Adler, Trevor Back, Stig Petersen, David Reiman, Ellen
+  Clancy, Michal Zielinski, Martin Steinegger, Michalina Pacholska, Tamas
+  Berghammer, Sebastian Bodenstein, David Silver, Oriol Vinyals, Andrew~W
+  Senior, Koray Kavukcuoglu, Pushmeet Kohli, and Demis Hassabis.
+\newblock Highly accurate protein structure prediction with {AlphaFold}.
+\newblock {\em Nature}, 596(7873):583--589, August 2021.
+
+\bibitem{Davies2021-xh}
+Alex Davies, Petar Veli{\v c}kovi{\'c}, Lars Buesing, Sam Blackwell, Daniel
+  Zheng, Nenad Toma{\v s}ev, Richard Tanburn, Peter Battaglia, Charles
+  Blundell, Andr{\'a}s Juh{\'a}sz, Marc Lackenby, Geordie Williamson, Demis
+  Hassabis, and Pushmeet Kohli.
+\newblock Advancing mathematics by guiding human intuition with {AI}.
+\newblock {\em Nature}, 600(7887):70--74, December 2021.
+
+\bibitem{DARTS_DBLP:conf/iclr/LiuSY19}
+Hanxiao Liu, Karen Simonyan, and Yiming Yang.
+\newblock {DARTS:} differentiable architecture search.
+\newblock In {\em 7th International Conference on Learning Representations,
+  {ICLR} 2019, New Orleans, LA, USA, May 6-9, 2019}. OpenReview.net, 2019.
+
+\bibitem{PNAS10.1007/978-3-030-01246-5_2}
+Chenxi Liu, Barret Zoph, Maxim Neumann, Jonathon Shlens, Wei Hua, Li-Jia Li,
+  Li~Fei-Fei, Alan Yuille, Jonathan Huang, and Kevin Murphy.
+\newblock Progressive neural architecture search.
+\newblock In Vittorio Ferrari, Martial Hebert, Cristian Sminchisescu, and Yair
+  Weiss, editors, {\em Computer Vision -- ECCV 2018}, pages 19--35, Cham, 2018.
+  Springer International Publishing.
+
+\bibitem{AlphaXDBLP:conf/aaai/WangZJTF20}
+Linnan Wang, Yiyang Zhao, Yuu Jinnai, Yuandong Tian, and Rodrigo Fonseca.
+\newblock Neural architecture search using deep neural networks and monte carlo
+  tree search.
+\newblock In {\em The Thirty-Fourth {AAAI} Conference on Artificial
+  Intelligence, {AAAI} 2020, The Thirty-Second Innovative Applications of
+  Artificial Intelligence Conference, {IAAI} 2020, The Tenth {AAAI} Symposium
+  on Educational Advances in Artificial Intelligence, {EAAI} 2020, New York,
+  NY, USA, February 7-12, 2020}, pages 9983--9991. {AAAI} Press, 2020.
+
+\bibitem{AlphaGoDBLP:journals/nature/SilverHMGSDSAPL16}
+David Silver, Aja Huang, Chris~J. Maddison, Arthur Guez, Laurent Sifre, George
+  van~den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Vedavyas
+  Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal
+  Kalchbrenner, Ilya Sutskever, Timothy~P. Lillicrap, Madeleine Leach, Koray
+  Kavukcuoglu, Thore Graepel, and Demis Hassabis.
+\newblock Mastering the game of go with deep neural networks and tree search.
+\newblock {\em Nat.}, 529(7587):484--489, 2016.
+
+\bibitem{huang2021neural}
+Hanxun Huang, Xingjun Ma, Sarah~M. Erfani, and James Bailey.
+\newblock Neural architecture search via combinatorial multi-armed bandit.
+\newblock In {\em International Joint Conference on Neural Networks, {IJCNN}
+  2021, Shenzhen, China, July 18-22, 2021}, pages 1--8. {IEEE}, 2021.
+
+\bibitem{zhang2021differentiable}
+Shi-Xin Zhang, Chang-Yu Hsieh, Shengyu Zhang, and Hong Yao.
+\newblock Differentiable quantum architecture search, 2021.
+
+\bibitem{Shu2019-jf}
+Yao Shu, Wei Wang, and Shaofeng Cai.
+\newblock Understanding architectures learnt by cell-based neural architecture
+  search.
+\newblock September 2019.
+
+\bibitem{Zhou2020-dg}
+Pan Zhou, Caiming Xiong, Richard Socher, and Steven C~H Hoi.
+\newblock Theory-inspired path-regularized differential network architecture
+  search.
+\newblock In {\em Proceedings of the 34th International Conference on Neural
+  Information Processing Systems}, number Article 695 in NIPS'20, pages
+  8296--8307, Red Hook, NY, USA, December 2020. Curran Associates Inc.
+
+\bibitem{zhang2021neural}
+Shi-Xin Zhang, Chang-Yu Hsieh, Shengyu Zhang, and Hong Yao.
+\newblock Neural predictor based quantum architecture search.
+\newblock {\em Machine Learning: Science and Technology}, 2(4):045027, Oct
+  2021.
+
+\bibitem{kuo2021quantum}
+En-Jui Kuo, Yao-Lung~L. Fang, and Samuel Yen-Chi Chen.
+\newblock Quantum architecture search via deep reinforcement learning, 2021.
+
+\bibitem{ENASpmlr-v80-pham18a}
+Hieu Pham, Melody Guan, Barret Zoph, Quoc Le, and Jeff Dean.
+\newblock Efficient neural architecture search via parameters sharing.
+\newblock In Jennifer Dy and Andreas Krause, editors, {\em Proceedings of the
+  35th International Conference on Machine Learning}, volume~80 of {\em
+  Proceedings of Machine Learning Research}, pages 4095--4104. PMLR, 10--15 Jul
+  2018.
+
+\bibitem{Sutton1999-nj}
+Richard~S Sutton, David McAllester, Satinder Singh, and Yishay Mansour.
+\newblock Policy gradient methods for reinforcement learning with function
+  approximation.
+\newblock {\em Adv. Neural Inf. Process. Syst.}, 12, 1999.
+
+\bibitem{chen2021quantum}
+Zhimin He, Chuangtao Chen, Lvzhou Li, Shenggen Zheng, and Haozhen Situ.
+\newblock Quantum architecture search with meta‐learning.
+\newblock {\em Adv. Quantum Technol.}, page 2100134, June 2022.
+
+\bibitem{du2020quantum}
+Yuxuan Du, Tao Huang, Shan You, Min-Hsiu Hsieh, and Dacheng Tao.
+\newblock Quantum circuit architecture search for variational quantum
+  algorithms.
+\newblock {\em npj Quantum Information}, 8(1):1--8, May 2022.
+
+\bibitem{Linghu2022-yy}
+Kehuan Linghu, Yang Qian, Ruixia Wang, Meng-Jun Hu, Zhiyuan Li, Xuegang Li,
+  Huikai Xu, Jingning Zhang, Teng Ma, Peng Zhao, Dong~E Liu, Min-Hsiu Hsieh,
+  Xingyao Wu, Yuxuan Du, Dacheng Tao, Yirong Jin, and Haifeng Yu.
+\newblock Quantum circuit architecture search on a superconducting processor.
+\newblock January 2022.
+
+\bibitem{9566740mctsqas}
+Fan-Xu Meng, Ze-Tong Li, Xu-Tao Yu, and Zai-Chen Zhang.
+\newblock Quantum circuit architecture optimization for variational quantum
+  eigensolver via monto carlo tree search.
+\newblock {\em IEEE Transactions on Quantum Engineering}, 2:1--10, 2021.
+
+\bibitem{CMAB_RTS}
+Santiago Onta\~{n}\'{o}n.
+\newblock The combinatorial multi-armed bandit problem and its application to
+  real-time strategy games.
+\newblock In {\em Proceedings of the Ninth AAAI Conference on Artificial
+  Intelligence and Interactive Digital Entertainment}, AIIDE'13, page 58–64.
+  AAAI Press, 2013.
+
+\bibitem{nielsen00}
+Michael~A. Nielsen and Isaac~L. Chuang.
+\newblock {\em Quantum Computation and Quantum Information}.
+\newblock Cambridge University Press, 2000.
+
+\bibitem{AlphaGoZeroDBLP:journals/nature/SilverSSAHGHBLB17}
+David Silver, Julian Schrittwieser, Karen Simonyan, Ioannis Antonoglou, Aja
+  Huang, Arthur Guez, Thomas Hubert, Lucas Baker, Matthew Lai, Adrian Bolton,
+  Yutian Chen, Timothy~P. Lillicrap, Fan Hui, Laurent Sifre, George van~den
+  Driessche, Thore Graepel, and Demis Hassabis.
+\newblock Mastering the game of go without human knowledge.
+\newblock {\em Nat.}, 550(7676):354--359, 2017.
+
+\bibitem{MCTS_for_game10.5555/3022539.3022579}
+Guillaume Chaslot, Sander Bakkes, Istvan Szita, and Pieter Spronck.
+\newblock Monte-carlo tree search: A new framework for game ai.
+\newblock In {\em Proceedings of the Fourth AAAI Conference on Artificial
+  Intelligence and Interactive Digital Entertainment}, AIIDE'08, page
+  216–217. AAAI Press, 2008.
+
+\bibitem{nestedmontecarlosearch}
+Tristan Cazenave.
+\newblock Nested monte-carlo search.
+\newblock In {\em Proceedings of the 21st International Joint Conference on
+  Artificial Intelligence}, IJCAI'09, page 456–461, San Francisco, CA, USA,
+  2009. Morgan Kaufmann Publishers Inc.
+
+\bibitem{UCB_paper_10.5555/944919.944941}
+Peter Auer.
+\newblock Using confidence bounds for exploitation-exploration trade-offs.
+\newblock {\em J. Mach. Learn. Res.}, 3:397–422, Mar 2003.
+
+\bibitem{qec_intro_guide}
+Joschka Roffe.
+\newblock Quantum error correction: an introductory guide.
+\newblock {\em Contemporary Physics}, 60(3):226--245, 2019.
+
+\bibitem{bergholm2020pennylane}
+Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, M.~Sohaib Alam,
+  Shahnawaz Ahmed, Juan~Miguel Arrazola, Carsten Blank, Alain Delgado, Soran
+  Jahangiri, Keri McKiernan, Johannes~Jakob Meyer, Zeyue Niu, Antal Száva, and
+  Nathan Killoran.
+\newblock Pennylane: Automatic differentiation of hybrid quantum-classical
+  computations, 2020.
+
+\bibitem{Bravo-Prieto_undated-oq}
+Carlos Bravo-Prieto, Ryan LaRose, M.~Cerezo, Yigit Subasi, Lukasz Cincio, and
+  Patrick~J. Coles.
+\newblock Variational quantum linear solver, 2019.
+
+\bibitem{HHL}
+Aram~W. Harrow, Avinatan Hassidim, and Seth Lloyd.
+\newblock Quantum algorithm for linear systems of equations.
+\newblock {\em Phys. Rev. Lett.}, 103:150502, Oct 2009.
+
+\bibitem{pennylane_vqls}
+Variational quantum linear solver --- {PennyLane}.
+\newblock \url{https://pennylane.ai/qml/demos/tutorial_vqls.html}.
+\newblock Accessed: 2022-4-24.
+
+\bibitem{li2017efficient}
+Ying Li and Simon~C Benjamin.
+\newblock Efficient variational quantum simulator incorporating active error
+  minimization.
+\newblock {\em Physical Review X}, 7(2):021050, 2017.
+
+\bibitem{mcclean2016theory}
+Jarrod~R McClean, Jonathan Romero, Ryan Babbush, and Al{\'a}n Aspuru-Guzik.
+\newblock The theory of variational hybrid quantum-classical algorithms.
+\newblock {\em New Journal of Physics}, 18(2):023023, 2016.
+
+\bibitem{wecker2015progress}
+Dave Wecker, Matthew~B Hastings, and Matthias Troyer.
+\newblock Progress towards practical quantum variational algorithms.
+\newblock {\em Physical Review A}, 92(4):042303, 2015.
+
+\bibitem{o2016scalable}
+Peter~JJ O’Malley, Ryan Babbush, Ian~D Kivlichan, Jonathan Romero, Jarrod~R
+  McClean, Rami Barends, Julian Kelly, Pedram Roushan, Andrew Tranter, Nan
+  Ding, et~al.
+\newblock Scalable quantum simulation of molecular energies.
+\newblock {\em Physical Review X}, 6(3):031007, 2016.
+
+\bibitem{colless2017implementing}
+James Colless, Vinay Ramasesh, Dar Dahlen, Machiel Blok, Jarrod McClean,
+  Jonathan Carter, Wibe~A de~Jong, and Irfan Siddiqi.
+\newblock Implementing a variational quantum eigensolver using superconducting
+  qubits.
+\newblock In {\em Quantum Information and Measurement}, pages QF6A--2. Optical
+  Society of America, 2017.
+
+\bibitem{kandala2017hardware}
+Abhinav Kandala, Antonio Mezzacapo, Kristan Temme, Maika Takita, Markus Brink,
+  Jerry~M Chow, and Jay~M Gambetta.
+\newblock Hardware-efficient variational quantum eigensolver for small
+  molecules and quantum magnets.
+\newblock {\em Nature}, 549(7671):242--246, 2017.
+
+\bibitem{colless2018computation}
+James~I Colless, Vinay~V Ramasesh, Dar Dahlen, Machiel~S Blok, Mollie~E
+  Kimchi-Schwartz, Jarrod~R McClean, Jonathan Carter, Wibe~A de~Jong, and Irfan
+  Siddiqi.
+\newblock Computation of molecular spectra on a quantum processor with an
+  error-resilient algorithm.
+\newblock {\em Physical Review X}, 8(1):011021, 2018.
+
+\bibitem{dumitrescu2018cloud}
+Eugene~F Dumitrescu, Alex~J McCaskey, Gaute Hagen, Gustav~R Jansen, Titus~D
+  Morris, T~Papenbrock, Raphael~C Pooser, David~Jarvis Dean, and Pavel
+  Lougovski.
+\newblock Cloud quantum computing of an atomic nucleus.
+\newblock {\em Physical review letters}, 120(21):210501, 2018.
+
+\bibitem{sakurai_napolitano_2017}
+J.~J. Sakurai and Jim Napolitano.
+\newblock {\em Modern Quantum Mechanics}.
+\newblock Cambridge University Press, 2 edition, 2017.
+
+\bibitem{pennylane_dev_team_2021}
+PennyLane dev team.
+\newblock A brief overview of vqe, Jul 2021.
+
+\bibitem{Sun2018-nq}
+Qiming Sun, Timothy~C Berkelbach, Nick~S Blunt, George~H Booth, Sheng Guo,
+  Zhendong Li, Junzi Liu, James~D McClain, Elvira~R Sayfutyarova, Sandeep
+  Sharma, Sebastian Wouters, and Garnet Kin-Lic Chan.
+\newblock {P} y {SCF}: the python‐based simulations of chemistry framework.
+\newblock {\em Wiley Interdiscip. Rev. Comput. Mol. Sci.}, 8(1):e1340, January
+  2018.
+
+\bibitem{Sun2020-ej}
+Qiming Sun, Xing Zhang, Samragni Banerjee, Peng Bao, Marc Barbry, Nick~S Blunt,
+  Nikolay~A Bogdanov, George~H Booth, Jia Chen, Zhi-Hao Cui, Janus~J Eriksen,
+  Yang Gao, Sheng Guo, Jan Hermann, Matthew~R Hermes, Kevin Koh, Peter Koval,
+  Susi Lehtola, Zhendong Li, Junzi Liu, Narbe Mardirossian, James~D McClain,
+  Mario Motta, Bastien Mussard, Hung~Q Pham, Artem Pulkin, Wirawan Purwanto,
+  Paul~J Robinson, Enrico Ronca, Elvira~R Sayfutyarova, Maximilian Scheurer,
+  Henry~F Schurkus, James E~T Smith, Chong Sun, Shi-Ning Sun, Shiv Upadhyay,
+  Lucas~K Wagner, Xiao Wang, Alec White, James~Daniel Whitfield, Mark~J
+  Williamson, Sebastian Wouters, Jun Yang, Jason~M Yu, Tianyu Zhu, Timothy~C
+  Berkelbach, Sandeep Sharma, Alexander~Yu Sokolov, and Garnet Kin-Lic Chan.
+\newblock Recent developments in the {PySCF} program package.
+\newblock {\em J. Chem. Phys.}, 153(2):024109, July 2020.
+
+\bibitem{Bharti2022-sw}
+Kishor Bharti, Alba Cervera-Lierta, Thi~Ha Kyaw, Tobias Haug, Sumner
+  Alperin-Lea, Abhinav Anand, Matthias Degroote, Hermanni Heimonen, Jakob~S
+  Kottmann, Tim Menke, Wai-Keong Mok, Sukin Sim, Leong-Chuan Kwek, and Al{\'a}n
+  Aspuru-Guzik.
+\newblock Noisy intermediate-scale quantum algorithms.
+\newblock {\em Rev. Mod. Phys.}, 94(1):015004, February 2022.
+
+\bibitem{Farhi2014-ug}
+Edward Farhi, Jeffrey Goldstone, and Sam Gutmann.
+\newblock A quantum approximate optimization algorithm.
+\newblock {\em arXiv preprint arXiv:1411.4028}, 2014.
+
+\end{thebibliography}
