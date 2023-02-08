@@ -215,8 +215,9 @@ def h2o_circuit():
 LiH Results
 """
 lih_file = '20220504-141016_LiH_QMLStateBasicGates.json'
-E_FCI_LiH = -7.888567271126
-E_SCF_LiH = -7.80324297491408
+#E_FCI_LiH = -7.888567271126
+#E_SCF_LiH = -7.80324297491408
+E_LiH_ADAPT_VQE = -7.97240884
 lih_symbols = ["Li", "H"]
 lih_geometry = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527])
 H_LiH, qubits_LiH = qml.qchem.molecular_hamiltonian(
@@ -245,8 +246,8 @@ plt.close()
 
 fig = plt.figure()
 plt.plot(list(range(len(lih_finetune_loss))), lih_finetune_loss, label = r"$E_\mathrm{SearchedCircuit}$",linestyle = '-',marker = '.')
-plt.axhline(y = E_FCI_LiH, color = 'r', linestyle = '--',label = r"$E_\mathrm{FCI}=-7.888 Ha$")
-plt.axhline(y = E_SCF_LiH, color = 'b', linestyle = 'dashdot',label = r"$E_\mathrm{SCF}=-7.803 Ha$")
+plt.axhline(y = E_LiH_ADAPT_VQE, color = 'r', linestyle = '--',label = r"$E_\mathrm{ADAPT-VQE}=-7.972 Ha$")
+#plt.axhline(y = E_SCF_LiH, color = 'b', linestyle = 'dashdot',label = r"$E_\mathrm{SCF}=-7.803 Ha$")
 plt.xlabel('Epoch')
 plt.ylabel('Loss (Energy, Ha)')
 plt.legend()
