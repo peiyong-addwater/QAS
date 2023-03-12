@@ -106,7 +106,7 @@ SUPPORTED_OPS_DICT = {
 
 SUPPORTED_OPS_NAME = set(SUPPORTED_OPS_DICT.keys())
 
-from .ops import Pool, QuantumGate
+from qas.ops import Pool, QuantumGate
 
 class QMLGate(QuantumGate):
 

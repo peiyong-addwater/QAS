@@ -1,5 +1,5 @@
-from .models import ModelFromK
-from .qml_gate_ops import (
+from qas.models import ModelFromK
+from qas.qml_gate_ops import (
     SUPPORTED_OPS_DICT,
     SUPPORTED_OPS_NAME,
     QMLPool,
@@ -22,11 +22,7 @@ from typing import (
     Dict,
     AnyStr
 )
-import qiskit
-from qiskit import QuantumCircuit
-from qiskit.quantum_info import state_fidelity, DensityMatrix, Statevector
-from qiskit.providers.aer.backends import StatevectorSimulator, AerSimulator, QasmSimulator
-import qiskit.providers.aer.noise as noise
+
 from collections import OrderedDict, Counter
 import shutup
 shutup.please()
@@ -211,7 +207,6 @@ for x in [ket0, ket1]:
         return qml.density_matrix(wires=[0,1,2,3,4])
     FIVE_ONE_THREE_QECC_DATA.append((x, five_one_three_circ(x)))
 
-TOFFOLI_012_MATRIX = qml.transforms.get_unitary_matrix(qml.Toffoli)(wires=[0,1,2])
 
 def extractParamIndicesQML(k:List[int], op_pool:Union[QMLPool, dict])->List:
     assert min(k) >= 0
