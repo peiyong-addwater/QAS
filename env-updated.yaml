@@ -41,7 +41,7 @@ dependencies:
      - SciencePlots
      - pyscf
      - openfermion
-     - openfermionpyscf==0.5
+     - openfermionpyscf
      - fqe
      - jupyterlab
      - ipykernel
