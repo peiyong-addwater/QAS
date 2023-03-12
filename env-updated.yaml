@@ -32,7 +32,6 @@ dependencies:
      - networkx
      - Typing
      - pennylane
-     - pennylane-qchem
      - pennylane-qiskit
      - pennylane-lightning[gpu]
      - pylatex
