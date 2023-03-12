@@ -1,6 +1,6 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_gate_ops import QMLPool
-from qas.qml_models import TwoQubitH2
+from qas.qml_models_legacy import TwoQubitH2
 import json
 import numpy as np
 import pennylane as qml
