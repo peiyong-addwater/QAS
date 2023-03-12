@@ -1366,7 +1366,7 @@ _H2_HAM_FOUR_QUBIT, _ = qml.qchem.molecular_hamiltonian(_H2_SYMBOLS, _H2_COORDIN
 
 _LiH_SYMBOLS = ["Li", "H"]
 _LiH_COORDINATES = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 2.969280527]) # units in Bohr
-_LiH_HAM, _LiH_QUBITS = qml.qchem.molecular_hamiltonian(_LiH_SYMBOLS, _LiH_COORDINATES, active_electrons=2, active_orbitals=5, basis='sto-6g')
+_LiH_HAM, _LiH_QUBITS = qml.qchem.molecular_hamiltonian(_LiH_SYMBOLS, _LiH_COORDINATES, active_electrons=2, active_orbitals=5, basis='sto-6g', load_data=True)
 
 _H2O_SYMBOLS = ['H', 'O', 'H']
 _H2O_COORDINATES = np.array([0.,0.,0.,1.63234543, 0.86417176, 0., 3.36087791, 0.,0.]) *1.88973 # Angstrom to Bohr
@@ -1378,6 +1378,7 @@ _H2O_HAM, _H2O_QUBITS = qml.qchem.molecular_hamiltonian(
     basis="sto-6g",
     active_electrons=4,
     active_orbitals=4,
+    load_data=True
 )
 
 class FourQubitH2(ModelFromK):
