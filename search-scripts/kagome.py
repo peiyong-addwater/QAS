@@ -1,14 +1,13 @@
-from qas.mcts_legacy import search, TreeNode, circuitModelTuning
+from qas.mcts.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_models.qml_gate_ops import QMLPool
-from qas.qml_models.qml_models_legacy import FourQubitH2
+from qas.qml_models.kagome_heisenberg_model import KagomeHeisenberg
+from qas.mcts.qml_mcts_state import QMLStateBasicGates
+
 import json
 import numpy as np
 import pennylane as qml
 import time
-from qas.mcts_legacy import QMLStateBasicGates
 
-
-#warnings.filterwarnings("ignore")
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -25,37 +24,33 @@ class NpEncoder(json.JSONEncoder):
 def nowtime():
     return str(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
 
-
 if __name__ == "__main__":
 
     import shutup
     shutup.please()
 
-    model = FourQubitH2 #ground-state energy = -1.13618883 Ha
+    model = KagomeHeisenberg
     state_class = QMLStateBasicGates
 
-
     marker = nowtime()
-    filename = marker + '.json'
     task = model.name + "_" + state_class.name
+    filename = task + "_"+ marker + '.json'
     print(task)
     init_qubit_with_actions = set()
     two_qubit_gate = ["CNOT"]
-    single_qubit_gate = ["Rot","PlaceHolder"]
-    connection_graph = [[0,1],[1,0],[1,2],[2,1],[2,3],[3,2]]
-
+    single_qubit_gate = ["Rot", "PlaceHolder"]
+    # connection graph of ibmq_guadalupe
+    connection_graph = [[0,1],[1,4],[1,2],[1,0],[2,1],[2,3],[3,2],[3,5],[4,1],[4,7],[5,8],[5,3],[6,7],[7,4],[7,10],[7,6],[8,5],[8,9],[8,11],[9,8],[10,12],[10,7],[11,8],[11,14],[12,15],[12,10],[12,13],[13,14],[13,12],[14,13],[14,11],[15,12]]
     # set a hard limit on the number of certain gate instead of using a penalty function
 
-    pool = QMLPool(4, single_qubit_gate, two_qubit_gate, complete_undirected_graph=True)
+    pool = QMLPool(16, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,  two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 28
+    p = 300
     l = 3
     c = len(pool)
     ph_count_limit = 0
-    gate_limit = {"CNOT": 14}
+    gate_limit = {"CNOT": 100}
 
-
-    # penalty function:
     def penalty_func(r: float, node: TreeNode):
         k = node.state.getCurrK()
         ph_count = 0
@@ -76,7 +71,7 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500, # was 200
+        num_iterations=500,  # was 200
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
@@ -85,7 +80,7 @@ if __name__ == "__main__":
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=5000,
+        warmup_arc_batchsize=500,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.99,
