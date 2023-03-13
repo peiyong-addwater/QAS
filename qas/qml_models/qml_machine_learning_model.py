@@ -1,4 +1,4 @@
-from .models import ModelFromK
+from qas.models import ModelFromK
 from .qml_gate_ops import (
     SUPPORTED_OPS_DICT,
     SUPPORTED_OPS_NAME,

@@ -1,13 +1,11 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
-from qas.qml_gate_ops import QMLPool
-from qas.qml_models_legacy import VQLSDemo5Q
+from qas.qml_models.qml_gate_ops import QMLPool
+from qas.qml_models.qml_models_legacy import VQLSDemo5Q
 import json
 import numpy as np
 import pennylane as qml
 import time
 from qas.mcts import QMLStateBasicGates
-import random
-import warnings
 import matplotlib.pyplot as plt
 plt.style.use(['science','nature'])
 #warnings.filterwarnings("ignore")

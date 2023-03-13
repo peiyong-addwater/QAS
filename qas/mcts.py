@@ -3,26 +3,20 @@ import random
 from typing import (
     List,
     Sequence,
-    Any,
-    Tuple,
     Callable,
-    Iterator,
     Optional,
     Union,
-    Iterable,
-    Dict,
-    AnyStr,
     Set
 )
 import numpy as np
 import pennylane as qml
 import pennylane.numpy as pnp
 from abc import ABC, abstractmethod
-from .qml_gate_ops import QMLGate, QMLPool, SUPPORTED_OPS_DICT
+from qas.qml_models.qml_gate_ops import QMLPool, SUPPORTED_OPS_DICT
 import time
 #from memory_profiler import profile
-from joblib import Parallel, delayed
-from tqdm import tqdm, trange
+from tqdm import tqdm
+
 
 class StateOfMCTS(ABC):
     name:str
@@ -220,7 +214,6 @@ class QMLStateBasicGates(StateOfMCTS):
         for i, p in enumerate(self.current_k):
             disp = disp + "OpAtDepth: {}\tOpKey: {}\tOpName: {}\n".format(i, p, self.op_name_dict[p])
         return disp
-
 
 class QMLStateBasicGatesNoRestrictions(StateOfMCTS):
     name = 'QMLStateBasicGatesNoRestrictions'

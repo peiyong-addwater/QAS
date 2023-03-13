@@ -1,12 +1,11 @@
 from qas.mcts import search, TreeNode, circuitModelTuning
-from qas.qml_gate_ops import QMLPool
-from qas.qml_models_legacy import FourTwoTwoQMLNoiseless
+from qas.qml_models.qml_gate_ops import QMLPool
+from qas.qml_models.qml_models_legacy import FourTwoTwoQMLNoiseless
 import json
 import numpy as np
 import pennylane as qml
 import time
 from qas.mcts import QMLStateBasicGates
-import random
 
 
 class NpEncoder(json.JSONEncoder):
