@@ -45,11 +45,11 @@ if __name__ == "__main__":
 
     pool = QMLPool(16, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,  two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 300
+    p = 100
     l = 3
     c = len(pool)
-    ph_count_limit = 0
-    gate_limit = {"CNOT": 100}
+    ph_count_limit = 50
+    gate_limit = {"CNOT": 50}
 
     def penalty_func(r: float, node: TreeNode):
         k = node.state.getCurrK()
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=500,  # was 200
+        num_iterations=100,
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
@@ -80,16 +80,16 @@ if __name__ == "__main__":
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=500,
-        search_arc_batchsize=100,
+        warmup_arc_batchsize=1000,
+        search_arc_batchsize=50,
         alpha_max=2,
         alpha_decay_rate=0.99,
         prune_constant_max=0.99,
         prune_constant_min=0.80,
-        max_visits_prune_threshold=20,
-        min_num_children=c // 2 + 1,
-        sampling_execute_rounds=10,
-        exploit_execute_rounds=20,
+        max_visits_prune_threshold=10,
+        min_num_children=5,
+        sampling_execute_rounds=5,
+        exploit_execute_rounds=3,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
