@@ -6,8 +6,8 @@
 from qas.qml_models.utils import extractParamIndicesQML
 from qas.qml_models.qml_gate_ops import QMLPool, QMLGate, SUPPORTED_OPS_DICT, SUPPORTED_OPS_NAME
 import pennylane as qml
-import numpy as np
 from pennylane import numpy as pnp
+import numpy as np
 from qas.models import ModelFromK
 from typing import (
     List,
@@ -62,7 +62,7 @@ class KagomeHeisenberg(ModelFromK):
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 16
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev = qml.device("lightning.gpu", wires=self.num_qubits, batch_obs=True)
+        self.dev = qml.device("lightning.qubit", wires=self.num_qubits)
         self.H = kagome_hamiltonian # ground state energy -18, two ground states
 
     def backboneCirc(self, extracted_params):
@@ -126,7 +126,7 @@ class KagomeHeisenberg(ModelFromK):
         gradients = np.zeros(super_circ_params.shape)
         for index in self.param_indices:
             extracted_params.append(super_circ_params[index])
-        extracted_params = np.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
+        extracted_params = pnp.array(extracted_params, requires_grad=True)  # needed for the new pennylane version
         if len(extracted_params) == 0:
             return gradients
         cost_grad = qml.grad(self.costFunc)
