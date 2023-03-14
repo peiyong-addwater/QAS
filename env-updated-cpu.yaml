@@ -1,0 +1,52 @@
+name: qas_gpu
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - pip
+  - pandas
+  - matplotlib
+  - python==3.8
+  - scikit-learn
+  - scipy
+  - pip:
+     - sympy
+     - quantum-decomp
+     - quimb
+     - networkx
+     - tqdm
+     - matplotlib
+     - pydot
+     - graphviz
+     - IBMQuantumExperience
+     - numpydoc
+     - qiskit[visualization, machine-learning, optimization, finance, nature]
+     - qiskit-machine-learning[torch]
+     - cplex
+     - networkx
+     - Typing
+     - pennylane
+     - pennylane-qiskit
+     - pennylane-lightning
+     - pylatex
+     - pylatexenc
+     - shutup
+     - SciencePlots
+     - pyscf
+     - openfermion
+     - openfermionpyscf
+     - fqe
+     - jupyterlab
+     - ipykernel
+     - noisyopt
+     - projectq
+     - pennylane_pq
+     - pipreqs
+     - dask[complete]
+     - torch
+     - torchvision
+     - torchaudio
+     - basis-set-exchange
+     - jax[cpu]
