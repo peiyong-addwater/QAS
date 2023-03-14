@@ -134,4 +134,28 @@ class H2STO3G(HamiltonianModel):
         self.H = H2_STO_3G_DATA.hamiltonian
         self.fci_energy = H2_STO_3G_DATA.fci_energy
 
+class LiHSTO3G(HamiltonianModel):
+    name = "LiH_STO-3G"
+    def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
+        super().__init__(p, c, l, structure_list, op_pool)
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 12
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev = qml.device("lightning.qubit", wires=self.num_qubits, batch_obs=True)
+        self.H = LiH_STO_3G_DATA.hamiltonian
+        self.fci_energy = LiH_STO_3G_DATA.fci_energy
 
+class H2OSTO3G(HamiltonianModel):
+    name = "H2O_STO-3G"
+    def __init__(self, p: int, c: int, l: int, structure_list: List[int], op_pool: Union[QMLPool, dict]):
+        super().__init__(p, c, l, structure_list, op_pool)
+        self.k = structure_list
+        self.pool = op_pool
+        self.p, self.c, self.l = p, c, l
+        self.num_qubits = 14
+        self.param_indices = extractParamIndicesQML(self.k, self.pool)
+        self.dev = qml.device("lightning.qubit", wires=self.num_qubits, batch_obs=True)
+        self.H = H2O_STO_3G_DATA.hamiltonian
+        self.fci_energy = H2O_STO_3G_DATA.fci_energy
