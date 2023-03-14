@@ -75,7 +75,7 @@ if __name__ == "__main__":
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
-        early_stop_threshold=1.13,
+        early_stop_threshold=18,
         early_stop_lookback_count=5,
         super_circ_train_lr=1,
         penalty_function=penalty_func,
