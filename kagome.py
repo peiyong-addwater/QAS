@@ -1,5 +1,5 @@
 import os
-os.environ["OMP_NUM_THREADS"] = 12
+os.environ["OMP_NUM_THREADS"] = "12"
 
 from qas.mcts.mcts import search, TreeNode, circuitModelTuning
 from qas.qml_models.qml_gate_ops import QMLPool
