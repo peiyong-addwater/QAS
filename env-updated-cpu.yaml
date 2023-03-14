@@ -25,6 +25,7 @@ dependencies:
      - qiskit[visualization, machine-learning, optimization, finance, nature]
      - qiskit-machine-learning[torch]
      - cplex
+     - zstd
      - networkx
      - Typing
      - pennylane

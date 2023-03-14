@@ -16,6 +16,7 @@ dependencies:
   - scipy
   - pip:
      - sympy
+     - zstd
      - quantum-decomp
      - quimb
      - networkx
