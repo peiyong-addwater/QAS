@@ -2,7 +2,6 @@
 # A 12-site kagome lattice on a 16-qubit quantum processor
 # The Hamiltonian is
 # H = \\sum_{\\langle i j \\rangle}^N X_i X_{j} + Y_i Y_{j} + Z_i Z_{j}
-
 from qas.qml_models.utils import extractParamIndicesQML
 from qas.qml_models.qml_gate_ops import QMLPool, QMLGate, SUPPORTED_OPS_DICT, SUPPORTED_OPS_NAME
 import pennylane as qml
@@ -62,7 +61,7 @@ class KagomeHeisenberg(ModelFromK):
         self.p, self.c, self.l = p, c, l
         self.num_qubits = 16
         self.param_indices = extractParamIndicesQML(self.k, self.pool)
-        self.dev = qml.device("lightning.qubit", wires=self.num_qubits)
+        self.dev = qml.device("lightning.qubit", wires=self.num_qubits, batch_obs=True)
         self.H = kagome_hamiltonian # ground state energy -18, two ground states
 
     def backboneCirc(self, extracted_params):
