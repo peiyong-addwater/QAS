@@ -89,7 +89,7 @@ if __name__ == "__main__":
         max_visits_prune_threshold=20,
         min_num_children=c // 2 + 1,
         sampling_execute_rounds=10,
-        exploit_execute_rounds=100,
+        exploit_execute_rounds=20,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
