@@ -44,8 +44,6 @@ if __name__ == "__main__":
     single_qubit_gate = ["Rot", "PlaceHolder"]
     # connection graph of ibmq_guadalupe
     connection_graph = [[0,1],[1,4],[1,2],[1,0],[2,1],[2,3],[3,2],[3,5],[4,1],[4,7],[5,8],[5,3],[6,7],[7,4],[7,10],[7,6],[8,5],[8,9],[8,11],[9,8],[10,12],[10,7],[11,8],[11,14],[12,15],[12,10],[12,13],[13,14],[13,12],[14,13],[14,11],[15,12]]
-    # set a hard limit on the number of certain gate instead of using a penalty function
-
     pool = QMLPool(16, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,  two_qubit_gate_map=connection_graph)
     print(pool)
     p = 200
