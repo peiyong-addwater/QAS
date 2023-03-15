@@ -1,8 +1,0 @@
-joblib==1.1.0
-numpy==1.22.2
-PennyLane==0.19.1
-qiskit==0.34.2
-qiskit_terra==0.19.2
-scikit_learn==1.0.2
-shutup==0.2.0
-tqdm==4.62.3
