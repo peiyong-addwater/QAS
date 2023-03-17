@@ -102,7 +102,7 @@ if __name__ == "__main__":
     final_params, loss_list = circuitModelTuning(
         initial_params=init_params,
         model=model,
-        num_epochs=400,
+        num_epochs=500,
         k=final_best_arc,
         op_pool=pool,
         opt_callable=qml.AdamOptimizer,
