@@ -72,7 +72,7 @@ if __name__ == "__main__":
         target_circuit_depth=p,
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
-        num_iterations=100,
+        num_iterations=200,
         num_warmup_iterations=20,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
@@ -81,16 +81,16 @@ if __name__ == "__main__":
         super_circ_train_lr=1,
         penalty_function=penalty_func,
         gate_limit_dict=gate_limit,
-        warmup_arc_batchsize=2000,
+        warmup_arc_batchsize=500,
         search_arc_batchsize=100,
         alpha_max=2,
         alpha_decay_rate=0.99,
         prune_constant_max=0.99,
         prune_constant_min=0.80,
-        max_visits_prune_threshold=10,
+        max_visits_prune_threshold=5,
         min_num_children=5,
-        sampling_execute_rounds=5,
-        exploit_execute_rounds=10,
+        sampling_execute_rounds=10,
+        exploit_execute_rounds=5,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
         uct_sample_policy='local_optimal',
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         lr=0.1,
         grad_noise_factor=0,
         verbose=1,
-        early_stop_threshold=-1.2
+        early_stop_threshold=-18
     )
 
     res_dict = {
