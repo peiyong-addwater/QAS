@@ -46,11 +46,11 @@ if __name__ == "__main__":
     connection_graph = [[0,1],[1,4],[1,2],[1,0],[2,1],[2,3],[3,2],[3,5],[4,1],[4,7],[5,8],[5,3],[6,7],[7,4],[7,10],[7,6],[8,5],[8,9],[8,11],[9,8],[10,12],[10,7],[11,8],[11,14],[12,15],[12,10],[12,13],[13,14],[13,12],[14,13],[14,11],[15,12]]
     pool = QMLPool(16, single_qubit_gate, two_qubit_gate, complete_undirected_graph=False,  two_qubit_gate_map=connection_graph)
     print(pool)
-    p = 200
+    p = 500
     l = 3
     c = len(pool)
-    ph_count_limit = 50
-    gate_limit = {"CNOT": 100}
+    ph_count_limit = p
+    gate_limit = {"CNOT": p}
 
     def penalty_func(r: float, node: TreeNode):
         k = node.state.getCurrK()
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         init_qubit_with_controls=init_qubit_with_actions,
         init_params=init_params,
         num_iterations=200,
-        num_warmup_iterations=20,
+        num_warmup_iterations=50,
         super_circ_train_optimizer=qml.AdamOptimizer,
         super_circ_train_gradient_noise_factor=0.0,
         early_stop_threshold=18,
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         prune_constant_min=0.80,
         max_visits_prune_threshold=5,
         min_num_children=5,
-        sampling_execute_rounds=10,
+        sampling_execute_rounds=20,
         exploit_execute_rounds=5,
         cmab_sample_policy='local_optimal',
         cmab_exploit_policy='local_optimal',
